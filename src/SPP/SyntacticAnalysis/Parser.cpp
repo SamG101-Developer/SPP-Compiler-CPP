@@ -22,11 +22,16 @@ import spp.semantic_analysis.asts.function_call_argument_named_ast;
 import spp.semantic_analysis.asts.function_call_argument_unnamed_ast;
 import spp.semantic_analysis.asts.function_implementation_ast;
 import spp.semantic_analysis.asts.function_parameter_group_ast;
+import spp.semantic_analysis.asts.function_parameter_optional_ast;
 import spp.semantic_analysis.asts.function_parameter_required_ast;
 import spp.semantic_analysis.asts.function_parameter_self_ast;
+import spp.semantic_analysis.asts.function_parameter_variadic_ast;
 import spp.semantic_analysis.asts.function_prototype_ast;
-import spp.semantic_analysis.asts.generic_argument_type_named_ast;
-import spp.semantic_analysis.asts.generic_argument_type_unnamed_ast;
+import spp.semantic_analysis.asts.generic_argument_group_ast;
+import spp.semantic_analysis.asts.generic_type_argument_named_ast;
+import spp.semantic_analysis.asts.generic_type_argument_unnamed_ast;
+import spp.semantic_analysis.asts.generic_comp_argument_named_ast;
+import spp.semantic_analysis.asts.generic_comp_argument_unnamed_ast;
 import spp.semantic_analysis.asts.generic_parameter_group_ast;
 import spp.semantic_analysis.asts.identifier_ast;
 import spp.semantic_analysis.asts.module_prototype_ast;
@@ -189,7 +194,6 @@ auto SPP::SyntacticAnalysis::Parser::parse_sup_use_statement() -> std::unique_pt
     return p2;
 }
 
-
 auto SPP::SyntacticAnalysis::Parser::parse_subroutine_prototype() -> std::unique_ptr<Asts::SubroutinePrototypeAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_0_or_more(&Parser::parse_annotation, &Parser::parse_nothing);
@@ -305,7 +309,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_function_parameter_optional() -> std:
     auto p4 = parse_once(&Parser::parse_type);
     auto p5 = parse_once(&Parser::parse_token_assign);
     auto p6 = parse_once(&Parser::parse_expression);
-    return std::make_unique<Asts::FunctionParameterOptionalAst>(c1, p1, p2, p3, p4, p5, p6);
+    return std::make_unique<Asts::FunctionParameterOptionalAst>(c1, std::move(p1), std::move(p2), std::move(p3), std::move(p4), std::move(p5), std::move(p6));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_function_parameter_variadic() -> std::unique_ptr<Asts::FunctionParameterVariadicAst> {
@@ -315,15 +319,15 @@ auto SPP::SyntacticAnalysis::Parser::parse_function_parameter_variadic() -> std:
     auto p3 = parse_once(&Parser::parse_token_colon);
     auto p4 = parse_once(&Parser::parse_convention);
     auto p5 = parse_once(&Parser::parse_type);
-    return std::make_unique<Asts::FunctionParameterVariadicAst>(c1, p1, p2, p3, p4, p5);
+    return std::make_unique<Asts::FunctionParameterVariadicAst>(c1, std::move(p1), std::move(p2), std::move(p3), std::move(p4), std::move(p5));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_generic_arguments() -> std::unique_ptr<Asts::GenericArgumentGroupAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_token_left_square_bracket);
-    auto p2 = parse_0_or_more(&Parser::parse_generic_argument, Parser::parse_token_comma);
+    auto p2 = parse_0_or_more(&Parser::parse_generic_argument, &Parser::parse_token_comma);
     auto p3 = parse_once(&Parser::parse_token_right_square_bracket);
-    return std::make_unique<Asts::GenericArgumentGroupAst>(c1, p1, p2, p3);
+    return std::make_unique<Asts::GenericArgumentGroupAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_generic_argument() -> UniqueVariant<Asts::GenericArgumentAst> {
@@ -335,32 +339,32 @@ auto SPP::SyntacticAnalysis::Parser::parse_generic_argument() -> UniqueVariant<A
     return p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_generic_argument_type_named() -> std::unique_ptr<Asts::GenericArgumentTypeNamedAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_generic_argument_type_named() -> std::unique_ptr<Asts::GenericTypeArgumentNamedAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_upper_identifier);
     auto p2 = parse_once(&Parser::parse_token_assign);
     auto p3 = parse_once(&Parser::parse_type);
-    return std::make_unique<Asts::GenericArgumentTypeNamedAst>(c1, Asts::TypeSingleAst::from(*p1), std::move(p2), std::move(p3));
+    return std::make_unique<Asts::GenericTypeArgumentNamedAst>(c1, Asts::TypeSingleAst::from(*p1), std::move(p2), std::move(p3));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_generic_argument_type_unnamed() -> std::unique_ptr<Asts::GenericArgumentTypeUnnamedAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_generic_argument_type_unnamed() -> std::unique_ptr<Asts::GenericTypeArgumentUnnamedAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_type);
-    return std::make_unique<Asts::GenericArgumentTypeUnnamedAst>(c1, std::move(p1));
+    return std::make_unique<Asts::GenericTypeArgumentUnnamedAst>(c1, std::move(p1));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_generic_argument_comp_named() -> std::unique_ptr<Asts::GenericArgumentCompNamedAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_generic_argument_comp_named() -> std::unique_ptr<Asts::GenericCompArgumentNamedAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_identifier);
     auto p2 = parse_once(&Parser::parse_token_assign);
     auto p3 = parse_once(&Parser::parse_comp_value);
-    return std::make_unique<Asts::GenericArgumentCompNamedAst>(c1, Asts::TypeSingleAst::from(*p1), p2, p3);
+    return std::make_unique<Asts::GenericCompArgumentNamedAst>(c1, Asts::TypeSingleAst::from(*p1), std::move(p2), std::move(p3));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_generic_argument_comp_unnamed() -> std::unique_ptr<Asts::GenericArgumentCompUnnamedAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_generic_argument_comp_unnamed() -> std::unique_ptr<Asts::GenericCompArgumentUnnamedAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_comp_value);
-    return std::make_unique<Asts::GenericArgumentCompUnnamedAst>(c1, p1);
+    return std::make_unique<Asts::GenericCompArgumentUnnamedAst>(c1, std::move(p1));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_generic_parameters() -> std::unique_ptr<Asts::GenericParameterGroupAst> {
@@ -368,54 +372,54 @@ auto SPP::SyntacticAnalysis::Parser::parse_generic_parameters() -> std::unique_p
     auto p1 = parse_once(&Parser::parse_token_left_square_bracket);
     auto p2 = parse_0_or_more(&Parser::parse_generic_parameter, &Parser::parse_token_comma);
     auto p3 = parse_once(&Parser::parse_token_right_square_bracket);
-    return std::make_unique<Asts::GenericParameterGroupAst>(c1, p1, p2, p3);
+    return std::make_unique<Asts::GenericParameterGroupAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_generic_parameter() -> UniqueVariant<Asts::GenericParameterAst> {
     auto p1 = parse_alternate(
-        &Parser::parse_generic_parameter_comp_variadic,
-        &Parser::parse_generic_parameter_comp_optional,
-        &Parser::parse_generic_parameter_comp_required,
         &Parser::parse_generic_parameter_type_variadic,
         &Parser::parse_generic_parameter_type_optional,
-        &Parser::parse_generic_parameter_type_required);
+        &Parser::parse_generic_parameter_type_required,
+        &Parser::parse_generic_parameter_comp_variadic,
+        &Parser::parse_generic_parameter_comp_optional,
+        &Parser::parse_generic_parameter_comp_required);
     return p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_generic_parameter_type_required() -> std::unique_ptr<Asts::GenericParameterTypeRequiredAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_generic_parameter_type_required() -> std::unique_ptr<Asts::GenericTypeParameterRequiredAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_upper_identifier);
     auto p2 = parse_optional(&Parser::parse_generic_inline_constraints);
-    return std::make_unique<Asts::GenericParameterTypeRequiredAst>(c1, Asts::TypeSingleAst::from(*p1), p2);
+    return std::make_unique<Asts::GenericTypeParameterRequiredAst>(c1, Asts::TypeSingleAst::from(*p1), p2);
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_generic_parameter_type_optional() -> std::unique_ptr<Asts::GenericParameterTypeOptionalAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_generic_parameter_type_optional() -> std::unique_ptr<Asts::GenericTypeParameterOptionalAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_upper_identifier);
     auto p2 = parse_optional(&Parser::parse_generic_inline_constraints);
     auto p3 = parse_once(&Parser::parse_token_assign);
     auto p4 = parse_once(&Parser::parse_type);
-    return std::make_unique<Asts::GenericParameterTypeOptionalAst>(c1, Asts::TypeSingleAst::from(*p1), p2, p3, p4);
+    return std::make_unique<Asts::GenericTypeParameterOptionalAst>(c1, Asts::TypeSingleAst::from(*p1), p2, p3, p4);
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_generic_parameter_type_variadic() -> std::unique_ptr<Asts::GenericParameterTypeVariadicAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_generic_parameter_type_variadic() -> std::unique_ptr<Asts::GenericTypeParameterVariadicAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_token_double_dot);
     auto p2 = parse_once(&Parser::parse_upper_identifier);
     auto p3 = parse_optional(&Parser::parse_generic_inline_constraints);
-    return std::make_unique<Asts::GenericParameterTypeVariadicAst>(c1, p1, Asts::TypeSingleAst::from(*p2), p3);
+    return std::make_unique<Asts::GenericTypeParameterVariadicAst>(c1, p1, Asts::TypeSingleAst::from(*p2), p3);
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_generic_parameter_comp_required() -> std::unique_ptr<Asts::GenericParameterCompRequiredAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_generic_parameter_comp_required() -> std::unique_ptr<Asts::GenericCompParameterRequiredAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_keyword_cmp);
     auto p2 = parse_once(&Parser::parse_identifier);
     auto p3 = parse_once(&Parser::parse_token_colon);
     auto p4 = parse_once(&Parser::parse_type);
-    return std::make_unique<Asts::GenericParameterCompRequiredAst>(c1, p1, Asts::TypeSingleAst::from(*p2), p3, p4);
+    return std::make_unique<Asts::GenericCompParameterRequiredAst>(c1, p1, Asts::TypeSingleAst::from(*p2), p3, p4);
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_generic_parameter_comp_optional() -> std::unique_ptr<Asts::GenericParameterCompOptionalAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_generic_parameter_comp_optional() -> std::unique_ptr<Asts::GenericCompParameterOptionalAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_keyword_cmp);
     auto p2 = parse_once(&Parser::parse_identifier);
@@ -423,17 +427,17 @@ auto SPP::SyntacticAnalysis::Parser::parse_generic_parameter_comp_optional() -> 
     auto p4 = parse_once(&Parser::parse_type);
     auto p5 = parse_once(&Parser::parse_token_assign);
     auto p6 = parse_once(&Parser::parse_comp_value);
-    return std::make_unique<Asts::GenericParameterCompOptionalAst>(c1, p1, Asts::TypeSingleAst::from(*p2), p3, p4, p5, p6);
+    return std::make_unique<Asts::GenericCompParameterOptionalAst>(c1, p1, Asts::TypeSingleAst::from(*p2), p3, p4, p5, p6);
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_generic_parameter_comp_variadic() -> std::unique_ptr<Asts::GenericParameterCompVariadicAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_generic_parameter_comp_variadic() -> std::unique_ptr<Asts::GenericCompParameterVariadicAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_keyword_cmp);
     auto p2 = parse_once(&Parser::parse_token_double_dot);
     auto p3 = parse_once(&Parser::parse_identifier);
     auto p4 = parse_once(&Parser::parse_token_colon);
     auto p5 = parse_once(&Parser::parse_type);
-    return std::make_unique<Asts::GenericParameterCompVariadicAst>(c1, p1, p2, Asts::TypeSingleAst::from(*p3), p4, p5);
+    return std::make_unique<Asts::GenericCompParameterVariadicAst>(c1, p1, p2, Asts::TypeSingleAst::from(*p3), p4, p5);
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_generic_inline_constraints() -> std::unique_ptr<Asts::GenericTypeParameterInlineConstraintsAst> {
@@ -470,7 +474,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_annotation() -> std::unique_ptr<Asts:
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_token_at);
     auto p2 = parse_once(&Parser::parse_identifier);
-    return std::make_unique<Asts::AnnotationAst>(c1, p1, p2);
+    return std::make_unique<Asts::AnnotationAst>(c1, std::move(p1), std::move(p2));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_expression() -> UniqueVariant<Asts::ExpressionAst> {
@@ -519,7 +523,6 @@ auto SPP::SyntacticAnalysis::Parser::parse_binary_expression_precedence_level_6(
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_unary_expression() -> UniqueVariant<Asts::ExpressionAst> {
-    auto c1 = get_current_pos();
     auto p1 = parse_0_or_more(&Parser::parse_unary_op, &Parser::parse_nothing);
     auto p2 = parse_once(&Parser::parse_postfix_expression);
     return std::move(genex::algorithms::accumulate(p1 | genex::views::reverse, p2, []<typename T>(auto &&acc, T &&elem) -> std::unique_ptr<Asts::UnaryExpressionAst> {
@@ -528,7 +531,6 @@ auto SPP::SyntacticAnalysis::Parser::parse_unary_expression() -> UniqueVariant<A
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_postfix_expression() -> UniqueVariant<Asts::ExpressionAst> {
-    auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_primary_expression);
     auto p2 = parse_0_or_more(&Parser::parse_postfix_op, &Parser::parse_nothing);
     return std::move(genex::algorithms::accumulate(p2, p1, []<typename T>(auto &&acc, T &&elem) -> std::unique_ptr<Asts::PostfixExpressionAst> {
@@ -536,7 +538,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_postfix_expression() -> UniqueVariant
     }));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_primary_expression() -> UniqueVariant<Asts::ExpressionAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_primary_expression() -> UniqueVariant<Asts::PrimaryExpressionAst> {
     auto p1 = parse_alternate(
         &Parser::parse_literal,
         &Parser::parse_object_initializer,
@@ -589,7 +591,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_case_expression_patterns() -> std::un
 
 auto SPP::SyntacticAnalysis::Parser::parse_case_expression_simple() -> std::unique_ptr<Asts::CaseExpressionAst> {
     auto c1 = get_current_pos();
-    auto p1 = parse_once(&Parser::parse_keyword_primitive_case);
+    auto p1 = parse_once(&Parser::parse_keyword_case);
     auto p2 = parse_once(&Parser::parse_expression);
     auto p3 = parse_once(&Parser::parse_inner_scope);
     auto p4 = parse_0_or_more(&Parser::parse_case_expression_branch_simple, Parser::parse_nothing);

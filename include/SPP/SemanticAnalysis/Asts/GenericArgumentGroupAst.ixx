@@ -1,10 +1,12 @@
 module;
 #include <string>
+#include <vector>
 
 export module spp.semantic_analysis.asts.generic_argument_group_ast;
-import spp.compiler.compiler_stages;
 import spp.semantic_analysis.asts.ast;
+import spp.semantic_analysis.asts.ast_members;
 import spp.semantic_analysis.meta.ast_printer;
+import spp.semantic_analysis.asts.ast_types;
 
 
 namespace SPP::SemanticAnalysis::Asts {
@@ -12,9 +14,15 @@ namespace SPP::SemanticAnalysis::Asts {
 }
 
 
-struct SPP::SemanticAnalysis::Asts::GenericArgumentGroupAst final : Ast, Compiler::CompilerStages {
-    // TODO
+struct SPP::SemanticAnalysis::Asts::GenericArgumentGroupAst final : Ast {
+    AstMemberType<TokenAst> tok_paren_l;
+    AstMemberType<std::vector<GenericArgumentAst>> members;
+    AstMemberType<TokenAst> tok_paren_r;
 
-    GenericArgumentGroupAst(std::size_t pos);
+    GenericArgumentGroupAst(
+        std::size_t pos,
+        decltype(tok_paren_l) &&tok_paren_l,
+        decltype(members) &&members,
+        decltype(tok_paren_r) &&tok_paren_r);
     auto print(Meta::AstPrinter &printer) const -> std::string override;
 };

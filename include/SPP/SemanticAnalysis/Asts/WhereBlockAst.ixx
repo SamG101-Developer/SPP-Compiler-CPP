@@ -3,12 +3,10 @@ module;
 #include <string>
 
 export module spp.semantic_analysis.asts.where_block_ast;
-import spp.compiler.compiler_stages;
 import spp.semantic_analysis.asts.ast;
 import spp.semantic_analysis.asts.ast_members;
-import spp.semantic_analysis.asts.token_ast;
-import spp.semantic_analysis.asts.where_constraints_group_ast;
 import spp.semantic_analysis.meta.ast_printer;
+import spp.semantic_analysis.asts.ast_types;
 
 
 namespace SPP::SemanticAnalysis::Asts {
@@ -16,7 +14,7 @@ namespace SPP::SemanticAnalysis::Asts {
 }
 
 
-struct SPP::SemanticAnalysis::Asts::WhereBlockAst final : Ast, Compiler::CompilerStages {
+struct SPP::SemanticAnalysis::Asts::WhereBlockAst final : Ast {
     AstMemberType<TokenAst> tok_where;
     AstMemberType<WhereConstraintsGroupAst> constraint_group;
 

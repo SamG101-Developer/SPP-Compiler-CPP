@@ -4,7 +4,6 @@ module;
 #include <string>
 
 export module spp.semantic_analysis.asts.identifier_ast;
-import spp.compiler.compiler_stages;
 import spp.semantic_analysis.asts.ast;
 import spp.semantic_analysis.meta.ast_printer;
 import spp.semantic_analysis.mixins.type_infer;
@@ -16,7 +15,7 @@ namespace SPP::SemanticAnalysis::Asts {
 }
 
 
-struct SPP::SemanticAnalysis::Asts::IdentifierAst final : Ast, Compiler::CompilerStages, Mixins::TypeInfer {
+struct SPP::SemanticAnalysis::Asts::IdentifierAst final : Ast, Mixins::TypeInfer {
     std::string value;
 
     IdentifierAst(std::size_t pos, decltype(value) &&value);

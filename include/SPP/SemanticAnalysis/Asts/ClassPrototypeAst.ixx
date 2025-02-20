@@ -3,16 +3,10 @@ module;
 #include <vector>
 
 export module spp.semantic_analysis.asts.class_prototype_ast;
-import spp.compiler.compiler_stages;
 import spp.semantic_analysis.asts.ast;
 import spp.semantic_analysis.asts.ast_members;
-import spp.semantic_analysis.asts.annotation_ast;
-import spp.semantic_analysis.asts.class_implementation_ast;
-import spp.semantic_analysis.asts.generic_parameter_group_ast;
-import spp.semantic_analysis.asts.token_ast;
-import spp.semantic_analysis.asts.type_single_ast;
-import spp.semantic_analysis.asts.where_block_ast;
 import spp.semantic_analysis.meta.ast_printer;
+import spp.semantic_analysis.asts.ast_types;
 
 
 namespace SPP::SemanticAnalysis::Asts {
@@ -20,7 +14,7 @@ namespace SPP::SemanticAnalysis::Asts {
 }
 
 
-struct SPP::SemanticAnalysis::Asts::ClassPrototypeAst final : Ast, Compiler::CompilerStages {
+struct SPP::SemanticAnalysis::Asts::ClassPrototypeAst final : Ast {
     AstMemberType<std::vector<AnnotationAst>> annotations;
     AstMemberType<TokenAst> tok_cls;
     AstMemberType<TypeSingleAst> name;

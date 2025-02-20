@@ -1,10 +1,8 @@
 module;
-#include <memory>
 #include <string>
 #include <vector>
 
 export module spp.semantic_analysis.asts.module_implementation_ast;
-import spp.compiler.compiler_stages;
 import spp.semantic_analysis.asts.ast;
 import spp.semantic_analysis.asts.ast_members;
 import spp.semantic_analysis.asts.ast_types;
@@ -17,7 +15,7 @@ namespace SPP::SemanticAnalysis::Asts {
 }
 
 
-struct SPP::SemanticAnalysis::Asts::ModuleImplementationAst final : Ast, Compiler::CompilerStages {
+struct SPP::SemanticAnalysis::Asts::ModuleImplementationAst final : Ast {
     std::vector<AstMemberType<ModuleMemberAst>> members;
 
     ModuleImplementationAst(std::size_t pos, decltype(members) &&members);

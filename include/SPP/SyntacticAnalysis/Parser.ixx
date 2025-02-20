@@ -104,19 +104,19 @@ public:
 
     CREATE_PARSER_RULE(generic_arguments, Asts::GenericArgumentGroupAst);
     CREATE_PARSER_RULE_VARIANT(generic_argument, Asts::GenericArgumentAst);
-    CREATE_PARSER_RULE(generic_argument_type_named, Asts::GenericArgumentTypeNamedAst);
-    CREATE_PARSER_RULE(generic_argument_type_unnamed, Asts::GenericArgumentTypeUnnamedAst);
-    CREATE_PARSER_RULE(generic_argument_comp_named, Asts::GenericArgumentCompNamedAst);
-    CREATE_PARSER_RULE(generic_argument_comp_unnamed, Asts::GenericArgumentCompUnnamedAst);
+    CREATE_PARSER_RULE(generic_argument_type_named, Asts::GenericTypeArgumentNamedAst);
+    CREATE_PARSER_RULE(generic_argument_type_unnamed, Asts::GenericTypeArgumentUnnamedAst);
+    CREATE_PARSER_RULE(generic_argument_comp_named, Asts::GenericCompArgumentNamedAst);
+    CREATE_PARSER_RULE(generic_argument_comp_unnamed, Asts::GenericCompArgumentUnnamedAst);
 
     CREATE_PARSER_RULE(generic_parameters, Asts::GenericParameterGroupAst);
     CREATE_PARSER_RULE_VARIANT(generic_parameter, Asts::GenericParameterAst);
-    CREATE_PARSER_RULE(generic_parameter_type_required, Asts::GenericParameterTypeRequiredAst);
-    CREATE_PARSER_RULE(generic_parameter_type_optional, Asts::GenericParameterTypeOptionalAst);
-    CREATE_PARSER_RULE(generic_parameter_type_variadic, Asts::GenericParameterTypeVariadicAst);
-    CREATE_PARSER_RULE(generic_parameter_comp_required, Asts::GenericParameterCompRequiredAst);
-    CREATE_PARSER_RULE(generic_parameter_comp_optional, Asts::GenericParameterCompOptionalAst);
-    CREATE_PARSER_RULE(generic_parameter_comp_variadic, Asts::GenericParameterCompVariadicAst);
+    CREATE_PARSER_RULE(generic_parameter_type_required, Asts::GenericTypeParameterRequiredAst);
+    CREATE_PARSER_RULE(generic_parameter_type_optional, Asts::GenericTypeParameterOptionalAst);
+    CREATE_PARSER_RULE(generic_parameter_type_variadic, Asts::GenericTypeParameterVariadicAst);
+    CREATE_PARSER_RULE(generic_parameter_comp_required, Asts::GenericCompParameterRequiredAst);
+    CREATE_PARSER_RULE(generic_parameter_comp_optional, Asts::GenericCompParameterOptionalAst);
+    CREATE_PARSER_RULE(generic_parameter_comp_variadic, Asts::GenericCompParameterVariadicAst);
     CREATE_PARSER_RULE(generic_inline_constraints, Asts::GenericTypeParameterInlineConstraintsAst);
 
     CREATE_PARSER_RULE(where_block, Asts::WhereBlockAst);
@@ -140,7 +140,7 @@ public:
 
     CREATE_PARSER_RULE_VARIANT(unary_expression, Asts::ExpressionAst);
     CREATE_PARSER_RULE_VARIANT(postfix_expression, Asts::ExpressionAst);
-    CREATE_PARSER_RULE_VARIANT(primary_expression, Asts::ExpressionAst);
+    CREATE_PARSER_RULE_VARIANT(primary_expression, Asts::PrimaryExpressionAst);
     CREATE_PARSER_RULE(parenthesized_expression, Asts::ParenthesizedExpressionAst);
     CREATE_PARSER_RULE(self_identifier, Asts::IdentifierAst);
     CREATE_PARSER_RULE(fold_expression, Asts::TokenAst);

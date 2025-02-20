@@ -3,11 +3,11 @@ module;
 #include <string>
 
 export module spp.semantic_analysis.asts.generic_identifier_ast;
-import spp.compiler.compiler_stages;
 import spp.semantic_analysis.asts.ast;
 import spp.semantic_analysis.asts.ast_members;
-import spp.semantic_analysis.asts.generic_argument_group_ast;
 import spp.semantic_analysis.meta.ast_printer;
+import spp.semantic_analysis.asts.ast_types;
+
 
 
 namespace SPP::SemanticAnalysis::Asts {
@@ -15,7 +15,7 @@ namespace SPP::SemanticAnalysis::Asts {
 }
 
 
-struct SPP::SemanticAnalysis::Asts::GenericIdentifierAst final : Ast, Compiler::CompilerStages {
+struct SPP::SemanticAnalysis::Asts::GenericIdentifierAst final : Ast {
     std::string value;
     AstMemberType<GenericArgumentGroupAst> generic_argument_group;
 

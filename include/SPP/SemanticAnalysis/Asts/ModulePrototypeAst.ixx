@@ -3,7 +3,6 @@ module;
 #include <string>
 
 export module spp.semantic_analysis.asts.module_prototype_ast;
-import spp.compiler.compiler_stages;
 import spp.semantic_analysis.asts.ast;
 import spp.semantic_analysis.asts.ast_members;
 import spp.semantic_analysis.asts.module_implementation_ast;
@@ -15,7 +14,7 @@ namespace SPP::SemanticAnalysis::Asts {
 }
 
 
-struct SPP::SemanticAnalysis::Asts::ModulePrototypeAst final : Ast, Compiler::CompilerStages {
+struct SPP::SemanticAnalysis::Asts::ModulePrototypeAst final : Ast {
     AstMemberType<ModuleImplementationAst> body;
     std::string name = "";
 

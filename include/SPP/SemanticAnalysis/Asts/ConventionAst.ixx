@@ -3,7 +3,6 @@ module;
 #include <string>
 
 export module spp.semantic_analysis.asts.convention_ast;
-import spp.compiler.compiler_stages;
 import spp.semantic_analysis.asts.ast;
 import spp.semantic_analysis.meta.ast_printer;
 
@@ -19,7 +18,7 @@ enum class SPP::SemanticAnalysis::Asts::ConventionType {
 };
 
 
-struct SPP::SemanticAnalysis::Asts::ConventionAst final : Ast, Compiler::CompilerStages {
+struct SPP::SemanticAnalysis::Asts::ConventionAst final : Ast {
     ConventionType type;
 
     ConventionAst(std::size_t pos, decltype(type) &&type);

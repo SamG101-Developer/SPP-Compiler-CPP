@@ -3,7 +3,6 @@ module;
 #include <string>
 
 export module spp.semantic_analysis.asts.annotation_ast;
-import spp.compiler.compiler_stages;
 import spp.semantic_analysis.asts.ast;
 import spp.semantic_analysis.asts.ast_members;
 import spp.semantic_analysis.asts.identifier_ast;
@@ -30,7 +29,7 @@ enum class SPP::SemanticAnalysis::Asts::AnnotationIdentifier {
 };
 
 
-struct SPP::SemanticAnalysis::Asts::AnnotationAst final : Ast, Compiler::CompilerStages {
+struct SPP::SemanticAnalysis::Asts::AnnotationAst final : Ast {
     AstMemberType<TokenAst> tok_ast;
     AstMemberType<IdentifierAst> name;
 

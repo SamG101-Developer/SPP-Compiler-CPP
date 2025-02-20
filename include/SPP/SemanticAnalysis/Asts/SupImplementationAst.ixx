@@ -24,5 +24,5 @@ struct SPP::SemanticAnalysis::Asts::SupImplementationAst final : Ast {
     AstMemberType<TokenAst> tok_brace_r;
 
     SupImplementationAst(std::size_t pos, decltype(tok_brace_l) &&tok_brace_l, decltype(members) &&members, decltype(tok_brace_r) &&tok_brace_r);
-    auto print(Meta::AstPrinter &printer) const -> std::string override;
+    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

@@ -21,5 +21,5 @@ struct SPP::SemanticAnalysis::Asts::GenericParameterGroupAst final : Ast {
     AstMemberType<TokenAst> tok_right_parenthesis;
 
     GenericParameterGroupAst(std::size_t pos, decltype(tok_left_parenthesis) &&tok_left_parenthesis, decltype(generic_argument_groups) &&generic_argument_groups, decltype(tok_right_parenthesis) &&tok_right_parenthesis);
-    auto print(Meta::AstPrinter &printer) const -> std::string override;
+    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

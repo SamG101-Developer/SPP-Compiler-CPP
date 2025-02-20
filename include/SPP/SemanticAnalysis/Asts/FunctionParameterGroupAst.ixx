@@ -28,5 +28,5 @@ struct SPP::SemanticAnalysis::Asts::FunctionParameterGroupAst final : Ast {
         decltype(members) &&members,
         decltype(tok_paren_r) &&tok_paren_r);
 
-    auto print(Meta::AstPrinter &printer) const -> std::string override;
+    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

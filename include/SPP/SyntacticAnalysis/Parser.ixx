@@ -140,7 +140,7 @@ public:
 
     CREATE_PARSER_RULE_VARIANT(unary_expression, Asts::ExpressionAst);
     CREATE_PARSER_RULE_VARIANT(postfix_expression, Asts::ExpressionAst);
-    CREATE_PARSER_RULE_VARIANT(primary_expression, Asts::PrimaryExpressionAst);
+    CREATE_PARSER_RULE_VARIANT(primary_expression, Asts::ExpressionAst);
     CREATE_PARSER_RULE(parenthesized_expression, Asts::ParenthesizedExpressionAst);
     CREATE_PARSER_RULE(self_identifier, Asts::IdentifierAst);
     CREATE_PARSER_RULE(fold_expression, Asts::TokenAst);

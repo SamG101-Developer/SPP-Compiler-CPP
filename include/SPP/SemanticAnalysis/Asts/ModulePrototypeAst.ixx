@@ -19,5 +19,5 @@ struct SPP::SemanticAnalysis::Asts::ModulePrototypeAst final : Ast {
     std::string name = "";
 
     ModulePrototypeAst(std::size_t pos, decltype(body) &&body);
-    auto print(Meta::AstPrinter &printer) const -> std::string override;
+    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

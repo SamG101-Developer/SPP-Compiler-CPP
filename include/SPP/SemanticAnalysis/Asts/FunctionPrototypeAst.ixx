@@ -54,5 +54,5 @@ struct SPP::SemanticAnalysis::Asts::FunctionPrototypeAst : Ast {
         decltype(where_block) &&where_block,
         decltype(body) &&body);
 
-    auto print(Meta::AstPrinter &printer) const -> std::string override;
+    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

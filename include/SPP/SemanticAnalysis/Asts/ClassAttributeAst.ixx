@@ -25,5 +25,5 @@ struct SPP::SemanticAnalysis::Asts::ClassAttributeAst final : Ast {
     AstMemberType<TypeAst> type;
 
     ClassAttributeAst(std::size_t pos, decltype(annotations) &&annotations, decltype(identifier) &&identifier, decltype(tok_colon) &&tok_colon, decltype(type) &&type);
-    auto print(Meta::AstPrinter &printer) const -> std::string override;
+    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

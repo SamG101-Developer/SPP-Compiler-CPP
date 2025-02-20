@@ -23,5 +23,5 @@ struct SPP::SemanticAnalysis::Asts::FunctionCallArgumentGroupAst final : Ast {
     AstMemberType<TokenAst> tok_paren_r;
 
     FunctionCallArgumentGroupAst(std::size_t pos, decltype(tok_paren_l) &&tok_paren_l, decltype(members) &&members, decltype(tok_paren_r) &&tok_paren_r);
-    auto print(Meta::AstPrinter &printer) const -> std::string override;
+    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

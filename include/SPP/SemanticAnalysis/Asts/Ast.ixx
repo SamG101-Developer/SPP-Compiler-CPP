@@ -30,7 +30,7 @@ struct SPP::SemanticAnalysis::Asts::Ast : Utils::StringConverter {
      * @param printer The printer object that maintains the current code context for indentation.
      * @return A string representation of the AST node.
      */
-    virtual auto print(Meta::AstPrinter &printer) const -> std::string = 0;
+    virtual auto print(Meta::AstPrinter &printer) const -> std::u8string = 0;
 
     /**
      * All nodes will have equality checks, mostly with themselves only, but sometimes different node types will be

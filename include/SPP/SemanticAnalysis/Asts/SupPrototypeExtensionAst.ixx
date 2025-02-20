@@ -31,5 +31,5 @@ struct SPP::SemanticAnalysis::Asts::SupPrototypeExtensionAst final : Ast {
         std::size_t pos, decltype(tok_sup) &&tok_sup, decltype(generic_params) &&generic_params, decltype(name) &&name,
         decltype(tok_ext) &&tok_ext, decltype(superclass) &&superclass, decltype(where_block) &&where_block,
         decltype(body) &&body);
-    auto print(Meta::AstPrinter &printer) const -> std::string override;
+    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

@@ -70,5 +70,5 @@ struct SPP::SemanticAnalysis::Asts::FunctionCallArgumentNamedAst final : Ast {
      * @param printer The printer object that maintains the current code context for indentation.
      * @return A string representation of the AST node.
      */
-    auto print(Meta::AstPrinter &printer) const -> std::string override;
+    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

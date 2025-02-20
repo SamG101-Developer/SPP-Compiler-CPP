@@ -19,5 +19,5 @@ struct SPP::SemanticAnalysis::Asts::WhereBlockAst final : Ast {
     AstMemberType<WhereConstraintsGroupAst> constraint_group;
 
     WhereBlockAst(std::size_t pos, decltype(tok_where) &&tok_where, decltype(constraint_group) &&constraint_group);
-    auto print(Meta::AstPrinter &printer) const -> std::string override;
+    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

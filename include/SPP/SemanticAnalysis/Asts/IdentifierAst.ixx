@@ -20,5 +20,5 @@ struct SPP::SemanticAnalysis::Asts::IdentifierAst final : Ast, Mixins::TypeInfer
 
     IdentifierAst(std::size_t pos, decltype(value) &&value);
     auto infer_type(Scoping::ScopeManager *scope_manager, std::map<std::string, std::any> &meta) -> Mixins::InferredType override;
-    auto print(Meta::AstPrinter &printer) const -> std::string override;
+    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

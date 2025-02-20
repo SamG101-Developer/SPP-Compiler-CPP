@@ -25,5 +25,5 @@ struct SPP::SemanticAnalysis::Asts::ClassPrototypeAst final : Ast {
     bool is_alias = false;
 
     ClassPrototypeAst(std::size_t pos, decltype(annotations) &&annotations, decltype(tok_cls) &&tok_cls, decltype(name) &&name, decltype(generic_params) &&generic_args, decltype(where_block) &&where_block, decltype(class_impl) &&class_impl);
-    auto print(Meta::AstPrinter &printer) const -> std::string override;
+    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

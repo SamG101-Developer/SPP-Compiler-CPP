@@ -24,5 +24,5 @@ struct SPP::SemanticAnalysis::Asts::GenericCompArgumentNamedAst final : Ast {
         decltype(name) &&name,
         decltype(tok_assign) &&tok_assign,
         decltype(value) &&value);
-    auto print(Meta::AstPrinter &printer) const -> std::string override;
+    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

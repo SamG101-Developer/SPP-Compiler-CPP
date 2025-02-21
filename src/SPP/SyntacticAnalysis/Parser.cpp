@@ -71,6 +71,10 @@ import spp.semantic_analysis.asts.pattern_variant_destructure_object_ast;
 import spp.semantic_analysis.asts.pattern_variant_destructure_skip_1_argument_ast;
 import spp.semantic_analysis.asts.pattern_variant_destructure_skip_n_arguments_ast;
 import spp.semantic_analysis.asts.pattern_variant_destructure_tuple_ast;
+import spp.semantic_analysis.asts.pattern_variant_else_ast;
+import spp.semantic_analysis.asts.pattern_variant_else_case_ast;
+import spp.semantic_analysis.asts.pattern_variant_expression_ast;
+import spp.semantic_analysis.asts.pattern_variant_literal_ast;
 import spp.semantic_analysis.asts.pattern_variant_single_identifier_ast;
 import spp.semantic_analysis.asts.pin_statement_ast;
 import spp.semantic_analysis.asts.rel_statement_ast;
@@ -1036,7 +1040,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_destructure_tuple() -
     auto p1 = parse_once(&Parser::parse_token_left_parenthesis);
     auto p2 = parse_1_or_more(&Parser::parse_pattern_variant_nested_for_destructure_tuple, &Parser::parse_token_comma);
     auto p3 = parse_once(&Parser::parse_token_right_parenthesis);
-    return std::make_unique<Asts::PatternVariantDestructureTupleAst>(c1, p1, p2, p3);
+    return std::make_unique<Asts::PatternVariantDestructureTupleAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_destructure_object() -> std::unique_ptr<Asts::PatternVariantDestructureObjectAst> {
@@ -1068,7 +1072,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_literal() -> std::uni
 auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_expression() -> std::unique_ptr<Asts::PatternVariantExpressionAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_expression);
-    return std::make_unique<Asts::PatternVariantExpressionAst>(c1, p1);
+    return std::make_unique<Asts::PatternVariantExpressionAst>(c1, std::move(p1));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_else() -> std::unique_ptr<Asts::PatternVariantElseAst> {
@@ -1081,7 +1085,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_else_case() -> std::u
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_keyword_else);
     auto p2 = parse_once(&Parser::parse_case_expression);
-    return std::make_unique<Asts::PatternVariantElseCaseAst>(c1, p1, p2);
+    return std::make_unique<Asts::PatternVariantElseCaseAst>(c1, std::move(p1), std::move(p2));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_nested_for_destructure_array() -> std::unique_ptr<Asts::PatternVariantNestedForDestructureArrayAst> {

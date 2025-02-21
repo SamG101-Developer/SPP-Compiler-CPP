@@ -45,6 +45,16 @@ import spp.semantic_analysis.asts.gen_expression_ast;
 import spp.semantic_analysis.asts.global_constant_ast;
 import spp.semantic_analysis.asts.identifier_ast;
 import spp.semantic_analysis.asts.inner_scope_ast;
+import spp.semantic_analysis.asts.let_statement_initialized_ast;
+import spp.semantic_analysis.asts.let_statement_uninitialized_ast;
+import spp.semantic_analysis.asts.local_variable_attribute_binding_ast;
+import spp.semantic_analysis.asts.local_variable_destructure_array_ast;
+import spp.semantic_analysis.asts.local_variable_destructure_object_ast;
+import spp.semantic_analysis.asts.local_variable_destructure_skip_1_argument_ast;
+import spp.semantic_analysis.asts.local_variable_destructure_skip_n_arguments_ast;
+import spp.semantic_analysis.asts.local_variable_destructure_tuple_ast;
+import spp.semantic_analysis.asts.local_variable_single_identifier_ast;
+import spp.semantic_analysis.asts.local_variable_single_identifier_alias_ast;
 import spp.semantic_analysis.asts.loop_expression_ast;
 import spp.semantic_analysis.asts.loop_condition_boolean_ast;
 import spp.semantic_analysis.asts.loop_condition_iterable_ast;
@@ -798,7 +808,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_let_statement_initialized() -> std::u
     auto p2 = parse_once(&Parser::parse_local_variable);
     auto p3 = parse_once(&Parser::parse_token_assign);
     auto p4 = parse_once(&Parser::parse_expression);
-    return std::make_unique<Asts::LetStatementInitializedAst>(c1, p1, p2, p3, p4);
+    return std::make_unique<Asts::LetStatementInitializedAst>(c1, std::move(p1), std::move(p2), std::move(p3), std::move(p4));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_let_statement_uninitialized() -> std::unique_ptr<Asts::LetStatementUninitializedAst> {
@@ -806,8 +816,9 @@ auto SPP::SyntacticAnalysis::Parser::parse_let_statement_uninitialized() -> std:
     auto p1 = parse_once(&Parser::parse_keyword_let);
     auto p2 = parse_once(&Parser::parse_local_variable);
     auto p3 = parse_once(&Parser::parse_token_colon);
-    auto p4 = parse_once(&Parser::parse_type);
-    return std::make_unique<Asts::LetStatementUninitializedAst>(c1, p1, p2, p3, p4);
+    auto p4 = parse_once(&Parser::parse_convention);
+    auto p5 = parse_once(&Parser::parse_type);
+    return std::make_unique<Asts::LetStatementUninitializedAst>(c1, std::move(p1), std::move(p2), std::move(p3), std::move(p4), std::move(p5));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_local_variable() -> UniqueVariant<Asts::LocalVariableAst> {
@@ -822,14 +833,14 @@ auto SPP::SyntacticAnalysis::Parser::parse_local_variable() -> UniqueVariant<Ast
 auto SPP::SyntacticAnalysis::Parser::parse_local_variable_destructure_skip_1_argument() -> std::unique_ptr<Asts::LocalVariableDestructureSkip1ArgumentAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_token_underscore);
-    return std::make_unique<Asts::LocalVariableDestructureSkip1ArgumentAst>(c1, p1);
+    return std::make_unique<Asts::LocalVariableDestructureSkip1ArgumentAst>(c1, std::move(p1));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_local_variable_destructure_skip_n_arguments() -> std::unique_ptr<Asts::LocalVariableDestructureSkipNArgumentsAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_token_double_dot);
     auto p2 = parse_optional(&Parser::parse_local_variable_single_identifier);
-    return std::make_unique<Asts::LocalVariableDestructureSkipNArgumentsAst>(c1, p1, p2);
+    return std::make_unique<Asts::LocalVariableDestructureSkipNArgumentsAst>(c1, std::move(p1), std::move(p2));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_local_variable_single_identifier() -> std::unique_ptr<Asts::LocalVariableSingleIdentifierAst> {
@@ -837,39 +848,39 @@ auto SPP::SyntacticAnalysis::Parser::parse_local_variable_single_identifier() ->
     auto p1 = parse_optional(&Parser::parse_keyword_mut);
     auto p2 = parse_once(&Parser::parse_identifier);
     auto p3 = parse_optional(&Parser::parse_local_variable_single_identifier_alias);
-    return std::make_unique<Asts::LocalVariableSingleIdentifierAst>(c1, p1, p2, p3);
+    return std::make_unique<Asts::LocalVariableSingleIdentifierAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_local_variable_single_identifier_alias() -> std::unique_ptr<Asts::LocalVariableSingleIdentifierAliasAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_keyword_as);
     auto p2 = parse_once(&Parser::parse_identifier);
-    return std::make_unique<Asts::LocalVariableSingleIdentifierAliasAst>(c1, p1, p2);
+    return std::make_unique<Asts::LocalVariableSingleIdentifierAliasAst>(c1, std::move(p1), std::move(p2));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_local_variable_destructure_array() -> std::unique_ptr<Asts::LocalVariableDestructureArrayAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_token_left_curly_brace);
-    auto p2 = parse_1_or_more(&Parser::parse_local_variable_nested_for_destructure_array, Parser::parse_token_comma);
+    auto p2 = parse_1_or_more(&Parser::parse_local_variable_nested_for_destructure_array, &Parser::parse_token_comma);
     auto p3 = parse_once(&Parser::parse_token_right_curly_brace);
-    return std::make_unique<Asts::LocalVariableDestructureArrayAst>(c1, p1, p2, p3);
+    return std::make_unique<Asts::LocalVariableDestructureArrayAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_local_variable_destructure_tuple() -> std::unique_ptr<Asts::LocalVariableDestructureTupleAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_token_left_parenthesis);
-    auto p2 = parse_1_or_more(&Parser::parse_local_variable_nested_for_destructure_tuple, Parser::parse_token_comma);
+    auto p2 = parse_1_or_more(&Parser::parse_local_variable_nested_for_destructure_tuple, &Parser::parse_token_comma);
     auto p3 = parse_once(&Parser::parse_token_right_parenthesis);
-    return std::make_unique<Asts::LocalVariableDestructureTupleAst>(c1, p1, p2, p3);
+    return std::make_unique<Asts::LocalVariableDestructureTupleAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_local_variable_destructure_object() -> std::unique_ptr<Asts::LocalVariableDestructureObjectAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_type_single);
     auto p2 = parse_once(&Parser::parse_token_left_parenthesis);
-    auto p3 = parse_0_or_more(&Parser::parse_local_variable_nested_for_destructure_object, Parser::parse_token_comma);
+    auto p3 = parse_0_or_more(&Parser::parse_local_variable_nested_for_destructure_object, &Parser::parse_token_comma);
     auto p4 = parse_once(&Parser::parse_token_right_parenthesis);
-    return std::make_unique<Asts::LocalVariableDestructureObjectAst>(c1, p1, p2, p3, p4);
+    return std::make_unique<Asts::LocalVariableDestructureObjectAst>(c1, std::move(p1), std::move(p2), std::move(p3), std::move(p4));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_local_variable_attribute_binding() -> std::unique_ptr<Asts::LocalVariableAttributeBindingAst> {
@@ -877,32 +888,32 @@ auto SPP::SyntacticAnalysis::Parser::parse_local_variable_attribute_binding() ->
     auto p1 = parse_once(&Parser::parse_identifier);
     auto p2 = parse_once(&Parser::parse_token_assign);
     auto p3 = parse_once(&Parser::parse_local_variable_nested_for_attribute_binding);
-    return std::make_unique<Asts::LocalVariableAttributeBindingAst>(c1, p1, p2, p3);
+    return std::make_unique<Asts::LocalVariableAttributeBindingAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_local_variable_nested_for_destructure_array() -> std::unique_ptr<Asts::LocalVariableNestedForDestructureArrayAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_local_variable_nested_for_destructure_array() -> UniqueVariant<Asts::LocalVariableNestedForDestructureArrayAst> {
     auto p1 = parse_alternate(
         &Parser::parse_local_variable_destructure_array,
         &Parser::parse_local_variable_destructure_tuple,
         &Parser::parse_local_variable_destructure_object,
         &Parser::parse_local_variable_single_identifier,
-        &Parser::parse_local_variable_destructure_skip_n_arguments,
-        &Parser::parse_local_variable_destructure_skip_1_argument);
+        &Parser::parse_local_variable_destructure_skip_1_argument,
+        &Parser::parse_local_variable_destructure_skip_n_arguments);
     return p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_local_variable_nested_for_destructure_tuple() -> std::unique_ptr<Asts::LocalVariableNestedForDestructureTupleAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_local_variable_nested_for_destructure_tuple() -> UniqueVariant<Asts::LocalVariableNestedForDestructureTupleAst> {
     auto p1 = parse_alternate(
         &Parser::parse_local_variable_destructure_array,
         &Parser::parse_local_variable_destructure_tuple,
         &Parser::parse_local_variable_destructure_object,
         &Parser::parse_local_variable_single_identifier,
-        &Parser::parse_local_variable_destructure_skip_n_arguments,
-        &Parser::parse_local_variable_destructure_skip_1_argument);
+        &Parser::parse_local_variable_destructure_skip_1_argument,
+        &Parser::parse_local_variable_destructure_skip_n_arguments);
     return p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_local_variable_nested_for_destructure_object() -> std::unique_ptr<Asts::LocalVariableNestedForDestructureObjectAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_local_variable_nested_for_destructure_object() -> UniqueVariant<Asts::LocalVariableNestedForDestructureObjectAst> {
     auto p1 = parse_alternate(
         &Parser::parse_local_variable_attribute_binding,
         &Parser::parse_local_variable_single_identifier,
@@ -911,7 +922,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_local_variable_nested_for_destructure
 }
 
 
-auto SPP::SyntacticAnalysis::Parser::parse_local_variable_nested_for_attribute_binding() -> std::unique_ptr<Asts::LocalVariableNestedForAttributeBindingAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_local_variable_nested_for_attribute_binding() -> UniqueVariant<Asts::LocalVariableNestedForAttributeBindingAst> {
     auto p1 = parse_alternate(
         &Parser::parse_local_variable_destructure_array,
         &Parser::parse_local_variable_destructure_tuple,

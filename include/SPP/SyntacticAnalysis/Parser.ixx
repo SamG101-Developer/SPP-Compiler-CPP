@@ -188,10 +188,10 @@ public:
     CREATE_PARSER_RULE(local_variable_destructure_object, Asts::LocalVariableDestructureObjectAst);
     CREATE_PARSER_RULE(local_variable_destructure_tuple, Asts::LocalVariableDestructureTupleAst);
     CREATE_PARSER_RULE(local_variable_attribute_binding, Asts::LocalVariableAttributeBindingAst);
-    CREATE_PARSER_RULE(local_variable_nested_for_destructure_array, Asts::LocalVariableNestedForDestructureArrayAst);
-    CREATE_PARSER_RULE(local_variable_nested_for_destructure_object, Asts::LocalVariableNestedForDestructureObjectAst);
-    CREATE_PARSER_RULE(local_variable_nested_for_destructure_tuple, Asts::LocalVariableNestedForDestructureTupleAst);
-    CREATE_PARSER_RULE(local_variable_nested_for_attribute_binding, Asts::LocalVariableNestedForAttributeBindingAst);
+    CREATE_PARSER_RULE_VARIANT(local_variable_nested_for_destructure_array, Asts::LocalVariableNestedForDestructureArrayAst);
+    CREATE_PARSER_RULE_VARIANT(local_variable_nested_for_destructure_object, Asts::LocalVariableNestedForDestructureObjectAst);
+    CREATE_PARSER_RULE_VARIANT(local_variable_nested_for_destructure_tuple, Asts::LocalVariableNestedForDestructureTupleAst);
+    CREATE_PARSER_RULE_VARIANT(local_variable_nested_for_attribute_binding, Asts::LocalVariableNestedForAttributeBindingAst);
 
     CREATE_PARSER_RULE(assignment_statement, Asts::AssignmentStatementAst);
 

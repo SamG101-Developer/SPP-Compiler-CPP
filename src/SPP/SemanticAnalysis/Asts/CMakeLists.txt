@@ -40,6 +40,16 @@ target_sources(SPP_SemanticAnalysis_Asts PUBLIC FILE_SET CXX_MODULES
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/GlobalConstantAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/IdentifierAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/InnerScopeAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LetStatementInitializedAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LetStatementUninitializedAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LocalVariableAttributeBindingAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LocalVariableDestructureArrayAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LocalVariableDestructureObjectAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LocalVariableDestructureSkip1ArgumentAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LocalVariableDestructureSkipNArgumentsAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LocalVariableDestructureTupleAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LocalVariableSingleIdentifierAliasAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LocalVariableSingleIdentifierAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LoopConditionBooleanAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LoopConditionIterableAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LoopElseStatementAst.ixx

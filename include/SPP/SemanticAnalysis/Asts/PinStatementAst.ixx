@@ -1,7 +1,8 @@
 module;
 #include <string>
+#include <vector>
 
-export module spp.semantic_analysis.asts.root_ast;
+export module spp.semantic_analysis.asts.pin_statement_ast;
 import spp.semantic_analysis.asts.ast;
 import spp.semantic_analysis.asts.ast_members;
 import spp.semantic_analysis.asts.ast_types;
@@ -9,18 +10,18 @@ import spp.semantic_analysis.meta.ast_printer;
 
 
 export namespace SPP::SemanticAnalysis::Asts {
-    struct RootAst;
+    struct PinStatementAst;
 }
 
 
-struct SPP::SemanticAnalysis::Asts::RootAst final : Ast {
-    AstMemberType<ModulePrototypeAst> root_ast;
-    AstMemberType<TokenAst> tok_eof;
+struct SPP::SemanticAnalysis::Asts::PinStatementAst final : Ast {
+    AstMemberType<TokenAst> tok_pin;
+    AstMemberType<std::vector<ExpressionAst>> pins;
 
-    RootAst(
+    PinStatementAst(
         std::size_t pos,
-        decltype(root_ast) &&root_ast,
-        decltype(tok_eof) &&tok_eof);
+        decltype(tok_pin) &&tok_pin,
+        decltype(pins) &&pins);
 
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

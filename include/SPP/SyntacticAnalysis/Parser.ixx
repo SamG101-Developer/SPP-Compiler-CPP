@@ -53,8 +53,11 @@ public:
     auto set_current_pos(std::size_t new_index) -> void;
 
 private:
-    template <typename ...Args, std::invocable<Parser*, Args...> F> auto parse_once(F&& parser_rule, Args&&... args) -> std::invoke_result_t<F, Parser*, Args...>;
-    template <typename ...Args, std::invocable<Parser*, Args...> F> auto parse_optional(F&& parser_rule, Args&&... args) -> std::optional<std::invoke_result_t<F, Parser*, Args...>>;
+    template <typename ...Args, std::invocable<Parser*, Args...> F>
+    auto parse_once(F&& parser_rule, Args&&... args) -> std::invoke_result_t<F, Parser*, Args...>;
+
+    template <typename ...Args, std::invocable<Parser*, Args...> F>
+    auto parse_optional(F&& parser_rule, Args&&... args) -> std::optional<std::invoke_result_t<F, Parser*, Args...>>;
 
     template <std::invocable<Parser*> F, std::invocable<Parser*> S> auto parse_0_or_more(F&& parser_rule, S&& separator) -> std::vector<std::invoke_result_t<F, Parser*>>;
     template <std::invocable<Parser*> F, std::invocable<Parser*> S> auto parse_1_or_more(F&& parser_rule, S&& separator) -> std::vector<std::invoke_result_t<F, Parser*>>;

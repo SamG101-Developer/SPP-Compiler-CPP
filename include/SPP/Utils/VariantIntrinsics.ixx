@@ -73,4 +73,16 @@ namespace SPP::Utils {
      */
     export template <typename... Types>
     using UniqueVariant = typename unique_variant<Types...>::type;
+
+    /**
+     * Convert a variant type into another variant type. This allows for something like std::variant<A, B> ->
+     * std::variant<A, B, C> easily. The new variant type arguments must be a superset of the old variant type
+     * arguments.
+     */
+    export template <typename Out, typename In>
+    auto convert_variant(In&& variant) -> Out {
+        return std::visit([](auto&& arg) -> Out {
+            return arg;
+        }, std::forward<In>(variant));
+    }
 }

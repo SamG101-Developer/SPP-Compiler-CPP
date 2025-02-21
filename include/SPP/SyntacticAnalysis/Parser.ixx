@@ -201,7 +201,7 @@ public:
     CREATE_PARSER_RULE(pattern_flavour_non_destructuring, Asts::CaseExpressionBranchAst);
     CREATE_PARSER_RULE(pattern_flavour_else_case, Asts::CaseExpressionBranchAst);
     CREATE_PARSER_RULE(pattern_flavour_else, Asts::CaseExpressionBranchAst);
-    CREATE_PARSER_RULE_VARIANT(pattern_group_destructure, Asts::PatternGroupDestructureAst);
+    CREATE_PARSER_RULE_VARIANT(pattern_group_destructure, Asts::PatternVariantAst)
     CREATE_PARSER_RULE(pattern_variant_skip_argument, Asts::PatternVariantDestructureSkip1ArgumentAst);
     CREATE_PARSER_RULE(pattern_variant_skip_arguments, Asts::PatternVariantDestructureSkipNArgumentsAst);
     CREATE_PARSER_RULE(pattern_variant_single_identifier, Asts::PatternVariantSingleIdentifierAst);
@@ -259,10 +259,10 @@ public:
     CREATE_PARSER_RULE(type_binary_op_precedence_level_2, Asts::TokenAst);
     CREATE_PARSER_RULE(type_unary_expression, Asts::TypeUnaryExpressionAst);
     CREATE_PARSER_RULE(type_postfix_expression, Asts::TypePostfixExpressionAst);
-    CREATE_PARSER_RULE(type_primary_expression, Asts::TypePrimaryExpressionAst);
-    CREATE_PARSER_RULE(type_parenthesized, Asts::TypeParenthesizedAst);
-    CREATE_PARSER_RULE(type_array, Asts::TypeArrayAst);
-    CREATE_PARSER_RULE(type_tuple, Asts::TypeTupleAst);
+    CREATE_PARSER_RULE(type_primary_expression, Asts::TypeSingleAst);
+    CREATE_PARSER_RULE(type_parenthesized, Asts::TypeSingleAst);
+    CREATE_PARSER_RULE(type_array, Asts::TypeSingleAst);
+    CREATE_PARSER_RULE(type_tuple, Asts::TypeSingleAst);
     CREATE_PARSER_RULE(type_single, Asts::TypeSingleAst);
     CREATE_PARSER_RULE_VARIANT(type_unary_op, Asts::TypeUnaryOperatorAst);
     CREATE_PARSER_RULE(type_unary_op_namespace, Asts::TypeUnaryOperatorNamespaceAst);

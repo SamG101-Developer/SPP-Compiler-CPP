@@ -36,6 +36,7 @@ import spp.semantic_analysis.asts.generic_comp_argument_unnamed_ast;
 import spp.semantic_analysis.asts.generic_comp_parameter_optional_ast;
 import spp.semantic_analysis.asts.generic_comp_parameter_required_ast;
 import spp.semantic_analysis.asts.generic_comp_parameter_variadic_ast;
+import spp.semantic_analysis.asts.generic_identifier_ast;
 import spp.semantic_analysis.asts.generic_parameter_group_ast;
 import spp.semantic_analysis.asts.generic_type_parameter_inline_constraints_ast;
 import spp.semantic_analysis.asts.generic_type_argument_named_ast;
@@ -1061,12 +1062,13 @@ auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_attribute_binding() -
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_literal() -> std::unique_ptr<Asts::PatternVariantLiteralAst> {
+    auto c1 = get_current_pos();
     auto p1 = parse_alternate(
         &Parser::parse_literal_float,
         &Parser::parse_literal_integer,
         &Parser::parse_literal_string,
         &Parser::parse_literal_boolean);
-    return p1;
+    return std::make_unique<Asts::PatternVariantLiteralAst>(c1, convert_variant<UniqueVariant<Asts::LiteralAst>>(p1));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_expression() -> std::unique_ptr<Asts::PatternVariantExpressionAst> {
@@ -1078,7 +1080,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_expression() -> std::
 auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_else() -> std::unique_ptr<Asts::PatternVariantElseAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_keyword_else);
-    return std::make_unique<Asts::PatternVariantElseAst>(c1, p1);
+    return std::make_unique<Asts::PatternVariantElseAst>(c1, std::move(p1));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_else_case() -> std::unique_ptr<Asts::PatternVariantElseCaseAst> {
@@ -1088,43 +1090,43 @@ auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_else_case() -> std::u
     return std::make_unique<Asts::PatternVariantElseCaseAst>(c1, std::move(p1), std::move(p2));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_nested_for_destructure_array() -> std::unique_ptr<Asts::PatternVariantNestedForDestructureArrayAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_nested_for_destructure_array() -> UniqueVariant<Asts::PatternVariantNestedForDestructureArrayAst> {
     auto p1 = parse_alternate(
         &Parser::parse_pattern_variant_destructure_array,
-        &Parser::parse_pattern_variant_destructure_tuple,
         &Parser::parse_pattern_variant_destructure_object,
-        &Parser::parse_pattern_variant_single_identifier,
-        &Parser::parse_pattern_variant_literal,
+        &Parser::parse_pattern_variant_destructure_tuple,
         &Parser::parse_pattern_variant_skip_arguments,
-        &Parser::parse_pattern_variant_skip_argument);
+        &Parser::parse_pattern_variant_skip_argument,
+        &Parser::parse_pattern_variant_literal,
+        &Parser::parse_pattern_variant_single_identifier);
     return p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_nested_for_destructure_tuple() -> std::unique_ptr<Asts::PatternVariantNestedForDestructureTupleAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_nested_for_destructure_tuple() -> UniqueVariant<Asts::PatternVariantNestedForDestructureTupleAst> {
     auto p1 = parse_alternate(
         &Parser::parse_pattern_variant_destructure_array,
-        &Parser::parse_pattern_variant_destructure_tuple,
         &Parser::parse_pattern_variant_destructure_object,
-        &Parser::parse_pattern_variant_single_identifier,
-        &Parser::parse_pattern_variant_literal,
+        &Parser::parse_pattern_variant_destructure_tuple,
         &Parser::parse_pattern_variant_skip_arguments,
-        &Parser::parse_pattern_variant_skip_argument);
+        &Parser::parse_pattern_variant_skip_argument,
+        &Parser::parse_pattern_variant_literal,
+        &Parser::parse_pattern_variant_single_identifier);
     return p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_nested_for_destructure_object() -> std::unique_ptr<Asts::PatternVariantNestedForDestructureObjectAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_nested_for_destructure_object() -> UniqueVariant<Asts::PatternVariantNestedForDestructureObjectAst> {
     auto p1 = parse_alternate(
         &Parser::parse_pattern_variant_attribute_binding,
-        &Parser::parse_pattern_variant_single_identifier,
-        &Parser::parse_pattern_variant_skip_arguments);
+        &Parser::parse_pattern_variant_skip_arguments,
+        &Parser::parse_pattern_variant_single_identifier);
     return p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_nested_for_attribute_binding() -> std::unique_ptr<Asts::PatternVariantNestedForAttributeBindingAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_nested_for_attribute_binding() -> UniqueVariant<Asts::PatternVariantNestedForAttributeBindingAst> {
     auto p1 = parse_alternate(
         &Parser::parse_pattern_variant_destructure_array,
-        &Parser::parse_pattern_variant_destructure_tuple,
         &Parser::parse_pattern_variant_destructure_object,
+        &Parser::parse_pattern_variant_destructure_tuple,
         &Parser::parse_pattern_variant_literal);
     return p1;
 }
@@ -1691,7 +1693,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_literal_comp_tuple_1_items() -> std::
 auto SPP::SyntacticAnalysis::Parser::parse_literal_tuple_n_items() -> std::unique_ptr<Asts::TupleLiteralAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_token_left_parenthesis);
-    auto p2 = parse_2_or_more(&Parser::parse_expression, Parser::parse_token_comma);
+    auto p2 = parse_2_or_more(&Parser::parse_expression, &Parser::parse_token_comma);
     auto p3 = parse_once(&Parser::parse_token_right_parenthesis);
     return std::make_unique<Asts::TupleLiteralAst>(c1, p1, p2, p3);
 }
@@ -1717,7 +1719,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_literal_array_0_items() -> std::uniqu
 auto SPP::SyntacticAnalysis::Parser::parse_literal_array_n_items() -> std::unique_ptr<Asts::ArrayLiteralAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_token_left_square_bracket);
-    auto p2 = parse_1_or_more(&Parser::parse_expression, Parser::parse_token_comma);
+    auto p2 = parse_1_or_more(&Parser::parse_expression, &Parser::parse_token_comma);
     auto p3 = parse_once(&Parser::parse_token_right_square_bracket);
     return std::make_unique<Asts::TupleLiteralAst>(c1, p1, p2, p3);
 }
@@ -1725,7 +1727,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_literal_array_n_items() -> std::uniqu
 auto SPP::SyntacticAnalysis::Parser::parse_literal_comp_array_n_items() -> std::unique_ptr<Asts::ArrayLiteralAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_token_left_square_bracket);
-    auto p2 = parse_1_or_more(&Parser::parse_comp_value, Parser::parse_token_comma);
+    auto p2 = parse_1_or_more(&Parser::parse_comp_value, &Parser::parse_token_comma);
     auto p3 = parse_once(&Parser::parse_token_right_square_bracket);
     return std::make_unique<Asts::LiteralAst>(c1, p1, p2, p3);
 }

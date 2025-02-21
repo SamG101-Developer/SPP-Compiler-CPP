@@ -213,10 +213,10 @@ public:
     CREATE_PARSER_RULE(pattern_variant_expression, Asts::PatternVariantExpressionAst);
     CREATE_PARSER_RULE(pattern_variant_else, Asts::PatternVariantElseAst);
     CREATE_PARSER_RULE(pattern_variant_else_case, Asts::PatternVariantElseCaseAst);
-    CREATE_PARSER_RULE(pattern_variant_nested_for_destructure_array, Asts::PatternVariantNestedForDestructureArrayAst);
-    CREATE_PARSER_RULE(pattern_variant_nested_for_destructure_object, Asts::PatternVariantNestedForDestructureObjectAst);
-    CREATE_PARSER_RULE(pattern_variant_nested_for_destructure_tuple, Asts::PatternVariantNestedForDestructureTupleAst);
-    CREATE_PARSER_RULE(pattern_variant_nested_for_attribute_binding, Asts::PatternVariantNestedForAttributeBindingAst);
+    CREATE_PARSER_RULE_VARIANT(pattern_variant_nested_for_destructure_array, Asts::PatternVariantNestedForDestructureArrayAst);
+    CREATE_PARSER_RULE_VARIANT(pattern_variant_nested_for_destructure_object, Asts::PatternVariantNestedForDestructureObjectAst);
+    CREATE_PARSER_RULE_VARIANT(pattern_variant_nested_for_destructure_tuple, Asts::PatternVariantNestedForDestructureTupleAst);
+    CREATE_PARSER_RULE_VARIANT(pattern_variant_nested_for_attribute_binding, Asts::PatternVariantNestedForAttributeBindingAst);
     CREATE_PARSER_RULE(pattern_guard, Asts::PatternGuardAst);
 
     CREATE_PARSER_RULE(binary_op_precedence_level_1, Asts::TokenAst);

@@ -51,7 +51,6 @@ export namespace SPP::SemanticAnalysis::Asts {
     struct LetStatementInitializedAst;
     struct LetStatementInitializedAst;
     struct LetStatementUninitializedAst;
-    struct LiteralAst;
     struct LocalVariableAttributeBindingAst;
     struct LocalVariableDestructureArrayAst;
     struct LocalVariableDestructureObjectAst;
@@ -227,9 +226,8 @@ export namespace SPP::SemanticAnalysis::Asts {
         PatternVariantDestructureArrayAst,
         PatternVariantDestructureObjectAst,
         PatternVariantDestructureTupleAst,
-        PatternVariantDestructureSkip1ArgumentAst,
         PatternVariantDestructureSkipNArgumentsAst,
-        PatternVariantExpressionAst,
+        PatternVariantDestructureSkip1ArgumentAst,
         PatternVariantLiteralAst,
         PatternVariantSingleIdentifierAst>;
 
@@ -242,9 +240,8 @@ export namespace SPP::SemanticAnalysis::Asts {
         PatternVariantDestructureArrayAst,
         PatternVariantDestructureObjectAst,
         PatternVariantDestructureTupleAst,
-        PatternVariantDestructureSkip1ArgumentAst,
         PatternVariantDestructureSkipNArgumentsAst,
-        PatternVariantExpressionAst,
+        PatternVariantDestructureSkip1ArgumentAst,
         PatternVariantLiteralAst,
         PatternVariantSingleIdentifierAst>;
 
@@ -322,4 +319,12 @@ export namespace SPP::SemanticAnalysis::Asts {
     using LoopControlFlowFinalActionAst = CollapsingVariant<
         TokenAst,
         ExpressionAst>;
+
+    using LiteralAst = CollapsingVariant<
+        FloatLiteralAst,
+        IntegerLiteralAst,
+        StringLiteralAst,
+        BooleanLiteralAst,
+        ArrayLiteralAst,
+        TupleLiteralAst>;
 }

@@ -33,13 +33,7 @@ struct combine_variants<L, std::variant<TypesR...>> {
     using type = std::variant<L, TypesR...>;
 };
 
-// 2 non-variant types that are the same type
-template <typename T>
-struct combine_variants<T, T> {
-    using type = std::variant<T>;
-};
-
-// 2 non-variant types that are different types
+// 2 non-variant types
 template <typename L, typename R>
 struct combine_variants<L, R> {
     using type = std::variant<L, R>;

@@ -7,6 +7,7 @@ target_sources(SPP_SemanticAnalysis_Asts PUBLIC FILE_SET CXX_MODULES
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/AnnotationAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/AssignmentStatementAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/Ast.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/BooleanLiteralAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/CaseExpressionAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/CaseExpressionBranchAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/ClassAttributeAst.ixx
@@ -14,6 +15,7 @@ target_sources(SPP_SemanticAnalysis_Asts PUBLIC FILE_SET CXX_MODULES
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/ClassPrototypeAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/ConventionAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/CoroutinePrototypeAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/FloatLiteralAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/FunctionCallArgumentGroupAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/FunctionCallArgumentUnnamedAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/FunctionCallArgumentNamedAst.ixx
@@ -42,6 +44,7 @@ target_sources(SPP_SemanticAnalysis_Asts PUBLIC FILE_SET CXX_MODULES
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/GlobalConstantAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/IdentifierAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/InnerScopeAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/IntegerLiteralAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LetStatementInitializedAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LetStatementUninitializedAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LocalVariableAttributeBindingAst.ixx

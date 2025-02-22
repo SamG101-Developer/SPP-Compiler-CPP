@@ -283,8 +283,8 @@ public:
     CREATE_PARSER_RULE(literal_integer, Asts::IntegerLiteralAst);
     CREATE_PARSER_RULE(literal_string, Asts::StringLiteralAst);
     CREATE_PARSER_RULE(literal_boolean, Asts::BooleanLiteralAst);
-    CREATE_PARSER_RULE(literal_array, Asts::ArrayLiteralAst);
-    CREATE_PARSER_RULE(literal_comp_array, Asts::ArrayLiteralAst);
+    CREATE_PARSER_RULE_VARIANT(literal_array, Asts::ArrayLiteralAst);
+    CREATE_PARSER_RULE_VARIANT(literal_comp_array, Asts::ArrayLiteralAst);
     CREATE_PARSER_RULE(literal_tuple, Asts::TupleLiteralAst);
     CREATE_PARSER_RULE(literal_comp_tuple, Asts::TupleLiteralAst);
 

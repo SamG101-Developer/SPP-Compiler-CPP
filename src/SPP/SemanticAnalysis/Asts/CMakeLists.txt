@@ -86,15 +86,21 @@ target_sources(SPP_SemanticAnalysis_Asts PUBLIC FILE_SET CXX_MODULES
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/RelStatementAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/RetStatementAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/RootAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/StringLiteralAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/SubroutinePrototypeAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/SupImplementationAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/SupPrototypeExtensionAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/SupPrototypeFunctionsAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TokenAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TupleLiteralAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypeArrayAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypeParenthesizedAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypePostfixOperatorIndexedAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypePostfixOperatorNestedAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypePostfixOperatorOptionalAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypeSingleAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypeTupleAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypeUnaryOperatorNamespaceAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/UnaryExpressionOperatorAsyncAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/UseStatementAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/WhereBlockAst.ixx

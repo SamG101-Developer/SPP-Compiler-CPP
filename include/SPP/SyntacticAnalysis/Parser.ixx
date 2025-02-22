@@ -308,7 +308,7 @@ public:
     CREATE_PARSER_RULE_VARIANT(comp_value, Asts::ExpressionAst);
     CREATE_PARSER_RULE(comp_object_initializer, Asts::ObjectInitializerAst);
     CREATE_PARSER_RULE(comp_object_initializer_arguments, Asts::ObjectInitializerArgumentGroupAst);
-    CREATE_PARSER_RULE(comp_object_initializer_argument_named, Asts::ObjectInitializerArgumentNamedAst);
+    CREATE_PARSER_RULE(comp_object_initializer_argument_named, Asts::ObjectInitializerArgumentAst);
 
     auto parse_token_left_curly_brace() -> std::unique_ptr<Asts::TokenAst>;
     auto parse_token_right_curly_brace() -> std::unique_ptr<Asts::TokenAst>;

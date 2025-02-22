@@ -102,9 +102,9 @@ import spp.semantic_analysis.asts.token_ast;
 import spp.semantic_analysis.asts.tuple_literal_ast;
 import spp.semantic_analysis.asts.type_array_ast;
 import spp.semantic_analysis.asts.type_parenthesized_ast;
-import spp.semantic_analysis.asts.type_postfix_operator_indexed_ast;
-import spp.semantic_analysis.asts.type_postfix_operator_nested_ast;
-import spp.semantic_analysis.asts.type_postfix_operator_optional_ast;
+import spp.semantic_analysis.asts.type_postfix_operator_indexed_type_ast;
+import spp.semantic_analysis.asts.type_postfix_operator_nested_type_ast;
+import spp.semantic_analysis.asts.type_postfix_operator_optional_type_ast;
 import spp.semantic_analysis.asts.type_single_ast;
 import spp.semantic_analysis.asts.type_tuple_ast;
 import spp.semantic_analysis.asts.type_unary_operator_namespace_ast;
@@ -1223,7 +1223,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_boolean_comparison_op() -> std::uniqu
     return p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_unary_op() -> std::unique_ptr<Asts::UnaryExpressionOperatorAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_unary_op() -> UniqueVariant<Asts::UnaryExpressionOperatorAst> {
     auto p1 = parse_alternate(
         &Parser::parse_unary_op_async_call);
     return p1;
@@ -1235,7 +1235,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_unary_op_async_call() -> std::unique_
     return std::make_unique<Asts::UnaryExpressionOperatorAsyncAst>(c1, std::move(p1));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_postfix_op() -> std::unique_ptr<Asts::PostfixExpressionOperatorAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_postfix_op() -> UniqueVariant<Asts::PostfixExpressionOperatorAst> {
     auto p1 = parse_alternate(
         &Parser::parse_postfix_op_function_call,
         &Parser::parse_postfix_op_member_access,
@@ -1279,14 +1279,14 @@ auto SPP::SyntacticAnalysis::Parser::parse_postfix_op_member_access_static() -> 
 auto SPP::SyntacticAnalysis::Parser::parse_postfix_op_early_return() -> std::unique_ptr<Asts::PostfixExpressionOperatorEarlyReturnAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_token_question_mark);
-    return std::make_unique<Asts::PostfixExpressionOperatorEarlyReturnAst>(c1, p1);
+    return std::make_unique<Asts::PostfixExpressionOperatorEarlyReturnAst>(c1, std::move(p1));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_postfix_op_not_keyword() -> std::unique_ptr<Asts::PostfixExpressionOperatorNotKeywordAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_token_dot);
     auto p2 = parse_once(&Parser::parse_keyword_not);
-    return std::make_unique<Asts::PostfixExpressionOperatorNotKeywordAst>(c1, p1, p2);
+    return std::make_unique<Asts::PostfixExpressionOperatorNotKeywordAst>(c1, std::move(p1), std::move(p2));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_postfix_op_step_keyword() -> std::unique_ptr<Asts::PostfixExpressionOperatorStepKeywordAst> {
@@ -1390,16 +1390,16 @@ auto SPP::SyntacticAnalysis::Parser::parse_type_binary_expression_precedence_lev
 auto SPP::SyntacticAnalysis::Parser::parse_type_unary_expression() -> UniqueVariant<Asts::TypeAst> {
     auto p1 = parse_0_or_more(&Parser::parse_type_unary_op, &Parser::parse_nothing);
     auto p2 = parse_once(&Parser::parse_type_primary_expression);
-    return std::move(genex::algorithms::accumulate(p1 | genex::views::reverse, p2, []<typename T>(auto &&acc, T &&elem) -> std::unique_ptr<Asts::TypeUnaryExpressionAst> {
-        return std::make_unique<Asts::TypeUnaryExpressionAst>(acc->pos, std::forward<T>(elem), std::move(acc));
+    return std::move(genex::algorithms::accumulate(p1 | genex::views::reverse, p2, []<typename A, typename T>(A &&acc, T &&elem) -> std::unique_ptr<Asts::TypeUnaryExpressionAst> {
+        return std::make_unique<Asts::TypeUnaryExpressionAst>(acc->pos, std::forward<T>(elem), std::forward<A>(acc));
     }));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_type_postfix_expression() -> UniqueVariant<Asts::TypeAst> {
     auto p1 = parse_once(&Parser::parse_type_primary_expression);
     auto p2 = parse_0_or_more(&Parser::parse_type_postfix_op, &Parser::parse_nothing);
-    return std::move(genex::algorithms::accumulate(p2, p1, []<typename T>(auto &&acc, T &&elem) -> std::unique_ptr<Asts::TypePostfixExpressionAst> {
-        return std::make_unique<Asts::TypePostfixExpressionAst>(acc->pos, std::move(acc), std::forward<T>(elem));
+    return std::move(genex::algorithms::accumulate(p2, p1, []<typename A, typename T>(A &&acc, T &&elem) -> std::unique_ptr<Asts::TypePostfixExpressionAst> {
+        return std::make_unique<Asts::TypePostfixExpressionAst>(acc->pos, std::forward<A>(acc), std::forward<T>(elem));
     }));
 }
 

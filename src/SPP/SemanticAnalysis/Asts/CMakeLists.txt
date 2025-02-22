@@ -95,9 +95,9 @@ target_sources(SPP_SemanticAnalysis_Asts PUBLIC FILE_SET CXX_MODULES
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TupleLiteralAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypeArrayAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypeParenthesizedAst.ixx
-        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypePostfixOperatorIndexedAst.ixx
-        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypePostfixOperatorNestedAst.ixx
-        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypePostfixOperatorOptionalAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypePostfixOperatorIndexedTypeAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypePostfixOperatorNestedTypeAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypePostfixOperatorOptionalTypeAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypeSingleAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypeTupleAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypeUnaryOperatorNamespaceAst.ixx

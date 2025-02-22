@@ -226,9 +226,9 @@ public:
     CREATE_PARSER_RULE(binary_op_precedence_level_5, Asts::TokenAst);
     CREATE_PARSER_RULE(binary_op_precedence_level_6, Asts::TokenAst);
     CREATE_PARSER_RULE(boolean_comparison_op, Asts::TokenAst);
-    CREATE_PARSER_RULE(unary_op, Asts::UnaryExpressionOperatorAst);
+    CREATE_PARSER_RULE_VARIANT(unary_op, Asts::UnaryExpressionOperatorAst);
     CREATE_PARSER_RULE(unary_op_async_call, Asts::UnaryExpressionOperatorAsyncAst);
-    CREATE_PARSER_RULE(postfix_op, Asts::PostfixExpressionOperatorAst);
+    CREATE_PARSER_RULE_VARIANT(postfix_op, Asts::PostfixExpressionOperatorAst);
     CREATE_PARSER_RULE(postfix_op_early_return, Asts::PostfixExpressionOperatorEarlyReturnAst);
     CREATE_PARSER_RULE(postfix_op_function_call, Asts::PostfixExpressionOperatorFunctionCallAst);
     CREATE_PARSER_RULE(postfix_op_member_access, Asts::PostfixExpressionOperatorMemberAccessAst);

@@ -9,14 +9,14 @@ import spp.semantic_analysis.meta.ast_printer;
 
 
 export namespace SPP::SemanticAnalysis::Asts {
-    struct TypePostfixOperatorOptionalAst;
+    struct TypePostfixOperatorOptionalTypeAst;
 }
 
 
-struct SPP::SemanticAnalysis::Asts::TypePostfixOperatorOptionalAst final : Ast {
+struct SPP::SemanticAnalysis::Asts::TypePostfixOperatorOptionalTypeAst final : Ast {
     AstMemberType<TokenAst> tok_question_mark;
 
-    TypePostfixOperatorOptionalAst(
+    TypePostfixOperatorOptionalTypeAst(
         std::size_t pos,
         decltype(tok_question_mark) &&tok_question_mark);
 

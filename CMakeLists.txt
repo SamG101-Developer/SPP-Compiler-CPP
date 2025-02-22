@@ -9,7 +9,7 @@ include(FetchContent)
 
 FetchContent_Declare(GenEx
         GIT_REPOSITORY https://github.com/SamG101-Developer/GenEx.git
-        GIT_TAG master)
+        GIT_TAG c8b89fa6ea35097d7a73a751bca9a19730c1a70f)
 
 find_package(magic_enum REQUIRED)
 find_package(RE2 REQUIRED)

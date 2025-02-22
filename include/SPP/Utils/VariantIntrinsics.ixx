@@ -15,22 +15,22 @@ struct combine_variants<L, R, Rest...> {
     using type = typename combine_variants<typename combine_variants<L, R>::type, Rest...>::type;
 };
 
-// std::variant followed by 1 more variant type
+// std::variant followed by variant type
 template <typename... TypesL, typename... TypesR>
 struct combine_variants<std::variant<TypesL...>, std::variant<TypesR...>> {
-    using type = std::variant<TypesL..., TypesR...>;
+    using type = typename std::variant<TypesL..., TypesR...>::type;
 };
 
 // std::variant followed by 1 non-variant type
 template <typename... TypesL, typename R>
 struct combine_variants<std::variant<TypesL...>, R> {
-    using type = std::variant<TypesL..., R>;
+    using type = typename std::variant<TypesL..., R>::type;
 };
 
 // 1 non-variant type followed by std::variant
 template <typename L, typename... TypesR>
 struct combine_variants<L, std::variant<TypesR...>> {
-    using type = std::variant<L, TypesR...>;
+    using type = typename std::variant<L, TypesR...>::type;
 };
 
 // 2 non-variant types
@@ -39,10 +39,16 @@ struct combine_variants<L, R> {
     using type = std::variant<L, R>;
 };
 
-// 1 type
+// 1 non-variant type
 template <typename T>
 struct combine_variants<T> {
     using type = std::variant<T>;
+};
+
+// 0 types
+template <>
+struct combine_variants<> {
+    using type = std::variant<>;
 };
 
 

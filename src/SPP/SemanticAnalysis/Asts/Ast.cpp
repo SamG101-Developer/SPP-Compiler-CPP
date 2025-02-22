@@ -15,7 +15,7 @@ auto SPP::SemanticAnalysis::Asts::Ast::operator==(const Ast &that) const -> bool
 }
 
 
-auto SPP::SemanticAnalysis::Asts::Ast::to_string() const -> std::string {
+auto SPP::SemanticAnalysis::Asts::Ast::to_string() const -> std::u8string {
     auto printer = Meta::AstPrinter();
     return print(printer);
 }

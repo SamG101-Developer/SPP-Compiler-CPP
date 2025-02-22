@@ -278,6 +278,14 @@ export namespace SPP::SemanticAnalysis::Asts {
     using TypeUnaryOperatorAst = CollapsingVariant<
         TypeUnaryOperatorNamespaceAst>;
 
+    using LiteralAst = CollapsingVariant<
+        FloatLiteralAst,
+        IntegerLiteralAst,
+        StringLiteralAst,
+        BooleanLiteralAst,
+        ArrayLiteralAst,
+        TupleLiteralAst>;
+
     using PrimaryExpressionAst = CollapsingVariant<
         LiteralAst,
         ObjectInitializerAst,
@@ -320,11 +328,7 @@ export namespace SPP::SemanticAnalysis::Asts {
         TokenAst,
         ExpressionAst>;
 
-    using LiteralAst = CollapsingVariant<
-        FloatLiteralAst,
-        IntegerLiteralAst,
-        StringLiteralAst,
-        BooleanLiteralAst,
-        ArrayLiteralAst,
-        TupleLiteralAst>;
+    using PostfixExpressionOperatorMemberAccessFieldIdentifierAst = CollapsingVariant<
+        IdentifierAst,
+        TokenAst>;
 }

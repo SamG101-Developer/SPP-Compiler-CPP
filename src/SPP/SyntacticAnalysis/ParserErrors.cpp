@@ -6,8 +6,8 @@ module spp.syntactic_analysis.parser_error;
 import spp.lexical_analysis.tokens;
 
 import genex.views.map;
-import genex.views.join;
 import genex.views.replace;
+import genex.views.interleave;
 import genex.views.to;
 import genex.generator;
 

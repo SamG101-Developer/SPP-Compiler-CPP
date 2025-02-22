@@ -5,20 +5,14 @@ module;
 #include <vector>
 #include <optional>
 
-#define OR ,
 
 #define PARSER_RESULT_TYPE(T) std::unique_ptr<T>
 
 #define PARSER_RESULT_TYPE_VARIANT(T) UniqueVariant<T>
 
-#define CREATE_PARSER_RULE(what, type)\
-    private:\
-        auto parse_##what() -> PARSER_RESULT_TYPE(type);
+#define CREATE_PARSER_RULE(what, type) auto parse_##what() -> std::unique_ptr<type>;
 
-
-#define CREATE_PARSER_RULE_VARIANT(what, type)\
-    private:\
-        auto parse_##what() -> PARSER_RESULT_TYPE_VARIANT(type);
+#define CREATE_PARSER_RULE_VARIANT(what, type) auto parse_##what() -> UniqueVariant<type>;
 
 
 export module spp.syntactic_analysis.parser;
@@ -41,13 +35,13 @@ class SPP::SyntacticAnalysis::Parser {
     std::size_t token_stream_size;
     std::string name;
     std::vector<LexicalAnalysis::RawToken> token_stream;
-    ErrorFormatter error_formatter;
+    Utils::ErrorFormatter error_formatter;
     std::optional<Errors::SyntaxError> error = std::nullopt;
 
     auto store_error(std::size_t pos, std::string error) -> bool;
 
 public:
-    explicit Parser(std::vector<LexicalAnalysis::RawToken> token_stream, std::string file_name = "", std::optional<ErrorFormatter> error_formatter = std::nullopt);
+    explicit Parser(std::vector<LexicalAnalysis::RawToken> token_stream, std::string file_name = "", std::optional<Utils::ErrorFormatter> error_formatter = std::nullopt);
     auto get_current_token() const -> LexicalAnalysis::RawToken;
     auto get_current_pos() const -> std::size_t;
     auto set_current_pos(std::size_t new_index) -> void;
@@ -68,6 +62,7 @@ private:
 public:
     auto parse() -> Asts::RootAst;
 
+private:
     CREATE_PARSER_RULE(root, Asts::ModulePrototypeAst)
     CREATE_PARSER_RULE(eof, Asts::TokenAst)
 
@@ -394,7 +389,6 @@ public:
     auto parse_lexeme_identifier() -> std::unique_ptr<Asts::TokenAst>;
     auto parse_lexeme_upper_identifier() -> std::unique_ptr<Asts::TokenAst>;
 
-    auto parse_lexeme(LexicalAnalysis::RawTokenTypes token_type) -> PARSER_RESULT_TYPE(Asts::TokenAst);
     auto parse_characters(std::string&& characters) -> PARSER_RESULT_TYPE(Asts::TokenAst);
     auto parse_character(char character) -> PARSER_RESULT_TYPE(Asts::TokenAst);
     auto parse_keyword_primitive(LexicalAnalysis::TokenTypes keyword) -> std::unique_ptr<Asts::TokenAst>;

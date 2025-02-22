@@ -47,5 +47,5 @@ struct SPP::SemanticAnalysis::Asts::Ast : Utils::StringConverter {
      * new printer object rooted at this node.
      * @return A string representation of the AST node.
      */
-    [[nodiscard]] auto to_string() const -> std::string override;
+    [[nodiscard]] auto to_string() const -> std::u8string override;
 };

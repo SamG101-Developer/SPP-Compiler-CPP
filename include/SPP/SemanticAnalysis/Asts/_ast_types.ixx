@@ -8,7 +8,7 @@ export namespace SPP::SemanticAnalysis::Asts {
     struct Ast;
     struct AnnotationAst;
     struct ArrayLiteral0ElementAst;
-    struct ArrayLiteralNElementAst;
+    struct ArrayLiteralNElementsAst;
     struct AssignmentStatementAst;
     struct BinaryExpressionAst;
     struct BooleanLiteralAst;
@@ -119,10 +119,6 @@ export namespace SPP::SemanticAnalysis::Asts {
     struct WhereBlockAst;
     struct WhereConstraintsAst;
     struct WhereConstraintsGroupAst;
-
-    using ArrayLiteralAst = CollapsingVariant<
-        ArrayLiteral0ElementAst,
-        ArrayLiteralNElementAst>;
 
     using ClassMemberAst = CollapsingVariant<
         ClassAttributeAst>;

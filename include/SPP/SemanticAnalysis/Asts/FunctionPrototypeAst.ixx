@@ -28,11 +28,11 @@ struct SPP::SemanticAnalysis::Asts::FunctionPrototypeAst : Ast {
     AstMemberType<std::vector<AnnotationAst>> annotations;
     AstMemberType<TokenAst> tok_fun;
     AstMemberType<IdentifierAst> name;
-    AstMemberTypeOpt<GenericParameterGroupAst> generic_params;
+    AstMemberType<GenericParameterGroupAst> generic_params;
     AstMemberType<FunctionParameterGroupAst> function_params;
     AstMemberType<TokenAst> tok_arrow;
     AstMemberType<TypeAst> return_type;
-    AstMemberTypeOpt<WhereBlockAst> where_block;
+    AstMemberType<WhereBlockAst> where_block;
     AstMemberType<FunctionImplementationAst> body;
 
     std::optional<IdentifierAst> _orig = std::nullopt;

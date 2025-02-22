@@ -95,8 +95,10 @@ import spp.semantic_analysis.asts.sup_prototype_functions_ast;
 import spp.semantic_analysis.asts.sup_prototype_extension_ast;
 import spp.semantic_analysis.asts.sup_implementation_ast;
 import spp.semantic_analysis.asts.token_ast;
+import spp.semantic_analysis.asts.type_array_ast;
 import spp.semantic_analysis.asts.type_parenthesized_ast;
 import spp.semantic_analysis.asts.type_single_ast;
+import spp.semantic_analysis.asts.type_tuple_ast;
 import spp.semantic_analysis.asts.unary_expression_operator_async_ast;
 import spp.semantic_analysis.asts.use_statement_ast;
 import spp.semantic_analysis.asts.where_block_ast;
@@ -1434,7 +1436,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_type_array() -> UniqueVariant<Asts::T
     auto p3 = parse_once(&Parser::parse_token_comma);
     auto p4 = parse_once(&Parser::parse_lexeme_dec_integer);
     auto p5 = parse_once(&Parser::parse_token_right_square_bracket);
-    return std::make_unique<Asts::TypeArrayAst>(c1, p1, p2, p3, p4, p5);
+    return std::make_unique<Asts::TypeArrayAst>(c1, std::move(p1), std::move(p2), std::move(p3), std::move(p4), std::move(p5));
 }
 
 
@@ -1498,16 +1500,16 @@ auto SPP::SyntacticAnalysis::Parser::parse_type_tuple_1_items() -> std::unique_p
     auto p2 = parse_once(&Parser::parse_type);
     auto p3 = parse_once(&Parser::parse_token_comma);
     auto p4 = parse_once(&Parser::parse_token_right_parenthesis);
-    return std::make_unique<Asts::TypeTupleAst>(c1, p1, p2, p3, p4);
+    return std::make_unique<Asts::TypeTupleAst>(c1, std::move(p1), {std::move(p2)}, std::move(p4));
 }
 
 
 auto SPP::SyntacticAnalysis::Parser::parse_type_tuple_n_items() -> std::unique_ptr<Asts::TypeTupleAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_token_left_parenthesis);
-    auto p2 = parse_2_or_more(&Parser::parse_type, Parser::parse_token_comma);
+    auto p2 = parse_2_or_more(&Parser::parse_type, &Parser::parse_token_comma);
     auto p3 = parse_once(&Parser::parse_token_right_parenthesis);
-    return std::make_unique<Asts::TypeTupleAst>(c1, p1, p2, p3);
+    return std::make_unique<Asts::TypeTupleAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
 
@@ -1535,7 +1537,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_generic_identifier() -> std::unique_p
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_upper_identifier);
     auto p2 = parse_optional(&Parser::parse_generic_arguments);
-    return std::make_unique<Asts::GenericIdentifierAst>(c1, p1->value, p2);
+    return std::make_unique<Asts::GenericIdentifierAst>(c1, std::move(p1->value), std::move(p2));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_literal() -> std::unique_ptr<Asts::LiteralAst> {

@@ -331,4 +331,8 @@ export namespace SPP::SemanticAnalysis::Asts {
     using PostfixExpressionOperatorMemberAccessFieldIdentifierAst = CollapsingVariant<
         IdentifierAst,
         TokenAst>;
+
+    using ObjectInitializerArgumentNameAst = CollapsingVariant<
+        IdentifierAst,
+        TokenAst>;
 }

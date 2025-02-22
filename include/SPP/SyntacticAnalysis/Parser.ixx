@@ -244,7 +244,7 @@ public:
 
     CREATE_PARSER_RULE(object_initializer, Asts::ObjectInitializerAst);
     CREATE_PARSER_RULE(object_initializer_arguments, Asts::ObjectInitializerArgumentGroupAst);
-    CREATE_PARSER_RULE(object_initializer_argument, Asts::ObjectInitializerArgumentAst);
+    CREATE_PARSER_RULE_VARIANT(object_initializer_argument, Asts::ObjectInitializerArgumentAst);
     CREATE_PARSER_RULE(object_initializer_argument_named, Asts::ObjectInitializerArgumentNamedAst);
     CREATE_PARSER_RULE(object_initializer_argument_unnamed, Asts::ObjectInitializerArgumentUnnamedAst);
 
@@ -257,13 +257,13 @@ public:
     CREATE_PARSER_RULE_VARIANT(type, Asts::TypeAst);
     CREATE_PARSER_RULE(type_binary_op_precedence_level_1, Asts::TokenAst);
     CREATE_PARSER_RULE(type_binary_op_precedence_level_2, Asts::TokenAst);
-    CREATE_PARSER_RULE(type_unary_expression, Asts::TypeUnaryExpressionAst);
-    CREATE_PARSER_RULE(type_postfix_expression, Asts::TypePostfixExpressionAst);
-    CREATE_PARSER_RULE(type_primary_expression, Asts::TypeSingleAst);
-    CREATE_PARSER_RULE(type_parenthesized, Asts::TypeSingleAst);
-    CREATE_PARSER_RULE(type_array, Asts::TypeSingleAst);
-    CREATE_PARSER_RULE(type_tuple, Asts::TypeSingleAst);
-    CREATE_PARSER_RULE(type_single, Asts::TypeSingleAst);
+    CREATE_PARSER_RULE_VARIANT(type_unary_expression, Asts::TypeAst);
+    CREATE_PARSER_RULE_VARIANT(type_postfix_expression, Asts::TypeAst);
+    CREATE_PARSER_RULE_VARIANT(type_primary_expression, Asts::TypeAst);
+    CREATE_PARSER_RULE_VARIANT(type_parenthesized, Asts::TypeAst);
+    CREATE_PARSER_RULE_VARIANT(type_array, Asts::TypeAst);
+    CREATE_PARSER_RULE_VARIANT(type_tuple, Asts::TypeAst);
+    CREATE_PARSER_RULE_VARIANT(type_single, Asts::TypeAst);
     CREATE_PARSER_RULE_VARIANT(type_unary_op, Asts::TypeUnaryOperatorAst);
     CREATE_PARSER_RULE(type_unary_op_namespace, Asts::TypeUnaryOperatorNamespaceAst);
     CREATE_PARSER_RULE_VARIANT(type_postfix_op, Asts::TypePostfixOperatorAst);

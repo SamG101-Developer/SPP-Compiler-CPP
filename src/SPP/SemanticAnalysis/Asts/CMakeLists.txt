@@ -58,6 +58,10 @@ target_sources(SPP_SemanticAnalysis_Asts PUBLIC FILE_SET CXX_MODULES
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LoopExpressionAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/ModuleImplementationAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/ModulePrototypeAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/ObjectInitializerAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/ObjectInitializerArgumentGroupAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/ObjectInitializerArgumentNamedAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/ObjectInitializerArgumentUnnamedAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/ParenthesizedExpressionAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/PatternVariantAttributeBindingAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/PatternVariantDestructureArrayAst.ixx
@@ -84,6 +88,7 @@ target_sources(SPP_SemanticAnalysis_Asts PUBLIC FILE_SET CXX_MODULES
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/SupPrototypeExtensionAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/SupPrototypeFunctionsAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TokenAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypeParenthesizedAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/TypeSingleAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/UnaryExpressionOperatorAsyncAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/UseStatementAst.ixx

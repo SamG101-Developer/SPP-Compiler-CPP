@@ -12,6 +12,8 @@ module spp.syntactic_analysis.parser;
 import spp.lexical_analysis.tokens;
 import spp.semantic_analysis.asts.ast;
 import spp.semantic_analysis.asts.annotation_ast;
+import spp.semantic_analysis.asts.array_literal_0_element_ast;
+import spp.semantic_analysis.asts.array_literal_n_elements_ast;
 import spp.semantic_analysis.asts.assignment_statement_ast;
 import spp.semantic_analysis.asts.boolean_literal_ast;
 import spp.semantic_analysis.asts.case_expression_ast;
@@ -31,6 +33,7 @@ import spp.semantic_analysis.asts.function_parameter_optional_ast;
 import spp.semantic_analysis.asts.function_parameter_required_ast;
 import spp.semantic_analysis.asts.function_parameter_self_ast;
 import spp.semantic_analysis.asts.function_parameter_variadic_ast;
+import spp.semantic_analysis.asts.function_pattern_guard_ast;
 import spp.semantic_analysis.asts.function_prototype_ast;
 import spp.semantic_analysis.asts.generic_argument_group_ast;
 import spp.semantic_analysis.asts.generic_comp_argument_named_ast;
@@ -102,6 +105,7 @@ import spp.semantic_analysis.asts.token_ast;
 import spp.semantic_analysis.asts.tuple_literal_ast;
 import spp.semantic_analysis.asts.type_array_ast;
 import spp.semantic_analysis.asts.type_parenthesized_ast;
+import spp.semantic_analysis.asts.type_postfix_expression_ast;
 import spp.semantic_analysis.asts.type_postfix_operator_indexed_type_ast;
 import spp.semantic_analysis.asts.type_postfix_operator_nested_type_ast;
 import spp.semantic_analysis.asts.type_postfix_operator_optional_type_ast;
@@ -1371,7 +1375,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_type_binary_expression_precedence_lev
     auto c1 = get_current_pos();
     auto p1 = parse_once(lhs);
     auto p2 = parse_optional([op, rhs]<typename T>(T&& s) { Parser::parse_binary_expression_precedence_level_n_rhs(s, op, rhs); });
-    return p2 ? std::make_unique<Asts::TypeBinaryExpressionAst>(c1, p1, p2.first, p2.second) : p1;
+    return p2 ? std::make_unique<Asts::TypeBinaryExpressionAst>(c1, p1, p2.first, p2.second)->convert() : p1;
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_type() -> UniqueVariant<Asts::TypeAst> {
@@ -1638,30 +1642,30 @@ auto SPP::SyntacticAnalysis::Parser::parse_numeric_prefix_op() -> std::unique_pt
 auto SPP::SyntacticAnalysis::Parser::parse_integer_postfix_type() -> std::unique_ptr<Asts::IdentifierAst> {
     auto _a = parse_once(&Parser::parse_token_underscore);
     auto p1 = parse_alternate(
-        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { Parser::parse_characters(x, "i8"); },
-        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { Parser::parse_characters(x, "i16"); },
-        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { Parser::parse_characters(x, "i32"); },
-        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { Parser::parse_characters(x, "i64"); },
-        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { Parser::parse_characters(x, "i128"); },
-        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { Parser::parse_characters(x, "i256"); },
-        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { Parser::parse_characters(x, "u8"); },
-        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { Parser::parse_characters(x, "u16"); },
-        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { Parser::parse_characters(x, "u32"); },
-        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { Parser::parse_characters(x, "u64"); },
-        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { Parser::parse_characters(x, "u128"); },
-        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { Parser::parse_characters(x, "u256"); });
+        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { return Parser::parse_characters(x, "i8"); },
+        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { return Parser::parse_characters(x, "i16"); },
+        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { return Parser::parse_characters(x, "i32"); },
+        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { return Parser::parse_characters(x, "i64"); },
+        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { return Parser::parse_characters(x, "i128"); },
+        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { return Parser::parse_characters(x, "i256"); },
+        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { return Parser::parse_characters(x, "u8"); },
+        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { return Parser::parse_characters(x, "u16"); },
+        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { return Parser::parse_characters(x, "u32"); },
+        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { return Parser::parse_characters(x, "u64"); },
+        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { return Parser::parse_characters(x, "u128"); },
+        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { return Parser::parse_characters(x, "u256"); });
     return std::make_unique<Asts::IdentifierAst>(p1->pos, p1->metadata);
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_float_postfix_type() -> std::unique_ptr<Asts::IdentifierAst> {
     auto _a = parse_once(&Parser::parse_token_underscore);
     auto p1 = parse_alternate(
-        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { Parser::parse_characters(x, "f8"); },
-        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { Parser::parse_characters(x, "f16"); },
-        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { Parser::parse_characters(x, "f32"); },
-        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { Parser::parse_characters(x, "f64"); },
-        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { Parser::parse_characters(x, "f128"); },
-        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { Parser::parse_characters(x, "f256"); });
+        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { return Parser::parse_characters(x, "f8"); },
+        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { return Parser::parse_characters(x, "f16"); },
+        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { return Parser::parse_characters(x, "f32"); },
+        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { return Parser::parse_characters(x, "f64"); },
+        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { return Parser::parse_characters(x, "f128"); },
+        [](auto&& x) -> std::unique_ptr<Asts::TokenAst> { return Parser::parse_characters(x, "f256"); });
     return std::make_unique<Asts::IdentifierAst>(p1->pos, p1->metadata);
 }
 
@@ -1695,7 +1699,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_literal_tuple_n_items() -> std::uniqu
     auto p1 = parse_once(&Parser::parse_token_left_parenthesis);
     auto p2 = parse_2_or_more(&Parser::parse_expression, &Parser::parse_token_comma);
     auto p3 = parse_once(&Parser::parse_token_right_parenthesis);
-    return std::make_unique<Asts::TupleLiteralAst>(c1, p1, p2, p3);
+    return std::make_unique<Asts::TupleLiteralAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_literal_comp_tuple_n_items() -> std::unique_ptr<Asts::TupleLiteralAst> {
@@ -1703,7 +1707,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_literal_comp_tuple_n_items() -> std::
     auto p1 = parse_once(&Parser::parse_token_left_parenthesis);
     auto p2 = parse_2_or_more(&Parser::parse_comp_value, &Parser::parse_token_comma);
     auto p3 = parse_once(&Parser::parse_token_right_parenthesis);
-    return std::make_unique<Asts::TupleLiteralAst>(c1, p1, p2, p3);
+    return std::make_unique<Asts::TupleLiteralAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_literal_array_0_items() -> std::unique_ptr<Asts::ArrayLiteralAst> {
@@ -1713,7 +1717,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_literal_array_0_items() -> std::uniqu
     auto p3 = parse_once(&Parser::parse_token_comma);
     auto p4 = parse_once(&Parser::parse_lexeme_dec_integer);
     auto p5 = parse_once(&Parser::parse_token_right_square_bracket);
-    return std::make_unique<Asts::TupleLiteralAst>(c1, p1, p2, p3, p4, p5);
+    return std::make_unique<Asts::ArrayLiteral0ElementAst>(c1, std::move(p1), std::move(p2), std::move(p3), std::move(p4), std::move(p5));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_literal_array_n_items() -> std::unique_ptr<Asts::ArrayLiteralAst> {
@@ -1721,7 +1725,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_literal_array_n_items() -> std::uniqu
     auto p1 = parse_once(&Parser::parse_token_left_square_bracket);
     auto p2 = parse_1_or_more(&Parser::parse_expression, &Parser::parse_token_comma);
     auto p3 = parse_once(&Parser::parse_token_right_square_bracket);
-    return std::make_unique<Asts::TupleLiteralAst>(c1, p1, p2, p3);
+    return std::make_unique<Asts::ArrayLiteralNElementsAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_literal_comp_array_n_items() -> std::unique_ptr<Asts::ArrayLiteralAst> {
@@ -1729,7 +1733,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_literal_comp_array_n_items() -> std::
     auto p1 = parse_once(&Parser::parse_token_left_square_bracket);
     auto p2 = parse_1_or_more(&Parser::parse_comp_value, &Parser::parse_token_comma);
     auto p3 = parse_once(&Parser::parse_token_right_square_bracket);
-    return std::make_unique<Asts::LiteralAst>(c1, p1, p2, p3);
+    return std::make_unique<Asts::ArrayLiteralNElementsAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_comp_value() -> UniqueVariant<Asts::ExpressionAst> {

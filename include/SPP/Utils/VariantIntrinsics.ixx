@@ -77,8 +77,8 @@ namespace SPP::Utils {
      * For example, declaring a std::UniqueVariant<int, std::string> object is the same as declaring a
      * std::variant<std::unique_ptr<int>, std::unique_ptr<std::string>> object.
      */
-    export template <typename... Types>
-    using UniqueVariant = typename unique_variant<Types...>::type;
+    export template <typename T>
+    using UniqueVariant = typename unique_variant<T>::type;
 
     /**
      * Convert a variant type into another variant type. This allows for something like std::variant<A, B> ->

@@ -24,9 +24,9 @@ struct SPP::SemanticAnalysis::Asts::TypeParenthesizedAst final : Ast {
         decltype(type) &&type,
         decltype(tok_right_parenthesis) &&tok_right_parenthesis);
 
+    ~TypeParenthesizedAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 
-    auto convert() -> AstMemberType<TypeAst> {
-        return std::move(type);
-    }
+    auto convert() -> AstMemberType<TypeAst>;
 };

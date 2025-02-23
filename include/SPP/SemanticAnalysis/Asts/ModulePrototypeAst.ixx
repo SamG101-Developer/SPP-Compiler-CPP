@@ -16,8 +16,13 @@ namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::ModulePrototypeAst final : Ast {
     AstMemberType<ModuleImplementationAst> body;
-    std::string name = "";
+    std::string name;
 
-    ModulePrototypeAst(std::size_t pos, decltype(body) &&body);
+    ModulePrototypeAst(
+        std::size_t pos,
+        decltype(body) &&body);
+
+    ~ModulePrototypeAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

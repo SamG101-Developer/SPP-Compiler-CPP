@@ -1,7 +1,7 @@
 module;
 #include <string>
 
-export module spp.semantic_analysis.asts.type_postfix_operator_indexed_ast;
+export module spp.semantic_analysis.asts.type_postfix_operator_indexed_type_ast;
 import spp.semantic_analysis.asts.ast;
 import spp.semantic_analysis.asts.ast_members;
 import spp.semantic_analysis.asts.ast_types;

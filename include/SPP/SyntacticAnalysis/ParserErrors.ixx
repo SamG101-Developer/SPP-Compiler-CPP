@@ -25,6 +25,9 @@ struct SPP::SyntacticAnalysis::Errors::SyntaxError final : protected ParserError
     std::size_t pos = 0;
     std::set<LexicalAnalysis::RawTokenTypes> expected;
 
-    SyntaxError(std::size_t pos, std::string&& message);
+    SyntaxError(
+        std::size_t pos,
+        std::string &&message);
+
     auto throw_(Utils::ErrorFormatter const &error_formatter) noexcept(false) -> void override;
 };

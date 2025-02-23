@@ -9,14 +9,6 @@ import spp.semantic_analysis.asts.ast;
 import spp.semantic_analysis.meta.ast_printer;
 import spp.semantic_analysis.asts.ast_members;
 import spp.semantic_analysis.asts.ast_types;
-import spp.semantic_analysis.asts.annotation_ast;
-import spp.semantic_analysis.asts.identifier_ast;
-import spp.semantic_analysis.asts.function_parameter_group_ast;
-import spp.semantic_analysis.asts.function_implementation_ast;
-import spp.semantic_analysis.asts.generic_parameter_group_ast;
-import spp.semantic_analysis.asts.module_prototype_ast;
-import spp.semantic_analysis.asts.token_ast;
-import spp.semantic_analysis.asts.where_block_ast;
 
 
 export namespace SPP::SemanticAnalysis::Asts {
@@ -35,12 +27,12 @@ struct SPP::SemanticAnalysis::Asts::FunctionPrototypeAst : Ast {
     AstMemberType<WhereBlockAst> where_block;
     AstMemberType<FunctionImplementationAst> body;
 
-    std::optional<IdentifierAst> _orig = std::nullopt;
-    std::optional<AnnotationAst> _abstract = std::nullopt;
-    std::optional<AnnotationAst> _virtual = std::nullopt;
-    std::optional<AnnotationAst> _no_impl = std::nullopt;
-    std::optional<AnnotationAst> _cold = std::nullopt;
-    std::optional<AnnotationAst> _hot = std::nullopt;
+    std::optional<IdentifierAst*> _orig = std::nullopt;
+    std::optional<AnnotationAst*> _abstract = std::nullopt;
+    std::optional<AnnotationAst*> _virtual = std::nullopt;
+    std::optional<AnnotationAst*> _no_impl = std::nullopt;
+    std::optional<AnnotationAst*> _cold = std::nullopt;
+    std::optional<AnnotationAst*> _hot = std::nullopt;
 
     FunctionPrototypeAst(
         std::size_t pos,
@@ -53,6 +45,8 @@ struct SPP::SemanticAnalysis::Asts::FunctionPrototypeAst : Ast {
         decltype(return_type) &&return_type,
         decltype(where_block) &&where_block,
         decltype(body) &&body);
+
+    ~FunctionPrototypeAst() override;
 
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

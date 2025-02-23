@@ -120,6 +120,10 @@ export namespace SPP::SemanticAnalysis::Asts {
     struct WhereConstraintsAst;
     struct WhereConstraintsGroupAst;
 
+    using ArrayLiteralAst = CollapsingVariant<
+        ArrayLiteral0ElementAst,
+        ArrayLiteralNElementsAst>;
+
     using ClassMemberAst = CollapsingVariant<
         ClassAttributeAst>;
 

@@ -59,6 +59,7 @@ target_sources(SPP_SemanticAnalysis_Asts PUBLIC FILE_SET CXX_MODULES
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LocalVariableSingleIdentifierAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LoopConditionBooleanAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LoopConditionIterableAst.ixx
+        ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LoopControlFlowStatementAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LoopElseStatementAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/LoopExpressionAst.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/SemanticAnalysis/Asts/ModuleImplementationAst.ixx

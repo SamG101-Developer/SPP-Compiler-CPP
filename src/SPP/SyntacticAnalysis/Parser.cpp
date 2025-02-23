@@ -33,7 +33,6 @@ import spp.semantic_analysis.asts.function_parameter_optional_ast;
 import spp.semantic_analysis.asts.function_parameter_required_ast;
 import spp.semantic_analysis.asts.function_parameter_self_ast;
 import spp.semantic_analysis.asts.function_parameter_variadic_ast;
-import spp.semantic_analysis.asts.function_pattern_guard_ast;
 import spp.semantic_analysis.asts.function_prototype_ast;
 import spp.semantic_analysis.asts.generic_argument_group_ast;
 import spp.semantic_analysis.asts.generic_comp_argument_named_ast;
@@ -76,6 +75,7 @@ import spp.semantic_analysis.asts.object_initializer_argument_group_ast;
 import spp.semantic_analysis.asts.object_initializer_argument_named_ast;
 import spp.semantic_analysis.asts.object_initializer_argument_unnamed_ast;
 import spp.semantic_analysis.asts.parenthesized_expression_ast;
+import spp.semantic_analysis.asts.pattern_guard_ast;
 import spp.semantic_analysis.asts.pattern_variant_attribute_binding_ast;
 import spp.semantic_analysis.asts.pattern_variant_destructure_array_ast;
 import spp.semantic_analysis.asts.pattern_variant_destructure_object_ast;
@@ -148,6 +148,66 @@ auto SPP::SyntacticAnalysis::Parser::parse_once(F &&parser_rule, Args &&... args
     return std::invoke(std::forward<F>(parser_rule), this, std::forward<Args>(args)...);
 }
 
+
+template <typename... Args, std::invocable<SPP::SyntacticAnalysis::Parser*, Args...> F>
+auto SPP::SyntacticAnalysis::Parser::parse_optional(F &&parser_rule, Args &&... args) -> std::optional<std::invoke_result_t<F, Parser*, Args...>> {
+    const auto index = pos;
+    const auto result = std::invoke(std::forward<F>(parser_rule), this, std::forward<Args>(args)...);
+
+    if (result.is_some()) {
+        return result;
+    }
+    pos = index;
+    return std::nullopt;
+}
+
+
+template <std::invocable<SPP::SyntacticAnalysis::Parser*> F, std::invocable<SPP::SyntacticAnalysis::Parser*> S>
+auto SPP::SyntacticAnalysis::Parser::parse_0_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>> {
+    auto done_1_parse = false;
+    auto result = std::vector<std::invoke_result_t<F, Parser*>>{};
+    auto temp_index = pos;
+
+    while (true) {
+        if (done_1_parse) {
+            const auto sep = parse_optional(std::forward<S>(separator));
+            if (sep.is_none()) { return result; }
+        }
+
+        const auto ast = std::invoke(std::forward<F>(parser_rule), this);
+        if (ast.is_some()) {
+            result.push_back(ast.unwrap());
+            done_1_parse = true;
+            temp_index = pos;
+        }
+        else {
+            pos = temp_index;
+            return result;
+        }
+    }
+}
+
+
+template <std::invocable<SPP::SyntacticAnalysis::Parser*> F, std::invocable<SPP::SyntacticAnalysis::Parser*> S>
+auto SPP::SyntacticAnalysis::Parser::parse_1_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>> {
+    const auto result = parse_0_or_more(std::forward<F>(parser_rule), std::forward<S>(separator));
+    if (result.empty()) {
+        throw Errors::SyntaxError{pos, "Expected at least one element"};
+    }
+    return result;
+}
+
+
+template <std::invocable<SPP::SyntacticAnalysis::Parser*> F, std::invocable<SPP::SyntacticAnalysis::Parser*> S>
+auto SPP::SyntacticAnalysis::Parser::parse_2_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>> {
+    const auto result = parse_0_or_more(std::forward<F>(parser_rule), std::forward<S>(separator));
+    if (result.size() < 2) {
+        throw Errors::SyntaxError{pos, "Expected at least two elements"};
+    }
+    return result;
+}
+
+
 auto SPP::SyntacticAnalysis::Parser::parse_root() -> std::unique_ptr<Asts::ModulePrototypeAst> {
     auto p1 = parse_once(&Parser::parse_module_prototype);
     auto _a = parse_once(&Parser::parse_eof);
@@ -166,7 +226,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_module_implementation() -> std::uniqu
     return std::make_unique<Asts::ModuleImplementationAst>(c1, std::move(p1));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_module_member() -> UniqueVariant<Asts::ModuleMemberAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_module_member() -> Utils::UniqueVariant<Asts::ModuleMemberAst> {
     auto p1 = parse_alternate(
         &Parser::parse_coroutine_prototype,
         &Parser::parse_subroutine_prototype,
@@ -197,7 +257,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_class_implementation() -> std::unique
     return std::make_unique<Asts::ClassImplementationAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_class_member() -> UniqueVariant<Asts::ClassMemberAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_class_member() -> Utils::UniqueVariant<Asts::ClassMemberAst> {
     auto p1 = parse_alternate(
         &Parser::parse_class_attribute);
     return p1;
@@ -242,7 +302,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_sup_implementation() -> std::unique_p
     return std::make_unique<Asts::SupImplementationAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_sup_member() -> UniqueVariant<Asts::SupMemberAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_sup_member() -> Utils::UniqueVariant<Asts::SupMemberAst> {
     auto p1 = parse_alternate(
         &Parser::parse_sup_subroutine_prototype,
         &Parser::parse_sup_coroutine_prototype,
@@ -304,7 +364,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_function_implementation() -> std::uni
     return std::make_unique<Asts::FunctionImplementationAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_function_member() -> UniqueVariant<Asts::FunctionMemberAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_function_member() -> Utils::UniqueVariant<Asts::FunctionMemberAst> {
     auto p1 = parse_once(&Parser::parse_statement);
     return p1;
 }
@@ -317,7 +377,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_function_call_arguments() -> std::uni
     return std::make_unique<Asts::FunctionCallArgumentGroupAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_function_call_argument() -> UniqueVariant<Asts::FunctionCallArgumentAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_function_call_argument() -> Utils::UniqueVariant<Asts::FunctionCallArgumentAst> {
     auto p1 = parse_alternate(
         &Parser::parse_function_call_argument_named,
         &Parser::parse_function_call_argument_unnamed);
@@ -349,7 +409,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_function_parameters() -> std::unique_
     return std::make_unique<Asts::FunctionParameterGroupAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_function_parameter() -> UniqueVariant<Asts::FunctionParameterAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_function_parameter() -> Utils::UniqueVariant<Asts::FunctionParameterAst> {
     auto p1 = parse_alternate(
         &Parser::parse_function_parameter_self,
         &Parser::parse_function_parameter_variadic,
@@ -404,7 +464,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_generic_arguments() -> std::unique_pt
     return std::make_unique<Asts::GenericArgumentGroupAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_generic_argument() -> UniqueVariant<Asts::GenericArgumentAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_generic_argument() -> Utils::UniqueVariant<Asts::GenericArgumentAst> {
     auto p1 = parse_alternate(
         &Parser::parse_generic_argument_type_named,
         &Parser::parse_generic_argument_type_unnamed,
@@ -449,7 +509,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_generic_parameters() -> std::unique_p
     return std::make_unique<Asts::GenericParameterGroupAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_generic_parameter() -> UniqueVariant<Asts::GenericParameterAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_generic_parameter() -> Utils::UniqueVariant<Asts::GenericParameterAst> {
     auto p1 = parse_alternate(
         &Parser::parse_generic_parameter_type_variadic,
         &Parser::parse_generic_parameter_type_optional,
@@ -551,51 +611,51 @@ auto SPP::SyntacticAnalysis::Parser::parse_annotation() -> std::unique_ptr<Asts:
     return std::make_unique<Asts::AnnotationAst>(c1, std::move(p1), std::move(p2));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_expression() -> UniqueVariant<Asts::ExpressionAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_expression() -> Utils::UniqueVariant<Asts::ExpressionAst> {
     auto p1 = parse_once(&Parser::parse_binary_expression_precedence_level_1);
     return p1;
 }
 
 template <std::invocable<SPP::SyntacticAnalysis::Parser*> A1, std::invocable<SPP::SyntacticAnalysis::Parser*> A2>
-auto SPP::SyntacticAnalysis::Parser::parse_binary_expression_precedence_level_n_rhs(A1&& op, A2&& rhs) -> std::pair<std::unique_ptr<Asts::TokenAst>, UniqueVariant<Asts::ExpressionAst>> {
+auto SPP::SyntacticAnalysis::Parser::parse_binary_expression_precedence_level_n_rhs(A1&& op, A2&& rhs) -> std::pair<std::unique_ptr<Asts::TokenAst>, Utils::UniqueVariant<Asts::ExpressionAst>> {
     auto p1 = parse_once(op);
     auto p2 = parse_once(rhs);
     return std::make_pair(p1, p2);
 }
 
 template <std::invocable<SPP::SyntacticAnalysis::Parser*> A1, std::invocable<SPP::SyntacticAnalysis::Parser*> A2, std::invocable<SPP::SyntacticAnalysis::Parser*> A3>
-auto SPP::SyntacticAnalysis::Parser::parse_binary_expression_precedence_level_n(A1 &&lhs, A2 &&op, A3 &&rhs) -> UniqueVariant<Asts::ExpressionAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_binary_expression_precedence_level_n(A1 &&lhs, A2 &&op, A3 &&rhs) -> Utils::UniqueVariant<Asts::ExpressionAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(lhs);
     auto p2 = parse_optional([op, rhs]<typename T>(T&& s) { Parser::parse_binary_expression_precedence_level_n_rhs(s, op, rhs); });
     return p2 ? std::make_unique<Asts::BinaryExpressionAst>(c1, p1, p2.first, p2.second) : p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_binary_expression_precedence_level_1() -> UniqueVariant<Asts::ExpressionAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_binary_expression_precedence_level_1() -> Utils::UniqueVariant<Asts::ExpressionAst> {
     return parse_binary_expression_precedence_level_n(&Parser::parse_binary_expression_precedence_level_2, &Parser::parse_binary_op_precedence_level_1, &Parser::parse_binary_expression_precedence_level_1);
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_binary_expression_precedence_level_2() -> UniqueVariant<Asts::ExpressionAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_binary_expression_precedence_level_2() -> Utils::UniqueVariant<Asts::ExpressionAst> {
     return parse_binary_expression_precedence_level_n(&Parser::parse_binary_expression_precedence_level_3, &Parser::parse_binary_op_precedence_level_2, &Parser::parse_binary_expression_precedence_level_2);
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_binary_expression_precedence_level_3() -> UniqueVariant<Asts::ExpressionAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_binary_expression_precedence_level_3() -> Utils::UniqueVariant<Asts::ExpressionAst> {
     return parse_binary_expression_precedence_level_n(&Parser::parse_binary_expression_precedence_level_4, &Parser::parse_binary_op_precedence_level_3, &Parser::parse_pattern_group_destructure);
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_binary_expression_precedence_level_4() -> UniqueVariant<Asts::ExpressionAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_binary_expression_precedence_level_4() -> Utils::UniqueVariant<Asts::ExpressionAst> {
     return parse_binary_expression_precedence_level_n(&Parser::parse_binary_expression_precedence_level_5, &Parser::parse_binary_op_precedence_level_4, &Parser::parse_binary_expression_precedence_level_4);
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_binary_expression_precedence_level_5() -> UniqueVariant<Asts::ExpressionAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_binary_expression_precedence_level_5() -> Utils::UniqueVariant<Asts::ExpressionAst> {
     return parse_binary_expression_precedence_level_n(&Parser::parse_binary_expression_precedence_level_6, &Parser::parse_binary_op_precedence_level_5, &Parser::parse_binary_expression_precedence_level_5);
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_binary_expression_precedence_level_6() -> UniqueVariant<Asts::ExpressionAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_binary_expression_precedence_level_6() -> Utils::UniqueVariant<Asts::ExpressionAst> {
     return parse_binary_expression_precedence_level_n(&Parser::parse_unary_expression, &Parser::parse_binary_op_precedence_level_6, &Parser::parse_binary_expression_precedence_level_6);
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_unary_expression() -> UniqueVariant<Asts::ExpressionAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_unary_expression() -> Utils::UniqueVariant<Asts::ExpressionAst> {
     auto p1 = parse_0_or_more(&Parser::parse_unary_op, &Parser::parse_nothing);
     auto p2 = parse_once(&Parser::parse_postfix_expression);
     return std::move(genex::algorithms::accumulate(p1 | genex::views::reverse, p2, []<typename A, typename T>(A &&acc, T &&elem) -> std::unique_ptr<Asts::UnaryExpressionAst> {
@@ -603,7 +663,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_unary_expression() -> UniqueVariant<A
     }));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_postfix_expression() -> UniqueVariant<Asts::ExpressionAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_postfix_expression() -> Utils::UniqueVariant<Asts::ExpressionAst> {
     auto p1 = parse_once(&Parser::parse_primary_expression);
     auto p2 = parse_0_or_more(&Parser::parse_postfix_op, &Parser::parse_nothing);
     return std::move(genex::algorithms::accumulate(p2, p1, []<typename A, typename T>(A &&acc, T &&elem) -> std::unique_ptr<Asts::PostfixExpressionAst> {
@@ -611,7 +671,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_postfix_expression() -> UniqueVariant
     }));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_primary_expression() -> UniqueVariant<Asts::ExpressionAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_primary_expression() -> Utils::UniqueVariant<Asts::ExpressionAst> {
     auto p1 = parse_alternate(
         &Parser::parse_literal,
         &Parser::parse_object_initializer,
@@ -650,7 +710,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_case_expression() -> std::unique_ptr<
     auto p1 = parse_alternate(
         &Parser::parse_case_expression_patterns,
         &Parser::parse_case_expression_simple);
-    return std::get<std::unique_ptr<Asts::CaseExpressionAst>>(p1);
+    return p1;
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_case_expression_patterns() -> std::unique_ptr<Asts::CaseExpressionAst> {
@@ -680,7 +740,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_loop_expression() -> std::unique_ptr<
     return std::make_unique<Asts::LoopExpressionAst>(c1, std::move(p1), std::move(p2), std::move(p3), std::move(p4));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_loop_expression_condition() -> UniqueVariant<Asts::LoopConditionAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_loop_expression_condition() -> Utils::UniqueVariant<Asts::LoopConditionAst> {
     auto p1 = parse_alternate(
         &Parser::parse_loop_expression_condition_iterable,
         &Parser::parse_loop_expression_condition_boolean);
@@ -793,7 +853,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_inner_scope() -> std::unique_ptr<Asts
     return std::make_unique<Asts::InnerScopeAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_statement() -> UniqueVariant<Asts::StatementAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_statement() -> Utils::UniqueVariant<Asts::StatementAst> {
     auto p1 = parse_alternate(
         &Parser::parse_use_statement,
         &Parser::parse_let_statement,
@@ -836,7 +896,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_comp_global_constant() -> std::unique
     return std::make_unique<Asts::GlobalConstantAst>(c1, std::move(p1), std::move(p2), std::move(p3), std::move(p4), std::move(p5), std::move(p6), std::move(p7));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_let_statement() -> UniqueVariant<Asts::LetStatementAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_let_statement() -> Utils::UniqueVariant<Asts::LetStatementAst> {
     auto p1 = parse_alternate(
         &Parser::parse_let_statement_initialized,
         &Parser::parse_let_statement_uninitialized);
@@ -862,7 +922,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_let_statement_uninitialized() -> std:
     return std::make_unique<Asts::LetStatementUninitializedAst>(c1, std::move(p1), std::move(p2), std::move(p3), std::move(p4), std::move(p5));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_local_variable() -> UniqueVariant<Asts::LocalVariableAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_local_variable() -> Utils::UniqueVariant<Asts::LocalVariableAst> {
     auto p1 = parse_alternate(
         &Parser::parse_local_variable_destructure_array,
         &Parser::parse_local_variable_destructure_tuple,
@@ -932,7 +992,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_local_variable_attribute_binding() ->
     return std::make_unique<Asts::LocalVariableAttributeBindingAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_local_variable_nested_for_destructure_array() -> UniqueVariant<Asts::LocalVariableNestedForDestructureArrayAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_local_variable_nested_for_destructure_array() -> Utils::UniqueVariant<Asts::LocalVariableNestedForDestructureArrayAst> {
     auto p1 = parse_alternate(
         &Parser::parse_local_variable_destructure_array,
         &Parser::parse_local_variable_destructure_tuple,
@@ -943,7 +1003,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_local_variable_nested_for_destructure
     return p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_local_variable_nested_for_destructure_tuple() -> UniqueVariant<Asts::LocalVariableNestedForDestructureTupleAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_local_variable_nested_for_destructure_tuple() -> Utils::UniqueVariant<Asts::LocalVariableNestedForDestructureTupleAst> {
     auto p1 = parse_alternate(
         &Parser::parse_local_variable_destructure_array,
         &Parser::parse_local_variable_destructure_tuple,
@@ -954,7 +1014,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_local_variable_nested_for_destructure
     return p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_local_variable_nested_for_destructure_object() -> UniqueVariant<Asts::LocalVariableNestedForDestructureObjectAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_local_variable_nested_for_destructure_object() -> Utils::UniqueVariant<Asts::LocalVariableNestedForDestructureObjectAst> {
     auto p1 = parse_alternate(
         &Parser::parse_local_variable_attribute_binding,
         &Parser::parse_local_variable_single_identifier,
@@ -963,7 +1023,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_local_variable_nested_for_destructure
 }
 
 
-auto SPP::SyntacticAnalysis::Parser::parse_local_variable_nested_for_attribute_binding() -> UniqueVariant<Asts::LocalVariableNestedForAttributeBindingAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_local_variable_nested_for_attribute_binding() -> Utils::UniqueVariant<Asts::LocalVariableNestedForAttributeBindingAst> {
     auto p1 = parse_alternate(
         &Parser::parse_local_variable_destructure_array,
         &Parser::parse_local_variable_destructure_tuple,
@@ -1026,7 +1086,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_pattern_flavour_else() -> std::unique
     return std::make_unique<Asts::CaseExpressionBranchAst>(c1, std::nullopt, {p1}, std::nullopt, p2);
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_pattern_group_destructure() -> UniqueVariant<Asts::PatternVariantAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_pattern_group_destructure() -> Utils::UniqueVariant<Asts::PatternVariantAst> {
     auto p1 = parse_alternate(
         &Parser::parse_pattern_variant_destructure_array,
         &Parser::parse_pattern_variant_destructure_tuple,
@@ -1117,7 +1177,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_else_case() -> std::u
     return std::make_unique<Asts::PatternVariantElseCaseAst>(c1, std::move(p1), std::move(p2));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_nested_for_destructure_array() -> UniqueVariant<Asts::PatternVariantNestedForDestructureArrayAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_nested_for_destructure_array() -> Utils::UniqueVariant<Asts::PatternVariantNestedForDestructureArrayAst> {
     auto p1 = parse_alternate(
         &Parser::parse_pattern_variant_destructure_array,
         &Parser::parse_pattern_variant_destructure_object,
@@ -1129,7 +1189,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_nested_for_destructur
     return p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_nested_for_destructure_tuple() -> UniqueVariant<Asts::PatternVariantNestedForDestructureTupleAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_nested_for_destructure_tuple() -> Utils::UniqueVariant<Asts::PatternVariantNestedForDestructureTupleAst> {
     auto p1 = parse_alternate(
         &Parser::parse_pattern_variant_destructure_array,
         &Parser::parse_pattern_variant_destructure_object,
@@ -1141,7 +1201,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_nested_for_destructur
     return p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_nested_for_destructure_object() -> UniqueVariant<Asts::PatternVariantNestedForDestructureObjectAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_nested_for_destructure_object() -> Utils::UniqueVariant<Asts::PatternVariantNestedForDestructureObjectAst> {
     auto p1 = parse_alternate(
         &Parser::parse_pattern_variant_attribute_binding,
         &Parser::parse_pattern_variant_skip_arguments,
@@ -1149,7 +1209,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_nested_for_destructur
     return p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_nested_for_attribute_binding() -> UniqueVariant<Asts::PatternVariantNestedForAttributeBindingAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_nested_for_attribute_binding() -> Utils::UniqueVariant<Asts::PatternVariantNestedForAttributeBindingAst> {
     auto p1 = parse_alternate(
         &Parser::parse_pattern_variant_destructure_array,
         &Parser::parse_pattern_variant_destructure_object,
@@ -1227,7 +1287,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_boolean_comparison_op() -> std::uniqu
     return p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_unary_op() -> UniqueVariant<Asts::UnaryExpressionOperatorAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_unary_op() -> Utils::UniqueVariant<Asts::UnaryExpressionOperatorAst> {
     auto p1 = parse_alternate(
         &Parser::parse_unary_op_async_call);
     return p1;
@@ -1239,7 +1299,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_unary_op_async_call() -> std::unique_
     return std::make_unique<Asts::UnaryExpressionOperatorAsyncAst>(c1, std::move(p1));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_postfix_op() -> UniqueVariant<Asts::PostfixExpressionOperatorAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_postfix_op() -> Utils::UniqueVariant<Asts::PostfixExpressionOperatorAst> {
     auto p1 = parse_alternate(
         &Parser::parse_postfix_op_function_call,
         &Parser::parse_postfix_op_member_access,
@@ -1341,7 +1401,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_object_initializer_arguments() -> std
     return std::make_unique<Asts::ObjectInitializerArgumentGroupAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_object_initializer_argument() -> UniqueVariant<Asts::ObjectInitializerArgumentAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_object_initializer_argument() -> Utils::UniqueVariant<Asts::ObjectInitializerArgumentAst> {
     auto p1 = parse_alternate(
         &Parser::parse_object_initializer_argument_named,
         &Parser::parse_object_initializer_argument_unnamed);
@@ -1371,27 +1431,27 @@ auto SPP::SyntacticAnalysis::Parser::parse_type_binary_expression_precedence_lev
 }
 
 template <std::invocable<SPP::SyntacticAnalysis::Parser*> A1, std::invocable<SPP::SyntacticAnalysis::Parser*> A2, std::invocable<SPP::SyntacticAnalysis::Parser*> A3>
-auto SPP::SyntacticAnalysis::Parser::parse_type_binary_expression_precedence_level_n(A1 &&lhs, A2 &&op, A3 &&rhs) -> UniqueVariant<Asts::TypeAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_type_binary_expression_precedence_level_n(A1 &&lhs, A2 &&op, A3 &&rhs) -> Utils::UniqueVariant<Asts::TypeAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(lhs);
     auto p2 = parse_optional([op, rhs]<typename T>(T&& s) { Parser::parse_binary_expression_precedence_level_n_rhs(s, op, rhs); });
     return p2 ? std::make_unique<Asts::TypeBinaryExpressionAst>(c1, p1, p2.first, p2.second)->convert() : p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_type() -> UniqueVariant<Asts::TypeAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_type() -> Utils::UniqueVariant<Asts::TypeAst> {
     auto p1 = parse_once(&Parser::parse_type_binary_expression_precedence_level_1);
     return p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_type_binary_expression_precedence_level_1() -> UniqueVariant<Asts::TypeAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_type_binary_expression_precedence_level_1() -> Utils::UniqueVariant<Asts::TypeAst> {
     return parse_type_binary_expression_precedence_level_n(&Parser::parse_type_binary_expression_precedence_level_2, &Parser::parse_type_binary_expression_precedence_level_1, &Parser::parse_type_binary_expression_precedence_level_1);
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_type_binary_expression_precedence_level_2() -> UniqueVariant<Asts::TypeAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_type_binary_expression_precedence_level_2() -> Utils::UniqueVariant<Asts::TypeAst> {
     return parse_type_binary_expression_precedence_level_n(&Parser::parse_type_unary_expression, &Parser::parse_type_binary_expression_precedence_level_2, &Parser::parse_type_binary_expression_precedence_level_2);
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_type_unary_expression() -> UniqueVariant<Asts::TypeAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_type_unary_expression() -> Utils::UniqueVariant<Asts::TypeAst> {
     auto p1 = parse_0_or_more(&Parser::parse_type_unary_op, &Parser::parse_nothing);
     auto p2 = parse_once(&Parser::parse_type_primary_expression);
     return std::move(genex::algorithms::accumulate(p1 | genex::views::reverse, p2, []<typename A, typename T>(A &&acc, T &&elem) -> std::unique_ptr<Asts::TypeUnaryExpressionAst> {
@@ -1399,7 +1459,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_type_unary_expression() -> UniqueVari
     }));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_type_postfix_expression() -> UniqueVariant<Asts::TypeAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_type_postfix_expression() -> Utils::UniqueVariant<Asts::TypeAst> {
     auto p1 = parse_once(&Parser::parse_type_primary_expression);
     auto p2 = parse_0_or_more(&Parser::parse_type_postfix_op, &Parser::parse_nothing);
     return std::move(genex::algorithms::accumulate(p2, p1, []<typename A, typename T>(A &&acc, T &&elem) -> std::unique_ptr<Asts::TypePostfixExpressionAst> {
@@ -1407,7 +1467,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_type_postfix_expression() -> UniqueVa
     }));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_type_primary_expression() -> UniqueVariant<Asts::TypeAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_type_primary_expression() -> Utils::UniqueVariant<Asts::TypeAst> {
     auto p1 = parse_alternate(
         &Parser::parse_type_parenthesized,
         &Parser::parse_type_tuple,
@@ -1416,7 +1476,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_type_primary_expression() -> UniqueVa
     return p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_type_parenthesized() -> UniqueVariant<Asts::TypeSingleAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_type_parenthesized() -> Utils::UniqueVariant<Asts::TypeSingleAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_token_left_parenthesis);
     auto p2 = parse_once(&Parser::parse_type);
@@ -1424,14 +1484,14 @@ auto SPP::SyntacticAnalysis::Parser::parse_type_parenthesized() -> UniqueVariant
     return std::make_unique<Asts::TypeParenthesizedAst>(c1, std::move(p1), std::move(p2), std::move(p3))->convert();
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_type_tuple() -> UniqueVariant<Asts::TypeSingleAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_type_tuple() -> Utils::UniqueVariant<Asts::TypeSingleAst> {
     auto p1 = parse_alternate(
         &Parser::parse_type_tuple_1_items,
         &Parser::parse_type_tuple_n_items);
     return p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_type_array() -> UniqueVariant<Asts::TypeSingleAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_type_array() -> Utils::UniqueVariant<Asts::TypeSingleAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_token_left_square_bracket);
     auto p2 = parse_once(&Parser::parse_type);
@@ -1441,13 +1501,13 @@ auto SPP::SyntacticAnalysis::Parser::parse_type_array() -> UniqueVariant<Asts::T
     return std::make_unique<Asts::TypeArrayAst>(c1, std::move(p1), std::move(p2), std::move(p3), std::move(p4), std::move(p5));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_type_single() -> UniqueVariant<Asts::TypeSingleAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_type_single() -> Utils::UniqueVariant<Asts::TypeSingleAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_generic_identifier);
     return std::make_unique<Asts::TypeSingleAst>(c1, std::move(p1));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_type_unary_op() -> UniqueVariant<Asts::TypeUnaryOperatorAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_type_unary_op() -> Utils::UniqueVariant<Asts::TypeUnaryOperatorAst> {
     auto p1 = parse_alternate(
         &Parser::parse_type_unary_op_namespace);
     return p1;
@@ -1460,7 +1520,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_type_unary_op_namespace() -> std::uni
     return std::make_unique<Asts::TypeUnaryOperatorNamespaceAst>(c1, std::move(p1), std::move(p2));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_type_postfix_op() -> UniqueVariant<Asts::TypePostfixOperatorAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_type_postfix_op() -> Utils::UniqueVariant<Asts::TypePostfixOperatorAst> {
     auto p1 = parse_alternate(
         &Parser::parse_type_postfix_op_nested_type,
         &Parser::parse_type_postfix_op_indexed_type,
@@ -1576,14 +1636,14 @@ auto SPP::SyntacticAnalysis::Parser::parse_literal_comp_tuple() -> std::unique_p
     return p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_literal_array() -> UniqueVariant<Asts::ArrayLiteralAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_literal_array() -> Utils::UniqueVariant<Asts::ArrayLiteralAst> {
     auto p1 = parse_alternate(
         &Parser::parse_literal_array_0_items,
         &Parser::parse_literal_array_n_items);
     return p1;
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_literal_comp_array() -> UniqueVariant<Asts::ArrayLiteralAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_literal_comp_array() -> Utils::UniqueVariant<Asts::ArrayLiteralAst> {
     auto p1 = parse_alternate(
         &Parser::parse_literal_array_0_items,
         &Parser::parse_literal_comp_array_n_items);
@@ -1736,7 +1796,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_literal_comp_array_n_items() -> std::
     return std::make_unique<Asts::ArrayLiteralNElementsAst>(c1, std::move(p1), std::move(p2), std::move(p3));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_comp_value() -> UniqueVariant<Asts::ExpressionAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_comp_value() -> Utils::UniqueVariant<Asts::ExpressionAst> {
     auto p1 = parse_alternate(
         &Parser::parse_literal_float,
         &Parser::parse_literal_integer,

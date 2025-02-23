@@ -322,7 +322,8 @@ export namespace SPP::SemanticAnalysis::Asts {
         // SupPrototypeExtensionAst,
         SupUseStatementAst>;
 
-    using UnaryExpressionOperatorAst = UnaryExpressionOperatorAsyncAst;
+    using UnaryExpressionOperatorAst = CollapsingVariant<
+        UnaryExpressionOperatorAsyncAst>;
 
     using LoopControlFlowFinalActionAst = CollapsingVariant<
         TokenAst,

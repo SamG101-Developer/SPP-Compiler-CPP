@@ -16,7 +16,7 @@ import genex.generator;
 auto SPP::SyntacticAnalysis::Errors::SyntaxError::throw_(Utils::ErrorFormatter const &error_formatter) noexcept(false) -> void {
     // Convert the set of expected tokens into a set of strings.
     const auto all_expected_tokens = expected
-        | genex::views::map([](const auto token) { return std::string{magic_enum::enum_name(token).data()}; })
+        | genex::views::map([](const LexicalAnalysis::RawTokenTypes token) { return std::string{magic_enum::enum_name(token).data()}; })
         // | genex::views::replace("\n", "\\n")
         // | genex::views::intersperse(", ")
         | genex::views::to<std::string>();

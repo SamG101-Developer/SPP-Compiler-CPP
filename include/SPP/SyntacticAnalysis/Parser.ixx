@@ -8,11 +8,11 @@ module;
 
 #define PARSER_RESULT_TYPE(T) std::unique_ptr<T>
 
-#define PARSER_RESULT_TYPE_VARIANT(T) UniqueVariant<T>
+#define PARSER_RESULT_TYPE_VARIANT(T) Utils::UniqueVariant<T>
 
 #define CREATE_PARSER_RULE(what, type) auto parse_##what() -> std::unique_ptr<type>;
 
-#define CREATE_PARSER_RULE_VARIANT(what, type) auto parse_##what() -> UniqueVariant<type>;
+#define CREATE_PARSER_RULE_VARIANT(what, type) auto parse_##what() -> Utils::UniqueVariant<type>;
 
 
 export module spp.syntactic_analysis.parser;
@@ -53,11 +53,16 @@ private:
     template <typename ...Args, std::invocable<Parser*, Args...> F>
     auto parse_optional(F&& parser_rule, Args&&... args) -> std::optional<std::invoke_result_t<F, Parser*, Args...>>;
 
-    template <std::invocable<Parser*> F, std::invocable<Parser*> S> auto parse_0_or_more(F&& parser_rule, S&& separator) -> std::vector<std::invoke_result_t<F, Parser*>>;
-    template <std::invocable<Parser*> F, std::invocable<Parser*> S> auto parse_1_or_more(F&& parser_rule, S&& separator) -> std::vector<std::invoke_result_t<F, Parser*>>;
-    template <std::invocable<Parser*> F, std::invocable<Parser*> S> auto parse_2_or_more(F&& parser_rule, S&& separator) -> std::vector<std::invoke_result_t<F, Parser*>>;
+    template <std::invocable<Parser*> F, std::invocable<Parser*> S>
+    auto parse_0_or_more(F&& parser_rule, S&& separator) -> std::vector<std::invoke_result_t<F, Parser*>>;
 
-    template <std::invocable<Parser*>... Fs> auto parse_alternate(Fs&&... parser_rules) -> CollapsingVariant<std::invoke_result_t<Fs, Parser*>...>;
+    template <std::invocable<Parser*> F, std::invocable<Parser*> S>
+    auto parse_1_or_more(F&& parser_rule, S&& separator) -> std::vector<std::invoke_result_t<F, Parser*>>;
+
+    template <std::invocable<Parser*> F, std::invocable<Parser*> S>
+    auto parse_2_or_more(F&& parser_rule, S&& separator) -> std::vector<std::invoke_result_t<F, Parser*>>;
+
+    template <std::invocable<Parser*>... Fs> auto parse_alternate(Fs&&... parser_rules) -> Utils::CollapsingVariant<std::invoke_result_t<Fs, Parser*>...>;
 
 public:
     auto parse() -> Asts::RootAst;

@@ -13,6 +13,7 @@ import spp.semantic_analysis.asts.annotation_ast;
 import spp.semantic_analysis.asts.array_literal_0_element_ast;
 import spp.semantic_analysis.asts.array_literal_n_elements_ast;
 import spp.semantic_analysis.asts.assignment_statement_ast;
+import spp.semantic_analysis.asts.binary_expression_ast;
 import spp.semantic_analysis.asts.boolean_literal_ast;
 import spp.semantic_analysis.asts.case_expression_ast;
 import spp.semantic_analysis.asts.case_expression_branch_ast;
@@ -130,6 +131,88 @@ import spp.utils.pointers;
 using namespace SPP::SemanticAnalysis;
 using namespace SPP::LexicalAnalysis;
 
+
+template <SPP::SyntacticAnalysis::is_parser_member_function F>
+auto SPP::SyntacticAnalysis::Parser::parse_once(F &&parser_rule) -> decltype(auto) {
+    return std::mem_fn(std::forward<F>(parser_rule))(this);
+}
+
+template <typename F>
+auto SPP::SyntacticAnalysis::Parser::parse_once(F &&parser_rule) -> decltype(auto) {
+    return std::invoke(std::forward<F>(parser_rule), this);
+}
+
+template <typename F>
+auto SPP::SyntacticAnalysis::Parser::parse_optional(F &&parser_rule) -> std::optional<std::invoke_result_t<F, Parser*>> {
+    const auto index = pos;
+
+    try {
+        auto result = parse_once(std::forward<F>(parser_rule));
+        auto optional_type = std::optional<decltype(result)>();
+        optional_type = std::move(result);
+        return optional_type;
+    }
+    catch (Errors::SyntaxError &) {
+        pos = index;
+        return std::nullopt;
+    }
+}
+
+template <typename F, SPP::SyntacticAnalysis::is_parser_member_function S>
+auto SPP::SyntacticAnalysis::Parser::parse_0_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>> {
+    auto done_1_parse = false;
+    auto result = std::vector<std::invoke_result_t<F, Parser*>>{};
+    auto temp_index = pos;
+
+    while (true) {
+        if (done_1_parse) {
+            const auto sep = parse_optional(std::forward<S>(separator));
+            if (not sep.has_value()) { return result; }
+        }
+
+        try {
+            const auto ast = parse_once(std::forward<F>(parser_rule));
+            result.push_back(std::move(ast));
+            done_1_parse = true;
+            temp_index = pos;
+        }
+        catch (Errors::SyntaxError &) {
+            pos = temp_index;
+            return result;
+        }
+    }
+}
+
+template <typename F, SPP::SyntacticAnalysis::is_parser_member_function S>
+auto SPP::SyntacticAnalysis::Parser::parse_1_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>> {
+    const auto result = parse_0_or_more(std::forward<F>(parser_rule), std::forward<S>(separator));
+    if (result.empty()) {
+        throw Errors::SyntaxError{pos, "Expected at least one element"};
+    }
+    return result;
+}
+
+template <typename F, SPP::SyntacticAnalysis::is_parser_member_function S>
+auto SPP::SyntacticAnalysis::Parser::parse_2_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>> {
+    const auto result = parse_0_or_more(std::forward<F>(parser_rule), std::forward<S>(separator));
+    if (result.size() < 2) {
+        throw Errors::SyntaxError{pos, "Expected at least two elements"};
+    }
+    return result;
+}
+
+template <typename F, typename ... Fs>
+auto SPP::SyntacticAnalysis::Parser::parse_alternate(F&& parser_rule, Fs &&... parser_rules) -> std::unique_ptr<Asts::Ast> {
+    auto p1 = parse_optional(std::forward<F>(parser_rule));
+    auto result = p1.transform([]<typename T>(T &&x) { return Utils::cast_unique<Asts::Ast>(std::move(x)); });
+    return result.value_or(parse_alternate(std::forward<Fs>(parser_rules)...));
+}
+
+template <typename F>
+auto SPP::SyntacticAnalysis::Parser::parse_alternate(F&& parser_rule) -> std::unique_ptr<Asts::Ast> {
+    auto p1 = std::mem_fn(std::forward<F>(parser_rule))(this);
+    return Utils::cast_unique<Asts::Ast>(std::move(p1));
+}
 
 auto SPP::SyntacticAnalysis::Parser::parse() -> Asts::RootAst {
     try {
@@ -557,7 +640,7 @@ template <typename A1, typename A2>
 auto SPP::SyntacticAnalysis::Parser::parse_binary_expression_precedence_level_n_rhs(A1 &&op, A2 &&rhs) -> std::pair<std::unique_ptr<Asts::TokenAst>, std::unique_ptr<Asts::Ast>> {
     auto p1 = parse_once(op);
     auto p2 = parse_once(rhs);
-    return std::make_pair(p1, p2);
+    return std::make_pair(std::move(p1), std::move(p2));
 }
 
 template <typename A1, typename A2, typename A3>
@@ -807,7 +890,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_statement() -> std::unique_ptr<Asts::
 auto SPP::SyntacticAnalysis::Parser::parse_global_use_statement() -> std::unique_ptr<Asts::UseStatementAst> {
     auto p1 = parse_0_or_more(&Parser::parse_annotation, &Parser::parse_nothing);
     auto p2 = parse_once(&Parser::parse_use_statement);
-    p2->annotations = p1;
+    p2->annotations = std::move(p1);
     return p2;
 }
 
@@ -1364,7 +1447,7 @@ template <typename A1, typename A2>
 auto SPP::SyntacticAnalysis::Parser::parse_type_binary_expression_precedence_level_n_rhs(A1 &&op, A2 &&rhs) -> std::pair<std::unique_ptr<Asts::TokenAst>, std::unique_ptr<Asts::Ast>> {
     auto p1 = parse_once(op);
     auto p2 = parse_once(rhs);
-    return std::make_pair(p1, p2);
+    return std::make_pair(std::move(p1), std::move(p2));
 }
 
 template <typename A1, typename A2, typename A3>
@@ -1381,11 +1464,11 @@ auto SPP::SyntacticAnalysis::Parser::parse_type() -> std::unique_ptr<Asts::Ast> 
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_type_binary_expression_precedence_level_1() -> std::unique_ptr<Asts::Ast> {
-    return parse_type_binary_expression_precedence_level_n(&Parser::parse_type_binary_expression_precedence_level_2, &Parser::parse_type_binary_expression_precedence_level_1, &Parser::parse_type_binary_expression_precedence_level_1);
+    return parse_type_binary_expression_precedence_level_n(&Parser::parse_type_binary_expression_precedence_level_2, &Parser::parse_type_binary_op_precedence_level_1, &Parser::parse_type_binary_expression_precedence_level_1);
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_type_binary_expression_precedence_level_2() -> std::unique_ptr<Asts::Ast> {
-    return parse_type_binary_expression_precedence_level_n(&Parser::parse_type_unary_expression, &Parser::parse_type_binary_expression_precedence_level_2, &Parser::parse_type_binary_expression_precedence_level_2);
+    return parse_type_binary_expression_precedence_level_n(&Parser::parse_type_unary_expression, &Parser::parse_type_binary_op_precedence_level_2, &Parser::parse_type_binary_expression_precedence_level_2);
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_type_unary_expression() -> std::unique_ptr<Asts::Ast> {

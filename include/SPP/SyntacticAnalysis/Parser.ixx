@@ -16,6 +16,7 @@ import spp.lexical_analysis.tokens;
 import spp.semantic_analysis.asts.ast_types;
 import spp.syntactic_analysis.parser_error;
 import spp.utils.error_formatter;
+import spp.utils.pointers;
 
 
 namespace SPP::SyntacticAnalysis {
@@ -406,83 +407,3 @@ private:
     auto parse_keyword_primitive(LexicalAnalysis::TokenTypes keyword) -> std::unique_ptr<Asts::TokenAst>;
     auto parse_token_primitive(LexicalAnalysis::RawTokenTypes token_type) -> PARSER_RESULT_TYPE(Asts::TokenAst);
 };
-
-template <SPP::SyntacticAnalysis::is_parser_member_function F>
-auto SPP::SyntacticAnalysis::Parser::parse_once(F &&parser_rule) -> decltype(auto) {
-    return std::mem_fn(std::forward<F>(parser_rule))(this);
-}
-
-template <typename F>
-auto SPP::SyntacticAnalysis::Parser::parse_once(F &&parser_rule) -> decltype(auto) {
-    return std::invoke(std::forward<F>(parser_rule), this);
-}
-
-template <typename F>
-auto SPP::SyntacticAnalysis::Parser::parse_optional(F &&parser_rule) -> std::optional<std::invoke_result_t<F, Parser*>> {
-    const auto index = pos;
-
-    try {
-        auto result = parse_once(std::forward<F>(parser_rule));
-        auto optional_type = std::optional<decltype(result)>();
-        optional_type = std::move(result);
-        return optional_type;
-    }
-    catch (Errors::SyntaxError &) {
-        pos = index;
-        return std::nullopt;
-    }
-}
-
-template <typename F, SPP::SyntacticAnalysis::is_parser_member_function S>
-auto SPP::SyntacticAnalysis::Parser::parse_0_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>> {
-    auto done_1_parse = false;
-    auto result = std::vector<std::invoke_result_t<F, Parser*>>{};
-    auto temp_index = pos;
-
-    while (true) {
-        if (done_1_parse) {
-            const auto sep = parse_optional(std::forward<S>(separator));
-            if (not sep.has_value()) { return result; }
-        }
-
-        try {
-            const auto ast = parse_once(std::forward<F>(parser_rule));
-            result.push_back(std::move(ast));
-            done_1_parse = true;
-            temp_index = pos;
-        }
-        catch (Errors::SyntaxError &) {
-            pos = temp_index;
-            return result;
-        }
-    }
-}
-
-template <typename F, SPP::SyntacticAnalysis::is_parser_member_function S>
-auto SPP::SyntacticAnalysis::Parser::parse_1_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>> {
-    const auto result = parse_0_or_more(std::forward<F>(parser_rule), std::forward<S>(separator));
-    if (result.empty()) {
-        throw Errors::SyntaxError{pos, "Expected at least one element"};
-    }
-    return result;
-}
-
-template <typename F, SPP::SyntacticAnalysis::is_parser_member_function S>
-auto SPP::SyntacticAnalysis::Parser::parse_2_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>> {
-    const auto result = parse_0_or_more(std::forward<F>(parser_rule), std::forward<S>(separator));
-    if (result.size() < 2) {
-        throw Errors::SyntaxError{pos, "Expected at least two elements"};
-    }
-    return result;
-}
-
-template <typename F, typename ... Fs>
-auto SPP::SyntacticAnalysis::Parser::parse_alternate(F&& parser_rule, Fs &&... parser_rules) -> std::unique_ptr<Asts::Ast> {
-    auto result = parse_optional(std::forward<F>(parser_rule));
-    return result.value_or(parse_alternate(std::forward<Fs>(parser_rules)...));
-}
-
-template <typename F>
-auto SPP::SyntacticAnalysis::Parser::parse_alternate(F&& parser_rule) -> std::unique_ptr<Asts::Ast> {
-    return std::mem_fn(std::forward<F>(parser_rule))(this);
-}

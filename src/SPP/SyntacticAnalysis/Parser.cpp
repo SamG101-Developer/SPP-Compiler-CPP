@@ -102,6 +102,7 @@ import spp.semantic_analysis.asts.sup_implementation_ast;
 import spp.semantic_analysis.asts.token_ast;
 import spp.semantic_analysis.asts.tuple_literal_ast;
 import spp.semantic_analysis.asts.type_array_ast;
+import spp.semantic_analysis.asts.type_binary_expression_ast;
 import spp.semantic_analysis.asts.type_parenthesized_ast;
 import spp.semantic_analysis.asts.type_postfix_expression_ast;
 import spp.semantic_analysis.asts.type_postfix_operator_indexed_type_ast;
@@ -560,7 +561,7 @@ template <typename A1, typename A2, typename A3>
 auto SPP::SyntacticAnalysis::Parser::parse_binary_expression_precedence_level_n(A1 &&lhs, A2 &&op, A3 &&rhs) -> std::unique_ptr<Asts::Ast> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(lhs);
-    auto p2 = parse_optional([op, rhs](Parser* x) -> std::pair<std::unique_ptr<Asts::TokenAst>, std::unique_ptr<Asts::Ast>> { return std::mem_fn(&Parser::parse_binary_expression_precedence_level_n_rhs<A2, A3>)(x, op, rhs); });
+    auto p2 = parse_optional([op=std::forward<A2>(op), rhs=std::forward<A3>(rhs)](Parser* x) mutable -> std::pair<std::unique_ptr<Asts::TokenAst>, std::unique_ptr<Asts::Ast>> { return std::mem_fn(&Parser::parse_binary_expression_precedence_level_n_rhs<A2, A3>)(x, std::forward<A2>(op), std::forward<A3>(rhs)); });
     return p2.has_value() ? Utils::cast_unique<Asts::Ast>(std::make_unique<Asts::BinaryExpressionAst>(c1, std::move(p1), std::move(p2->first), std::move(p2->second))) : Utils::cast_unique<Asts::Ast>(std::move(p1));
 }
 
@@ -1367,7 +1368,7 @@ template <typename A1, typename A2, typename A3>
 auto SPP::SyntacticAnalysis::Parser::parse_type_binary_expression_precedence_level_n(A1 &&lhs, A2 &&op, A3 &&rhs) -> std::unique_ptr<Asts::Ast> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(lhs);
-    auto p2 = parse_optional([op, rhs](Parser* x) -> std::pair<std::unique_ptr<Asts::TokenAst>, std::unique_ptr<Asts::Ast>> { return std::mem_fn(&Parser::parse_binary_expression_precedence_level_n_rhs<A2, A3>)(x, op, rhs); });
+    auto p2 = parse_optional([op=std::forward<A2>(op), rhs=std::forward<A3>(rhs)](Parser* x) mutable -> std::pair<std::unique_ptr<Asts::TokenAst>, std::unique_ptr<Asts::Ast>> { return std::mem_fn(&Parser::parse_binary_expression_precedence_level_n_rhs<A2, A3>)(x, std::forward<A2>(op), std::forward<A3>(rhs)); });
     return p2.has_value() ? std::make_unique<Asts::TypeBinaryExpressionAst>(c1, std::move(p1), std::move(p2->first), std::move(p2->second))->convert() : Utils::cast_unique<Asts::Ast>(std::move(p1));
 }
 

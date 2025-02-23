@@ -20,6 +20,11 @@ import spp.utils.error_formatter;
 
 namespace SPP::SyntacticAnalysis {
     export class Parser;
+
+    template <typename F>
+    concept is_parser_member_function = requires(F f, Parser *p) {
+        std::mem_fn(f)(p);
+    };
 }
 
 using namespace SPP::SemanticAnalysis;
@@ -42,19 +47,22 @@ public:
     auto set_current_pos(std::size_t new_index) -> void;
 
 private:
+    template <is_parser_member_function F>
+    auto parse_once(F &&parser_rule) -> decltype(auto);
+
     template <typename F>
-    auto parse_once(F &&parser_rule) -> std::invoke_result_t<F, Parser*>;
+    auto parse_once(F &&parser_rule) -> decltype(auto);
 
     template <typename F>
     auto parse_optional(F &&parser_rule) -> std::optional<std::invoke_result_t<F, Parser*>>;
 
-    template <typename F, typename S>
+    template <typename F, is_parser_member_function S>
     auto parse_0_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>>;
 
-    template <typename F, typename S>
+    template <typename F, is_parser_member_function S>
     auto parse_1_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>>;
 
-    template <typename F, typename S>
+    template <typename F, is_parser_member_function S>
     auto parse_2_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>>;
 
     template <typename F, typename... Fs>
@@ -399,9 +407,14 @@ private:
     auto parse_token_primitive(LexicalAnalysis::RawTokenTypes token_type) -> PARSER_RESULT_TYPE(Asts::TokenAst);
 };
 
-template <typename F>
-auto SPP::SyntacticAnalysis::Parser::parse_once(F &&parser_rule) -> std::invoke_result_t<F, Parser*> {
+template <SPP::SyntacticAnalysis::is_parser_member_function F>
+auto SPP::SyntacticAnalysis::Parser::parse_once(F &&parser_rule) -> decltype(auto) {
     return std::mem_fn(std::forward<F>(parser_rule))(this);
+}
+
+template <typename F>
+auto SPP::SyntacticAnalysis::Parser::parse_once(F &&parser_rule) -> decltype(auto) {
+    return std::invoke(std::forward<F>(parser_rule), this);
 }
 
 template <typename F>
@@ -409,8 +422,10 @@ auto SPP::SyntacticAnalysis::Parser::parse_optional(F &&parser_rule) -> std::opt
     const auto index = pos;
 
     try {
-        const auto result = std::mem_fn(std::forward<F>(parser_rule))(this);
-        return std::make_optional(std::move(result));
+        auto result = parse_once(std::forward<F>(parser_rule));
+        auto optional_type = std::optional<decltype(result)>();
+        optional_type = std::move(result);
+        return optional_type;
     }
     catch (Errors::SyntaxError &) {
         pos = index;
@@ -418,7 +433,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_optional(F &&parser_rule) -> std::opt
     }
 }
 
-template <typename F, typename S>
+template <typename F, SPP::SyntacticAnalysis::is_parser_member_function S>
 auto SPP::SyntacticAnalysis::Parser::parse_0_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>> {
     auto done_1_parse = false;
     auto result = std::vector<std::invoke_result_t<F, Parser*>>{};
@@ -427,11 +442,11 @@ auto SPP::SyntacticAnalysis::Parser::parse_0_or_more(F &&parser_rule, S &&separa
     while (true) {
         if (done_1_parse) {
             const auto sep = parse_optional(std::forward<S>(separator));
-            if (sep.is_none()) { return result; }
+            if (not sep.has_value()) { return result; }
         }
 
         try {
-            const auto ast = std::mem_fn(std::forward<F>(parser_rule))(this);
+            const auto ast = parse_once(std::forward<F>(parser_rule));
             result.push_back(std::move(ast));
             done_1_parse = true;
             temp_index = pos;
@@ -443,7 +458,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_0_or_more(F &&parser_rule, S &&separa
     }
 }
 
-template <typename F, typename S>
+template <typename F, SPP::SyntacticAnalysis::is_parser_member_function S>
 auto SPP::SyntacticAnalysis::Parser::parse_1_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>> {
     const auto result = parse_0_or_more(std::forward<F>(parser_rule), std::forward<S>(separator));
     if (result.empty()) {
@@ -452,7 +467,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_1_or_more(F &&parser_rule, S &&separa
     return result;
 }
 
-template <typename F, typename S>
+template <typename F, SPP::SyntacticAnalysis::is_parser_member_function S>
 auto SPP::SyntacticAnalysis::Parser::parse_2_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>> {
     const auto result = parse_0_or_more(std::forward<F>(parser_rule), std::forward<S>(separator));
     if (result.size() < 2) {

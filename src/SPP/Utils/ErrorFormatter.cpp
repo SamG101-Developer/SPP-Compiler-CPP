@@ -6,20 +6,6 @@ module spp.utils.error_formatter;
 import spp.lexical_analysis.tokens;
 import spp.utils.pretty_printer;
 
-import genex.operations.push_back;
-import genex.algorithms.contains;
-import genex.algorithms.count;
-import genex.algorithms.find;
-import genex.views.enumerate;
-import genex.views.map;
-import genex.views.take;
-import genex.views.drop;
-import genex.views.slice;
-import genex.views.reverse;
-import genex.algorithms.accumulate;
-import genex.views.to;
-import genex.generator;
-
 
 SPP::Utils::ErrorFormatter::ErrorFormatter(std::vector<LexicalAnalysis::RawToken> token_stream, std::string file_path)
     : token_stream(std::move(token_stream)), file_path(std::move(file_path)) {

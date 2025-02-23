@@ -16,6 +16,6 @@ target_link_libraries(SPP_SyntacticAnalysis PRIVATE
         SPP::LexicalAnalysis
         SPP::SemanticAnalysis::Asts
         SPP::Utils
-        GenEx::GenEx Boost::boost)
+        Boost::boost)
 
 add_library(SPP::SyntacticAnalysis ALIAS SPP_SyntacticAnalysis)

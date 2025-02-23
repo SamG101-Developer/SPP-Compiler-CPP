@@ -14,7 +14,6 @@ target_include_directories(SPP_Utils PRIVATE
         ${CMAKE_SOURCE_DIR}/include)
 
 target_link_libraries(SPP_Utils PRIVATE
-        SPP::LexicalAnalysis
-        GenEx::GenEx)
+        SPP::LexicalAnalysis)
 
 add_library(SPP::Utils ALIAS SPP_Utils)

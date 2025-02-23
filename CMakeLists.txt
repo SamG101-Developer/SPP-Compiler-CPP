@@ -7,14 +7,9 @@ project(SPP_Compiler_CPP)
 set(CMAKE_CXX_STANDARD ${CMAKE_CXX_STANDARD_LATEST})
 include(FetchContent)
 
-FetchContent_Declare(GenEx
-        GIT_REPOSITORY https://github.com/SamG101-Developer/GenEx.git
-        GIT_TAG 69050ce0a051f0f0d2380fd21028adde51e1e9bf)
-
 find_package(magic_enum REQUIRED)
 find_package(RE2 REQUIRED)
 find_package(Boost REQUIRED)
-FetchContent_MakeAvailable(GenEx)
 
 add_subdirectory(src/SPP)
 add_executable(${PROJECT_NAME} main.cpp)

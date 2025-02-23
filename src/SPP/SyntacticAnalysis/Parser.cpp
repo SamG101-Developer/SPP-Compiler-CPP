@@ -86,6 +86,7 @@ import spp.semantic_analysis.asts.pattern_variant_expression_ast;
 import spp.semantic_analysis.asts.pattern_variant_literal_ast;
 import spp.semantic_analysis.asts.pattern_variant_single_identifier_ast;
 import spp.semantic_analysis.asts.pin_statement_ast;
+import spp.semantic_analysis.asts.postfix_expression_ast;
 import spp.semantic_analysis.asts.postfix_expression_operator_early_return_ast;
 import spp.semantic_analysis.asts.postfix_expression_operator_function_call_ast;
 import spp.semantic_analysis.asts.postfix_expression_operator_member_access_ast;
@@ -110,7 +111,9 @@ import spp.semantic_analysis.asts.type_postfix_operator_nested_type_ast;
 import spp.semantic_analysis.asts.type_postfix_operator_optional_type_ast;
 import spp.semantic_analysis.asts.type_single_ast;
 import spp.semantic_analysis.asts.type_tuple_ast;
+import spp.semantic_analysis.asts.type_unary_expression_ast;
 import spp.semantic_analysis.asts.type_unary_operator_namespace_ast;
+import spp.semantic_analysis.asts.unary_expression_ast;
 import spp.semantic_analysis.asts.unary_expression_operator_async_ast;
 import spp.semantic_analysis.asts.use_statement_ast;
 import spp.semantic_analysis.asts.where_block_ast;
@@ -258,7 +261,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_sup_coroutine_prototype() -> std::uni
 auto SPP::SyntacticAnalysis::Parser::parse_sup_use_statement() -> std::unique_ptr<Asts::UseStatementAst> {
     auto p1 = parse_0_or_more(&Parser::parse_annotation, &Parser::parse_nothing);
     auto p2 = parse_once(&Parser::parse_use_statement);
-    p2->annotations = p1;
+    p2->annotations = std::move(p1);
     return p2;
 }
 
@@ -812,7 +815,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_use_statement() -> std::unique_ptr<As
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_keyword_use);
     auto p2 = parse_once(&Parser::parse_upper_identifier);
-    auto p3 = parse_optional(&Parser::parse_generic_parameters).value_or(Asts::GenericArgumentGroupAst::from_empty());
+    auto p3 = parse_optional(&Parser::parse_generic_parameters).value_or(Asts::GenericParameterGroupAst::from_empty());
     auto p4 = parse_once(&Parser::parse_token_assign);
     auto p5 = parse_once(&Parser::parse_type);
     return std::make_unique<Asts::UseStatementAst>(c1, std::vector<std::unique_ptr<Asts::AnnotationAst>>{}, std::move(p1), Asts::TypeSingleAst::from(*p2), std::move(p3), std::move(p4), std::move(p5));

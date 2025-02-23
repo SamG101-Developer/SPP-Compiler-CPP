@@ -17,11 +17,11 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::LoopExpressionAst final : Ast {
     AstMemberType<TokenAst> tok_loop;
-    AstMemberType<LoopConditionAst> expr;
+    AstMemberType<Ast> expr;
     AstMemberType<InnerScopeAst> inner_scope;
     AstMemberTypeOpt<LoopElseStatementAst> else_statement;
 
-    std::map<std::size_t, TypeAst*> _loop_type_info;
+    std::map<std::size_t, Ast*> _loop_type_info;
     std::size_t _loop_level;
 
     LoopExpressionAst(

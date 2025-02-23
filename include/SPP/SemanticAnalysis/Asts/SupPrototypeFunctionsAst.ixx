@@ -7,10 +7,6 @@ import spp.semantic_analysis.asts.ast;
 import spp.semantic_analysis.asts.ast_members;
 import spp.semantic_analysis.meta.ast_printer;
 import spp.semantic_analysis.asts.ast_types;
-import spp.semantic_analysis.asts.generic_parameter_group_ast;
-import spp.semantic_analysis.asts.sup_implementation_ast;
-import spp.semantic_analysis.asts.token_ast;
-import spp.semantic_analysis.asts.where_block_ast;
 
 
 export namespace SPP::SemanticAnalysis::Asts {
@@ -20,9 +16,9 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::SupPrototypeFunctionsAst final : Ast {
     AstMemberType<TokenAst> tok_sup;
-    AstMemberTypeOpt<GenericParameterGroupAst> generic_params;
-    AstMemberType<TypeAst> name;
-    AstMemberTypeOpt<WhereBlockAst> where_block;
+    AstMemberType<GenericParameterGroupAst> generic_params;
+    AstMemberType<Ast> name;
+    AstMemberType<WhereBlockAst> where_block;
     AstMemberType<SupImplementationAst> body;
 
     SupPrototypeFunctionsAst(

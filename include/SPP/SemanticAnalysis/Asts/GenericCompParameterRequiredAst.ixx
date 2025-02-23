@@ -15,9 +15,9 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::GenericCompParameterRequiredAst final : Ast {
     AstMemberType<TokenAst> tok_cmp;
-    AstMemberType<TypeAst> name;
+    AstMemberType<Ast> name;
     AstMemberType<TokenAst> tok_colon;
-    AstMemberType<TypeAst> type;
+    AstMemberType<Ast> type;
 
     GenericCompParameterRequiredAst(
         std::size_t pos,

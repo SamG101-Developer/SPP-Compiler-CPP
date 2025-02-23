@@ -23,5 +23,7 @@ struct SPP::SemanticAnalysis::Asts::WhereBlockAst final : Ast {
         decltype(tok_where) &&tok_where,
         decltype(constraint_group) &&constraint_group);
 
+    static auto from_empty() -> std::unique_ptr<WhereBlockAst>;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

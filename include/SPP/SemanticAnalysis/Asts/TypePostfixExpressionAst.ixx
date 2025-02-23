@@ -14,8 +14,8 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 
 struct SPP::SemanticAnalysis::Asts::TypePostfixExpressionAst final : Ast {
-    AstMemberType<TypeAst> lhs;
-    AstMemberType<TypePostfixOperatorAst> op;
+    AstMemberType<Ast> lhs;
+    AstMemberType<Ast> op;
 
     TypePostfixExpressionAst(
         std::size_t pos,

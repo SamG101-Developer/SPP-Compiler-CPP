@@ -16,9 +16,9 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 
 struct SPP::SemanticAnalysis::Asts::WhereConstraintsAst final : Ast {
-    AstMemberType<std::vector<TypeAst>> types;
+    AstMemberType<std::vector<Ast>> types;
     AstMemberType<TokenAst> tok_colon;
-    AstMemberType<TypeAst> constraint;
+    AstMemberType<Ast> constraint;
 
     WhereConstraintsAst(
         std::size_t pos,

@@ -16,7 +16,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::GenericTypeParameterInlineConstraintsAst final : Ast {
     AstMemberType<TokenAst> tok_colon;
-    AstMemberType<TypeAst> type;
+    AstMemberType<Ast> type;
 
     GenericTypeParameterInlineConstraintsAst(
         std::size_t pos,

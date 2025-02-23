@@ -1,8 +1,11 @@
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <vector>
 
 import spp.lexical_analysis.lexer;
 import spp.lexical_analysis.tokens;
+
 
 int main() {
     // Read contents of file ../test.spp

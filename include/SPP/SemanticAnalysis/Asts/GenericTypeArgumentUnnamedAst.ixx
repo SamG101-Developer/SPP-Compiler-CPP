@@ -14,7 +14,7 @@ namespace SPP::SemanticAnalysis::Asts {
 
 
 struct SPP::SemanticAnalysis::Asts::GenericTypeArgumentUnnamedAst final : Ast {
-    AstMemberType<TypeAst> type;
+    AstMemberType<Ast> type;
 
     GenericTypeArgumentUnnamedAst(std::size_t pos, decltype(type) &&type);
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;

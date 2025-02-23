@@ -17,7 +17,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::CaseExpressionAst final : Ast {
     AstMemberType<TokenAst> tok_case;
-    AstMemberType<ExpressionAst> expr;
+    AstMemberType<Ast> expr;
     AstMemberTypeOpt<TokenAst> tok_of;
     AstMemberType<std::vector<CaseExpressionBranchAst>> branches;
 

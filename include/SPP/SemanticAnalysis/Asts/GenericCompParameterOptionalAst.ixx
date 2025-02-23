@@ -15,11 +15,11 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::GenericCompParameterOptionalAst final : Ast {
     AstMemberType<TokenAst> tok_cmp;
-    AstMemberType<TypeAst> name;
+    AstMemberType<Ast> name;
     AstMemberType<TokenAst> tok_colon;
-    AstMemberType<TypeAst> type;
+    AstMemberType<Ast> type;
     AstMemberType<TokenAst> tok_assign;
-    AstMemberType<ExpressionAst> default_expr;
+    AstMemberType<Ast> default_expr;
 
     GenericCompParameterOptionalAst(
         std::size_t pos,

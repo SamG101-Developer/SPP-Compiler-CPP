@@ -19,9 +19,9 @@ struct SPP::SemanticAnalysis::Asts::GenExpressionAst final : Ast {
     AstMemberType<TokenAst> tok_gen;
     AstMemberTypeOpt<TokenAst> tok_with;
     AstMemberType<ConventionAst> conv;
-    AstMemberTypeOpt<ExpressionAst> expr;
+    AstMemberTypeOpt<Ast> expr;
 
-    std::optional<TypeAst*> _cor_ret_type;
+    std::optional<Ast*> _cor_ret_type;
 
     GenExpressionAst(
         std::size_t pos,

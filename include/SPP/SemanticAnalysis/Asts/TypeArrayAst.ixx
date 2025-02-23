@@ -15,7 +15,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::TypeArrayAst final : Ast {
     AstMemberType<TokenAst> tok_left_bracket;
-    AstMemberType<TypeAst> type;
+    AstMemberType<Ast> type;
     AstMemberType<TokenAst> tok_comma;
     AstMemberType<TokenAst> size;
     AstMemberType<TokenAst> tok_right_bracket;
@@ -30,5 +30,5 @@ struct SPP::SemanticAnalysis::Asts::TypeArrayAst final : Ast {
 
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 
-    auto convert() -> AstMemberType<TypeAst>;
+    auto convert() -> AstMemberType<Ast>;
 };

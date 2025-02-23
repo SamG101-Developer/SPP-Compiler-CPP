@@ -23,7 +23,7 @@ struct SPP::SemanticAnalysis::Asts::FunctionPrototypeAst : Ast {
     AstMemberType<GenericParameterGroupAst> generic_params;
     AstMemberType<FunctionParameterGroupAst> function_params;
     AstMemberType<TokenAst> tok_arrow;
-    AstMemberType<TypeAst> return_type;
+    AstMemberType<Ast> return_type;
     AstMemberType<WhereBlockAst> where_block;
     AstMemberType<FunctionImplementationAst> body;
 

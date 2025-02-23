@@ -14,7 +14,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 
 struct SPP::SemanticAnalysis::Asts::LoopConditionBooleanAst final : Ast {
-    AstMemberType<ExpressionAst> cond;
+    AstMemberType<Ast> cond;
 
     LoopConditionBooleanAst(
         std::size_t pos,

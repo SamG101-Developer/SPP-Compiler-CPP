@@ -15,9 +15,9 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 
 struct SPP::SemanticAnalysis::Asts::AssignmentStatementAst final : Ast {
-    AstMemberType<std::vector<ExpressionAst>> lhs;
+    AstMemberType<std::vector<Ast>> lhs;
     AstMemberType<TokenAst> tok_assign;
-    AstMemberType<std::vector<ExpressionAst>> rhs;
+    AstMemberType<std::vector<Ast>> rhs;
 
     AssignmentStatementAst(
         std::size_t pos,

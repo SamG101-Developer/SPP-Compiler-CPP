@@ -14,7 +14,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 
 struct SPP::SemanticAnalysis::Asts::ObjectInitializerAst final : Ast {
-    AstMemberType<TypeAst> type;
+    AstMemberType<Ast> type;
     AstMemberType<ObjectInitializerArgumentGroupAst> obj_args_group;
 
     ObjectInitializerAst(

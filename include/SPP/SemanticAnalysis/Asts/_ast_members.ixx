@@ -1,11 +1,9 @@
 module;
 #include <memory>
 #include <optional>
-#include <variant>
 #include <vector>
 
 export module spp.semantic_analysis.asts.ast_members;
-import spp.utils.variant_intrinsics;
 
 
 template <typename T>
@@ -14,21 +12,9 @@ struct ast_member {
 };
 
 
-template <typename... Ts>
-struct ast_member<std::variant<Ts...>> {
-    using type = SPP::Utils::UniqueVariant<std::variant<Ts...>>;
-};
-
-
 template <typename T>
 struct ast_member<std::vector<T>> {
     using type = std::vector<std::unique_ptr<T>>;
-};
-
-
-template <typename... Ts>
-struct ast_member<std::vector<std::variant<Ts...>>> {
-    using type = std::vector<SPP::Utils::UniqueVariant<std::variant<Ts...>>>;
 };
 
 

@@ -16,7 +16,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::TypeTupleAst final : Ast {
     AstMemberType<TokenAst> tok_left_parenthesis;
-    AstMemberType<std::vector<TypeAst>> type_list;
+    AstMemberType<std::vector<Ast>> type_list;
     AstMemberType<TokenAst> tok_right_parenthesis;
 
     TypeTupleAst(
@@ -27,5 +27,5 @@ struct SPP::SemanticAnalysis::Asts::TypeTupleAst final : Ast {
 
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 
-    auto convert() -> AstMemberType<TypeAst>;
+    auto convert() -> AstMemberType<Ast>;
 };

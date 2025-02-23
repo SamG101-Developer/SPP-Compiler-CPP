@@ -9,7 +9,6 @@ import spp.semantic_analysis.asts.ast_members;
 import spp.semantic_analysis.asts.ast_types;
 import spp.semantic_analysis.meta.ast_printer;
 import spp.semantic_analysis.asts.token_ast;
-import spp.utils.variant_intrinsics;
 
 
 export namespace SPP::SemanticAnalysis::Asts {
@@ -19,7 +18,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::FunctionParameterGroupAst final : Ast {
     AstMemberType<TokenAst> tok_paren_l;
-    AstMemberType<std::vector<FunctionParameterAst>> members;
+    AstMemberType<std::vector<Ast>> members;
     AstMemberType<TokenAst> tok_paren_r;
 
     FunctionParameterGroupAst(

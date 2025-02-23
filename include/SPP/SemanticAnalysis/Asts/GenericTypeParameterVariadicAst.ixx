@@ -15,7 +15,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::GenericTypeParameterVariadicAst final : Ast {
     AstMemberType<TokenAst> tok_variadic;
-    AstMemberType<TypeAst> name;
+    AstMemberType<Ast> name;
     AstMemberTypeOpt<GenericTypeParameterInlineConstraintsAst> constraints;
 
     GenericTypeParameterVariadicAst(

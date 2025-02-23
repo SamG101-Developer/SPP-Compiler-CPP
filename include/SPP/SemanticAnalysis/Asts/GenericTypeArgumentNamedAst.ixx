@@ -13,9 +13,9 @@ namespace SPP::SemanticAnalysis::Asts {
 
 
 struct SPP::SemanticAnalysis::Asts::GenericTypeArgumentNamedAst final : Ast {
-    AstMemberType<TypeAst> name;
+    AstMemberType<Ast> name;
     AstMemberType<TokenAst> tok_assign;
-    AstMemberType<TypeAst> type;
+    AstMemberType<Ast> type;
 
     GenericTypeArgumentNamedAst(std::size_t pos, decltype(type) &&type, decltype(tok_assign) &&tok_assign, decltype(name) &&name);
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;

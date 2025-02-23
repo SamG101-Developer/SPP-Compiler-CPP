@@ -7,7 +7,6 @@ import spp.semantic_analysis.asts.ast;
 import spp.semantic_analysis.asts.ast_members;
 import spp.semantic_analysis.asts.ast_types;
 import spp.semantic_analysis.meta.ast_printer;
-import spp.utils.variant_intrinsics;
 
 
 namespace SPP::SemanticAnalysis::Asts {
@@ -16,7 +15,7 @@ namespace SPP::SemanticAnalysis::Asts {
 
 
 struct SPP::SemanticAnalysis::Asts::ModuleImplementationAst final : Ast {
-    std::vector<AstMemberType<ModuleMemberAst>> members;
+    std::vector<AstMemberType<Ast>> members;
 
     ModuleImplementationAst(
         std::size_t pos,

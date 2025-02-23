@@ -18,7 +18,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::ClassImplementationAst final : Ast {
     AstMemberType<TokenAst> tok_brace_l;
-    AstMemberType<std::vector<ClassMemberAst>> members;
+    AstMemberType<std::vector<Ast>> members;
     AstMemberType<TokenAst> tok_brace_r;
 
     ClassImplementationAst(std::size_t pos, decltype(tok_brace_l) &&tok_brace_l, decltype(members) &&members, decltype(tok_brace_r) &&tok_brace_r);

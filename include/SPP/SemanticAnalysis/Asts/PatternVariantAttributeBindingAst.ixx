@@ -16,7 +16,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 struct SPP::SemanticAnalysis::Asts::PatternVariantAttributeBindingAst final : Ast {
     AstMemberType<IdentifierAst> name;
     AstMemberType<TokenAst> tok_assign;
-    AstMemberType<PatternVariantNestedForAttributeBindingAst> value;
+    AstMemberType<Ast> value;
 
     PatternVariantAttributeBindingAst(
         std::size_t pos,

@@ -16,7 +16,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::ObjectInitializerArgumentGroupAst final : Ast {
     AstMemberType<TokenAst> tok_left_parenthesis;
-    AstMemberType<std::vector<ObjectInitializerArgumentAst>> obj_args_group;
+    AstMemberType<std::vector<Ast>> obj_args_group;
     AstMemberType<TokenAst> tok_right_parenthesis;
 
     ObjectInitializerArgumentGroupAst(

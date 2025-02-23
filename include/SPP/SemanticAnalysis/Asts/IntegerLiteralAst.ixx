@@ -16,7 +16,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 struct SPP::SemanticAnalysis::Asts::IntegerLiteralAst final : Ast {
     AstMemberTypeOpt<TokenAst> tok_sign;
     AstMemberType<TokenAst> val;
-    AstMemberTypeOpt<TypeAst> type;
+    AstMemberTypeOpt<Ast> type;
 
     IntegerLiteralAst(
         std::size_t pos,

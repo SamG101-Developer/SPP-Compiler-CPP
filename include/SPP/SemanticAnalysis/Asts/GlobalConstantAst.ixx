@@ -19,9 +19,9 @@ struct SPP::SemanticAnalysis::Asts::GlobalConstantAst final : Ast {
     AstMemberType<TokenAst> tok_cmp;
     AstMemberType<IdentifierAst> name;
     AstMemberType<TokenAst> tok_colon;
-    AstMemberType<TypeAst> type;
+    AstMemberType<Ast> type;
     AstMemberType<TokenAst> tok_assign;
-    AstMemberType<ExpressionAst> value;
+    AstMemberType<Ast> value;
 
     GlobalConstantAst(
         std::size_t pos,

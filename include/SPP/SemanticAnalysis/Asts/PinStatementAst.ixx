@@ -16,7 +16,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::PinStatementAst final : Ast {
     AstMemberType<TokenAst> tok_pin;
-    AstMemberType<std::vector<ExpressionAst>> pins;
+    AstMemberType<std::vector<Ast>> pins;
 
     PinStatementAst(
         std::size_t pos,

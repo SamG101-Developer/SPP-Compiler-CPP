@@ -16,7 +16,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::InnerScopeAst final : Ast {
     AstMemberType<TokenAst> tok_left_brace;
-    AstMemberType<std::vector<StatementAst>> members;
+    AstMemberType<std::vector<Ast>> members;
     AstMemberType<TokenAst> tok_right_brace;
 
     InnerScopeAst(

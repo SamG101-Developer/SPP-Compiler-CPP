@@ -15,7 +15,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::PostfixExpressionOperatorMemberAccessAst final : Ast {
     AstMemberType<TokenAst> tok_access;
-    AstMemberType<PostfixExpressionOperatorMemberAccessFieldIdentifierAst> field;
+    AstMemberType<Ast> field;
 
     PostfixExpressionOperatorMemberAccessAst(
         std::size_t pos,

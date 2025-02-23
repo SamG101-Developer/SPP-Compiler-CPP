@@ -18,7 +18,7 @@ struct SPP::SemanticAnalysis::Asts::FloatLiteralAst final : Ast {
     AstMemberType<TokenAst> integer_part;
     AstMemberType<TokenAst> tok_dot;
     AstMemberType<TokenAst> decimal_part;
-    AstMemberTypeOpt<TypeAst> type;
+    AstMemberTypeOpt<Ast> type;
 
     FloatLiteralAst(
         std::size_t pos,

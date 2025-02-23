@@ -31,7 +31,7 @@ struct SPP::SemanticAnalysis::Asts::FunctionParameterVariadicAst final : Ast {
      * The name of this parameter. It can be an identifier or some local variable destructure. It is identical to a
      * "let" statement, just without the "let" keyword, which is implied by the parameter being a parameter.
      */
-    AstMemberType<LocalVariableAst> name;
+    AstMemberType<Ast> name;
 
     /**
      * The colon token separating the parameter's name from the convention/type.
@@ -47,7 +47,7 @@ struct SPP::SemanticAnalysis::Asts::FunctionParameterVariadicAst final : Ast {
     /**
      * The type of the required parameter. This is the type that the argument must match when calling the function.
      */
-    AstMemberType<TypeAst> type;
+    AstMemberType<Ast> type;
 
     /**
      * Create a new FunctionParameterRequiredAst with the given name, colon token, convention and type.

@@ -15,9 +15,9 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::LetStatementInitializedAst final : Ast {
     AstMemberType<TokenAst> tok_let;
-    AstMemberType<LocalVariableAst> variable;
+    AstMemberType<Ast> variable;
     AstMemberType<TokenAst> tok_assign;
-    AstMemberType<ExpressionAst> value;
+    AstMemberType<Ast> value;
 
     LetStatementInitializedAst(
         std::size_t pos,

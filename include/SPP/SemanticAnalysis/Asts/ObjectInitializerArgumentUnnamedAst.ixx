@@ -14,7 +14,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 
 struct SPP::SemanticAnalysis::Asts::ObjectInitializerArgumentUnnamedAst final : Ast {
-    AstMemberType<TokenAst> tok_default;
+    AstMemberTypeOpt<TokenAst> tok_default;
     AstMemberType<IdentifierAst> name;
 
     ObjectInitializerArgumentUnnamedAst(

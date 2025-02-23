@@ -14,9 +14,9 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 
 struct SPP::SemanticAnalysis::Asts::ObjectInitializerArgumentNamedAst final : Ast {
-    AstMemberType<ObjectInitializerArgumentNameAst> name;
+    AstMemberType<Ast> name;
     AstMemberType<TokenAst> tok_assign;
-    AstMemberType<ExpressionAst> value;
+    AstMemberType<Ast> value;
 
     ObjectInitializerArgumentNamedAst(
         std::size_t pos,

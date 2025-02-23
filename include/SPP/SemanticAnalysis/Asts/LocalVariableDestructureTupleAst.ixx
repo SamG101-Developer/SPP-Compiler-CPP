@@ -16,7 +16,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::LocalVariableDestructureTupleAst final : Ast {
     AstMemberType<TokenAst> tok_left_parenthesis;
-    AstMemberType<std::vector<LocalVariableNestedForDestructureTupleAst>> bindings;
+    AstMemberType<std::vector<Ast>> bindings;
     AstMemberType<TokenAst> tok_right_parenthesis;
 
     LocalVariableDestructureTupleAst(

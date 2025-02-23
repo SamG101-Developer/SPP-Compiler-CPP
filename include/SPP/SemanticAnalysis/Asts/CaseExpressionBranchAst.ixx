@@ -16,8 +16,8 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 
 struct SPP::SemanticAnalysis::Asts::CaseExpressionBranchAst final : Ast {
-    AstMemberType<TokenAst> comp_op;
-    AstMemberType<std::vector<PatternVariantAst>> patterns;
+    AstMemberTypeOpt<TokenAst> comp_op;
+    AstMemberType<std::vector<Ast>> patterns;
     AstMemberTypeOpt<PatternGuardAst> guard;
     AstMemberType<InnerScopeAst> body;
 

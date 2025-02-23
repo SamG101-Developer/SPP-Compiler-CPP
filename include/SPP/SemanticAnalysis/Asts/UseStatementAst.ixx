@@ -17,10 +17,10 @@ export namespace SPP::SemanticAnalysis::Asts {
 struct SPP::SemanticAnalysis::Asts::UseStatementAst final : Ast {
     AstMemberType<std::vector<AnnotationAst>> annotations;
     AstMemberType<TokenAst> tok_use;
-    AstMemberType<TypeAst> new_type;
+    AstMemberType<Ast> new_type;
     AstMemberType<GenericParameterGroupAst> generic_params;
     AstMemberType<TokenAst> tok_assign;
-    AstMemberType<TypeAst> old_type;
+    AstMemberType<Ast> old_type;
 
     bool _generated;
 

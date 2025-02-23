@@ -1,5 +1,6 @@
 module;
 #include <string>
+#include <vector>
 
 export module spp.semantic_analysis.asts.array_literal_n_elements_ast;
 import spp.semantic_analysis.asts.ast;
@@ -15,7 +16,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::ArrayLiteralNElementsAst final : Ast {
     AstMemberType<TokenAst> tok_left_bracket;
-    AstMemberType<TypeAst> elements;
+    AstMemberType<std::vector<Ast>> elements;
     AstMemberType<TokenAst> tok_right_bracket;
 
     ArrayLiteralNElementsAst(

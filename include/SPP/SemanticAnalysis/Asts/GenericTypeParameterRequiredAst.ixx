@@ -14,7 +14,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 
 struct SPP::SemanticAnalysis::Asts::GenericTypeParameterRequiredAst final : Ast {
-    AstMemberType<TypeAst> name;
+    AstMemberType<Ast> name;
     AstMemberTypeOpt<GenericTypeParameterInlineConstraintsAst> constraints;
 
     GenericTypeParameterRequiredAst(

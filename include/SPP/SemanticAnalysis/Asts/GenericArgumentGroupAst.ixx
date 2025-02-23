@@ -1,4 +1,5 @@
 module;
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -16,7 +17,7 @@ namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::GenericArgumentGroupAst final : Ast {
     AstMemberType<TokenAst> tok_paren_l;
-    AstMemberType<std::vector<GenericArgumentAst>> members;
+    AstMemberType<std::vector<Ast>> members;
     AstMemberType<TokenAst> tok_paren_r;
 
     GenericArgumentGroupAst(
@@ -24,5 +25,8 @@ struct SPP::SemanticAnalysis::Asts::GenericArgumentGroupAst final : Ast {
         decltype(tok_paren_l) &&tok_paren_l,
         decltype(members) &&members,
         decltype(tok_paren_r) &&tok_paren_r);
+
+    static auto from_empty() -> std::unique_ptr<GenericArgumentGroupAst>;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

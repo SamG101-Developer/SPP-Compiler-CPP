@@ -16,7 +16,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::LocalVariableDestructureArrayAst final : Ast {
     AstMemberType<TokenAst> tok_left_bracket;
-    AstMemberType<std::vector<LocalVariableNestedForDestructureArrayAst>> bindings;
+    AstMemberType<std::vector<Ast>> bindings;
     AstMemberType<TokenAst> tok_right_bracket;
 
     LocalVariableDestructureArrayAst(

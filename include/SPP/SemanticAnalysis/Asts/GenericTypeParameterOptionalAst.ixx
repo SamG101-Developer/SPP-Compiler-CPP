@@ -14,10 +14,10 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 
 struct SPP::SemanticAnalysis::Asts::GenericTypeParameterOptionalAst final : Ast {
-    AstMemberType<TypeAst> name;
+    AstMemberType<Ast> name;
     AstMemberTypeOpt<GenericTypeParameterInlineConstraintsAst> constraints;
     AstMemberType<TokenAst> tok_assign;
-    AstMemberType<TypeAst> default_type;
+    AstMemberType<Ast> default_type;
 
     GenericTypeParameterOptionalAst(
         std::size_t pos,

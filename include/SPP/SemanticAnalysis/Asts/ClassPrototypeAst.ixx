@@ -18,8 +18,8 @@ struct SPP::SemanticAnalysis::Asts::ClassPrototypeAst final : Ast {
     AstMemberType<std::vector<AnnotationAst>> annotations;
     AstMemberType<TokenAst> tok_cls;
     AstMemberType<TypeSingleAst> name;
-    AstMemberTypeOpt<GenericParameterGroupAst> generic_params;
-    AstMemberTypeOpt<WhereBlockAst> where_block;
+    AstMemberType<GenericParameterGroupAst> generic_params;
+    AstMemberType<WhereBlockAst> where_block;
     AstMemberType<ClassImplementationAst> class_impl;
 
     bool is_alias = false;

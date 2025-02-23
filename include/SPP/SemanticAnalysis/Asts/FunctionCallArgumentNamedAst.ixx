@@ -47,7 +47,7 @@ struct SPP::SemanticAnalysis::Asts::FunctionCallArgumentNamedAst final : Ast {
      * The value of the argument that is passed to the parameter of the target function. This value must match the type
      * of the parameter identified by the name.
      */
-    AstMemberType<ExpressionAst> expression;
+    AstMemberType<Ast> expression;
 
     /**
      * Create a new FunctionCallArgumentNamedAst with the given name, assign token, convention and expression.

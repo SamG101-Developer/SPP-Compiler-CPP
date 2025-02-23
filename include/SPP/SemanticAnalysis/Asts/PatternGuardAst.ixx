@@ -15,7 +15,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::PatternGuardAst final : Ast {
     AstMemberType<TokenAst> tok_guard;
-    AstMemberType<ExpressionAst> expr;
+    AstMemberType<Ast> expr;
 
     PatternGuardAst(
         std::size_t pos,

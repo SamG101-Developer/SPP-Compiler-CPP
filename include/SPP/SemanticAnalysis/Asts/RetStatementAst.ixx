@@ -17,9 +17,9 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::RetStatementAst final : Ast {
     AstMemberType<TokenAst> tok_ret;
-    AstMemberTypeOpt<ExpressionAst> expr;
+    AstMemberTypeOpt<Ast> expr;
 
-    std::optional<TypeAst*> _fun_ret_type;
+    std::optional<Ast*> _fun_ret_type;
 
     RetStatementAst(
         std::size_t pos,

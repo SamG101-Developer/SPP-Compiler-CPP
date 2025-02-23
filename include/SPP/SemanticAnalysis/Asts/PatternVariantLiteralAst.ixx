@@ -14,7 +14,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 
 struct SPP::SemanticAnalysis::Asts::PatternVariantLiteralAst final : Ast {
-    AstMemberType<LiteralAst> literal;
+    AstMemberType<Ast> literal;
 
     PatternVariantLiteralAst(
         std::size_t pos,

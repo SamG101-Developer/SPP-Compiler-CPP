@@ -14,9 +14,9 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 
 struct SPP::SemanticAnalysis::Asts::TypeBinaryExpressionAst final : Ast {
-    AstMemberType<TypeAst> lhs;
+    AstMemberType<Ast> lhs;
     AstMemberType<TokenAst> op;
-    AstMemberType<TypeAst> rhs;
+    AstMemberType<Ast> rhs;
 
     TypeBinaryExpressionAst(
         std::size_t pos,
@@ -26,5 +26,5 @@ struct SPP::SemanticAnalysis::Asts::TypeBinaryExpressionAst final : Ast {
 
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 
-    auto convert() -> AstMemberType<TypeAst>;
+    auto convert() -> AstMemberType<Ast>;
 };

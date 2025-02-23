@@ -15,9 +15,9 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 
 struct SPP::SemanticAnalysis::Asts::LoopConditionIterableAst final : Ast {
-    AstMemberType<LocalVariableAst> variable;
+    AstMemberType<Ast> variable;
     AstMemberType<TokenAst> tok_in;
-    AstMemberType<ExpressionAst> iterable;
+    AstMemberType<Ast> iterable;
 
     LoopConditionIterableAst(
         std::size_t pos,

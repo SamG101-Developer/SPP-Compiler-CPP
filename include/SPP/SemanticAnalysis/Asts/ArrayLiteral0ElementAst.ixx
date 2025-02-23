@@ -15,7 +15,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::ArrayLiteral0ElementAst final : Ast {
     AstMemberType<TokenAst> tok_left_bracket;
-    AstMemberType<TypeAst> elem_type;
+    AstMemberType<Ast> elem_type;
     AstMemberType<TokenAst> tok_comma;
     AstMemberType<TokenAst> size;
     AstMemberType<TokenAst> tok_right_bracket;

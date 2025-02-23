@@ -15,7 +15,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::TypeParenthesizedAst final : Ast {
     AstMemberType<TokenAst> tok_left_parenthesis;
-    AstMemberType<TypeAst> type;
+    AstMemberType<Ast> type;
     AstMemberType<TokenAst> tok_right_parenthesis;
 
     TypeParenthesizedAst(
@@ -28,5 +28,5 @@ struct SPP::SemanticAnalysis::Asts::TypeParenthesizedAst final : Ast {
 
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 
-    auto convert() -> AstMemberType<TypeAst>;
+    auto convert() -> AstMemberType<Ast>;
 };

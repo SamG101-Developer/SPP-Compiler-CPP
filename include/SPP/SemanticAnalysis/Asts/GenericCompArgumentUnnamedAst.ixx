@@ -14,7 +14,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 
 struct SPP::SemanticAnalysis::Asts::GenericCompArgumentUnnamedAst final : Ast {
-    AstMemberType<ExpressionAst> value;
+    AstMemberType<Ast> value;
 
     GenericCompArgumentUnnamedAst(
         std::size_t pos,

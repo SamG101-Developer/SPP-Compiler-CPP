@@ -18,7 +18,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::PostfixExpressionOperatorFunctionCallAst final : Ast {
     AstMemberType<GenericArgumentGroupAst> generic_args_group;
-    AstMemberType<FunctionCallArgumentAst> function_args_group;
+    AstMemberType<Ast> function_args_group;
     AstMemberTypeOpt<TokenAst> tok_fold;
 
     std::optional<std::tuple<Scoping::Scope*, FunctionPrototypeAst*>> _overload;

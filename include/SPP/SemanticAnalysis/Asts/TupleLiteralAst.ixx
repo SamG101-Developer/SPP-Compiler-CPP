@@ -16,7 +16,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::TupleLiteralAst final : Ast {
     AstMemberType<TokenAst> tok_left_parenthesis;
-    AstMemberType<std::vector<ExpressionAst>> tuple_list;
+    AstMemberType<std::vector<Ast>> tuple_list;
     AstMemberType<TokenAst> tok_right_parenthesis;
 
     TupleLiteralAst(

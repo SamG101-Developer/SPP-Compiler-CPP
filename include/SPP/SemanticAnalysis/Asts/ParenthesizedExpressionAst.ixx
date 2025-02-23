@@ -16,7 +16,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::ParenthesizedExpressionAst final : Ast {
     AstMemberType<TokenAst> tok_left_parenthesis;
-    AstMemberType<ExpressionAst> expr;
+    AstMemberType<Ast> expr;
     AstMemberType<TokenAst> tok_right_parenthesis;
 
     ParenthesizedExpressionAst(

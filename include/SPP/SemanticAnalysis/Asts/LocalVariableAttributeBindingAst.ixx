@@ -16,7 +16,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 struct SPP::SemanticAnalysis::Asts::LocalVariableAttributeBindingAst final : Ast {
     AstMemberType<IdentifierAst> name;
     AstMemberType<TokenAst> tok_assign;
-    AstMemberType<LocalVariableNestedForAttributeBindingAst> value;
+    AstMemberType<Ast> value;
 
     LocalVariableAttributeBindingAst(
         std::size_t pos,

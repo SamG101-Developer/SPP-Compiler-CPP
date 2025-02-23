@@ -5,7 +5,7 @@ target_sources(SPP_Utils PUBLIC FILE_SET CXX_MODULES
         ${CMAKE_SOURCE_DIR}/include/SPP/Utils/Converter.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/Utils/ErrorFormatter.ixx
         ${CMAKE_SOURCE_DIR}/include/SPP/Utils/PrettyPrinter.ixx
-        ${CMAKE_SOURCE_DIR}/include/SPP/Utils/VariantIntrinsics.ixx)
+        ${CMAKE_SOURCE_DIR}/include/SPP/Utils/Pointers.ixx)
 
 target_sources(SPP_Utils PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/ErrorFormatter.cpp)

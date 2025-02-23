@@ -15,10 +15,10 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::LetStatementUninitializedAst final : Ast {
     AstMemberType<TokenAst> tok_let;
-    AstMemberType<LocalVariableAst> variable;
+    AstMemberType<Ast> variable;
     AstMemberType<TokenAst> tok_colon;
     AstMemberType<ConventionAst> conv;
-    AstMemberType<TypeAst> type;
+    AstMemberType<Ast> type;
 
     LetStatementUninitializedAst(
         std::size_t pos,

@@ -14,7 +14,7 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 
 struct SPP::SemanticAnalysis::Asts::PatternVariantExpressionAst final : Ast {
-    AstMemberType<ExpressionAst> expr;
+    AstMemberType<Ast> expr;
 
     PatternVariantExpressionAst(
         std::size_t pos,

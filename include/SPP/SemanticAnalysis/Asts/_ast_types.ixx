@@ -1,8 +1,6 @@
 export module spp.semantic_analysis.asts.ast_types;
 import spp.utils.variant_intrinsics;
 
-using namespace SPP::Utils;
-
 
 export namespace SPP::SemanticAnalysis::Asts {
     struct Ast;
@@ -120,30 +118,30 @@ export namespace SPP::SemanticAnalysis::Asts {
     struct WhereConstraintsAst;
     struct WhereConstraintsGroupAst;
 
-    using ArrayLiteralAst = CollapsingVariant<
+    using ArrayLiteralAst = Utils::CollapsingVariant<
         ArrayLiteral0ElementAst,
         ArrayLiteralNElementsAst>;
 
-    using ClassMemberAst = CollapsingVariant<
+    using ClassMemberAst = Utils::CollapsingVariant<
         ClassAttributeAst>;
 
-    using FunctionCallArgumentAst = CollapsingVariant<
+    using FunctionCallArgumentAst = Utils::CollapsingVariant<
         FunctionCallArgumentNamedAst,
         FunctionCallArgumentUnnamedAst>;
 
-    using FunctionParameterAst = CollapsingVariant<
+    using FunctionParameterAst = Utils::CollapsingVariant<
         FunctionParameterSelfAst,
         FunctionParameterVariadicAst,
         FunctionParameterOptionalAst,
         FunctionParameterRequiredAst>;
 
-    using GenericArgumentAst = CollapsingVariant<
+    using GenericArgumentAst = Utils::CollapsingVariant<
         GenericTypeArgumentNamedAst,
         GenericTypeArgumentUnnamedAst,
         GenericCompArgumentNamedAst,
         GenericCompArgumentUnnamedAst>;
 
-    using GenericParameterAst = CollapsingVariant<
+    using GenericParameterAst = Utils::CollapsingVariant<
         GenericTypeParameterVariadicAst,
         GenericTypeParameterOptionalAst,
         GenericTypeParameterRequiredAst,
@@ -151,17 +149,17 @@ export namespace SPP::SemanticAnalysis::Asts {
         GenericCompParameterOptionalAst,
         GenericCompParameterRequiredAst>;
 
-    using LetStatementAst = CollapsingVariant<
+    using LetStatementAst = Utils::CollapsingVariant<
         LetStatementInitializedAst,
         LetStatementUninitializedAst>;
 
-    using LocalVariableAst = CollapsingVariant<
+    using LocalVariableAst = Utils::CollapsingVariant<
         LocalVariableDestructureArrayAst,
         LocalVariableDestructureTupleAst,
         LocalVariableDestructureObjectAst,
         LocalVariableSingleIdentifierAst>;
 
-    using LocalVariableNestedForDestructureArrayAst = CollapsingVariant<
+    using LocalVariableNestedForDestructureArrayAst = Utils::CollapsingVariant<
         LocalVariableDestructureArrayAst,
         LocalVariableDestructureTupleAst,
         LocalVariableDestructureObjectAst,
@@ -169,7 +167,7 @@ export namespace SPP::SemanticAnalysis::Asts {
         LocalVariableDestructureSkip1ArgumentAst,
         LocalVariableDestructureSkipNArgumentsAst>;
 
-    using LocalVariableNestedForDestructureTupleAst = CollapsingVariant<
+    using LocalVariableNestedForDestructureTupleAst = Utils::CollapsingVariant<
         LocalVariableDestructureArrayAst,
         LocalVariableDestructureTupleAst,
         LocalVariableDestructureObjectAst,
@@ -177,24 +175,24 @@ export namespace SPP::SemanticAnalysis::Asts {
         LocalVariableDestructureSkip1ArgumentAst,
         LocalVariableDestructureSkipNArgumentsAst>;
 
-    using LocalVariableNestedForDestructureObjectAst = CollapsingVariant<
+    using LocalVariableNestedForDestructureObjectAst = Utils::CollapsingVariant<
         LocalVariableAttributeBindingAst,
         LocalVariableSingleIdentifierAst,
         LocalVariableDestructureSkipNArgumentsAst>;
 
-    using LocalVariableNestedForAttributeBindingAst = CollapsingVariant<
+    using LocalVariableNestedForAttributeBindingAst = Utils::CollapsingVariant<
         LocalVariableDestructureArrayAst,
         LocalVariableDestructureTupleAst,
         LocalVariableDestructureObjectAst,
         LocalVariableSingleIdentifierAst>;
 
-    using LoopConditionAst = CollapsingVariant<
+    using LoopConditionAst = Utils::CollapsingVariant<
         LoopConditionIterableAst,
         LoopConditionBooleanAst>;
 
     using SupUseStatementAst = UseStatementAst;
 
-    using ModuleMemberAst = CollapsingVariant<
+    using ModuleMemberAst = Utils::CollapsingVariant<
         CoroutinePrototypeAst,
         SubroutinePrototypeAst,
         ClassPrototypeAst,
@@ -203,11 +201,11 @@ export namespace SPP::SemanticAnalysis::Asts {
         UseStatementAst,
         GlobalConstantAst>;
 
-    using ObjectInitializerArgumentAst = CollapsingVariant<
+    using ObjectInitializerArgumentAst = Utils::CollapsingVariant<
         ObjectInitializerArgumentNamedAst,
         ObjectInitializerArgumentUnnamedAst>;
 
-    using PatternVariantAst = CollapsingVariant<
+    using PatternVariantAst = Utils::CollapsingVariant<
         PatternVariantElseAst,
         PatternVariantExpressionAst,
         PatternVariantLiteralAst,
@@ -217,12 +215,12 @@ export namespace SPP::SemanticAnalysis::Asts {
         PatternVariantDestructureSkip1ArgumentAst,
         PatternVariantSingleIdentifierAst>;
 
-    using PatternGroupDestructureAst = CollapsingVariant<
+    using PatternGroupDestructureAst = Utils::CollapsingVariant<
         PatternVariantDestructureArrayAst,
         PatternVariantDestructureObjectAst,
         PatternVariantDestructureTupleAst>;
 
-    using PatternVariantNestedForDestructureArrayAst = CollapsingVariant<
+    using PatternVariantNestedForDestructureArrayAst = Utils::CollapsingVariant<
         PatternVariantDestructureArrayAst,
         PatternVariantDestructureObjectAst,
         PatternVariantDestructureTupleAst,
@@ -231,12 +229,12 @@ export namespace SPP::SemanticAnalysis::Asts {
         PatternVariantLiteralAst,
         PatternVariantSingleIdentifierAst>;
 
-    using PatternVariantNestedForDestructureObjectAst = CollapsingVariant<
+    using PatternVariantNestedForDestructureObjectAst = Utils::CollapsingVariant<
         PatternVariantAttributeBindingAst,
         PatternVariantDestructureSkipNArgumentsAst,
         PatternVariantSingleIdentifierAst>;
 
-    using PatternVariantNestedForDestructureTupleAst = CollapsingVariant<
+    using PatternVariantNestedForDestructureTupleAst = Utils::CollapsingVariant<
         PatternVariantDestructureArrayAst,
         PatternVariantDestructureObjectAst,
         PatternVariantDestructureTupleAst,
@@ -245,40 +243,40 @@ export namespace SPP::SemanticAnalysis::Asts {
         PatternVariantLiteralAst,
         PatternVariantSingleIdentifierAst>;
 
-    using PatternVariantNestedForAttributeBindingAst = CollapsingVariant<
+    using PatternVariantNestedForAttributeBindingAst = Utils::CollapsingVariant<
         PatternVariantDestructureArrayAst,
         PatternVariantDestructureObjectAst,
         PatternVariantDestructureTupleAst,
         PatternVariantLiteralAst>;
 
-    using PostfixExpressionOperatorAst = CollapsingVariant<
+    using PostfixExpressionOperatorAst = Utils::CollapsingVariant<
         PostfixExpressionOperatorEarlyReturnAst,
         PostfixExpressionOperatorFunctionCallAst,
         PostfixExpressionOperatorMemberAccessAst,
         PostfixExpressionOperatorStepKeywordAst,
         PostfixExpressionOperatorNotKeywordAst>;
 
-    using TypePostfixOperatorAst = CollapsingVariant<
+    using TypePostfixOperatorAst = Utils::CollapsingVariant<
         TypePostfixOperatorNestedTypeAst,
         TypePostfixOperatorIndexedTypeAst,
         TypePostfixOperatorOptionalTypeAst>;
 
-    using TypeAst = CollapsingVariant<
+    using TypeAst = Utils::CollapsingVariant<
         TypeSingleAst,
         TypeUnaryExpressionAst,
         TypeBinaryExpressionAst,
         TypePostfixExpressionAst>;
 
-    using TypePrimaryExpressionAst = CollapsingVariant<
+    using TypePrimaryExpressionAst = Utils::CollapsingVariant<
         TypeArrayAst,
         TypeTupleAst,
         TypeParenthesizedAst,
         TypeSingleAst>;
 
-    using TypeUnaryOperatorAst = CollapsingVariant<
+    using TypeUnaryOperatorAst = Utils::CollapsingVariant<
         TypeUnaryOperatorNamespaceAst>;
 
-    using LiteralAst = CollapsingVariant<
+    using LiteralAst = Utils::CollapsingVariant<
         FloatLiteralAst,
         IntegerLiteralAst,
         StringLiteralAst,
@@ -286,7 +284,7 @@ export namespace SPP::SemanticAnalysis::Asts {
         ArrayLiteralAst,
         TupleLiteralAst>;
 
-    using PrimaryExpressionAst = CollapsingVariant<
+    using PrimaryExpressionAst = Utils::CollapsingVariant<
         LiteralAst,
         ObjectInitializerAst,
         ParenthesizedExpressionAst,
@@ -298,13 +296,13 @@ export namespace SPP::SemanticAnalysis::Asts {
         IdentifierAst,
         TokenAst>;
 
-    using ExpressionAst = CollapsingVariant<
+    using ExpressionAst = Utils::CollapsingVariant<
         BinaryExpressionAst,
         PostfixExpressionAst,
         UnaryExpressionAst,
         PrimaryExpressionAst>;
 
-    using StatementAst = CollapsingVariant<
+    using StatementAst = Utils::CollapsingVariant<
         UseStatementAst,
         LetStatementAst,
         RetStatementAst,
@@ -316,24 +314,24 @@ export namespace SPP::SemanticAnalysis::Asts {
 
     using FunctionMemberAst = StatementAst;
 
-    using SupMemberAst = CollapsingVariant<
+    using SupMemberAst = Utils::CollapsingVariant<
         SubroutinePrototypeAst,
         CoroutinePrototypeAst,
         // SupPrototypeExtensionAst,
         SupUseStatementAst>;
 
-    using UnaryExpressionOperatorAst = CollapsingVariant<
+    using UnaryExpressionOperatorAst = Utils::CollapsingVariant<
         UnaryExpressionOperatorAsyncAst>;
 
-    using LoopControlFlowFinalActionAst = CollapsingVariant<
+    using LoopControlFlowFinalActionAst = Utils::CollapsingVariant<
         TokenAst,
         ExpressionAst>;
 
-    using PostfixExpressionOperatorMemberAccessFieldIdentifierAst = CollapsingVariant<
+    using PostfixExpressionOperatorMemberAccessFieldIdentifierAst = Utils::CollapsingVariant<
         IdentifierAst,
         TokenAst>;
 
-    using ObjectInitializerArgumentNameAst = CollapsingVariant<
+    using ObjectInitializerArgumentNameAst = Utils::CollapsingVariant<
         IdentifierAst,
         TokenAst>;
 }

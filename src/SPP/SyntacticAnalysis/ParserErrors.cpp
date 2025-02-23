@@ -1,32 +1,27 @@
 module;
-#include <coroutine>
 #include <magic_enum/magic_enum.hpp>
+#include <ranges>
 
 
 module spp.syntactic_analysis.parser_error;
 import spp.lexical_analysis.tokens;
 
-import genex.views.map;
-import genex.views.replace;
-import genex.views.intersperse;
-import genex.views.to;
-import genex.generator;
+// import genex.views.chunk;
+// import genex.views.map;
+// import genex.views.replace;
+// import genex.views.flat;
+// import genex.views.intersperse;
+// import genex.views.to;
+// import genex.generator;
 
 
 auto SPP::SyntacticAnalysis::Errors::SyntaxError::throw_(Utils::ErrorFormatter const &error_formatter) noexcept(false) -> void {
-    // Convert the set of expected tokens into a set of strings.
     const auto all_expected_tokens = expected
-        | genex::views::map([](const LexicalAnalysis::RawTokenTypes token) { return std::string{magic_enum::enum_name(token).data()}; })
-        // | genex::views::replace("\n", "\\n")
-        // | genex::views::intersperse(", ")
-        | genex::views::to<std::string>();
+        | std::ranges::views::transform([](const LexicalAnalysis::RawTokenTypes token) -> std::string { return std::string{magic_enum::enum_name(token).data()}; })
+        | std::ranges::views::join_with(std::string{", "})
+        | std::ranges::to<std::string>();
 
-    // Replace the "£" in the string with the set of expected tokens.
     auto error_message = std::string{what()};
-    error_message = error_message
-        // | genex::views::replace(static_cast<const char*>("£"), all_expected_tokens.c_str())
-        | genex::views::to<std::string>();
-
-    // Throw the error.
+    error_message.replace(error_message.find("£"), 1, all_expected_tokens);
     throw SyntaxError(pos, error_message.c_str());
 }

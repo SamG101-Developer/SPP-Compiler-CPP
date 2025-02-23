@@ -62,7 +62,8 @@ private:
     template <std::invocable<Parser*> F, std::invocable<Parser*> S>
     auto parse_2_or_more(F&& parser_rule, S&& separator) -> std::vector<std::invoke_result_t<F, Parser*>>;
 
-    template <std::invocable<Parser*>... Fs> auto parse_alternate(Fs&&... parser_rules) -> Utils::CollapsingVariant<std::invoke_result_t<Fs, Parser*>...>;
+    template <std::invocable<Parser*>... Fs>
+    auto parse_alternate(Fs&&... parser_rules) -> Utils::CollapsingVariant<std::invoke_result_t<Fs, Parser*>...>;
 
 public:
     auto parse() -> Asts::RootAst;
@@ -399,3 +400,75 @@ private:
     auto parse_keyword_primitive(LexicalAnalysis::TokenTypes keyword) -> std::unique_ptr<Asts::TokenAst>;
     auto parse_token_primitive(LexicalAnalysis::RawTokenTypes token_type) -> PARSER_RESULT_TYPE(Asts::TokenAst);
 };
+
+template <typename... Args, std::invocable<SPP::SyntacticAnalysis::Parser*, Args...> F>
+auto SPP::SyntacticAnalysis::Parser::parse_once(F &&parser_rule, Args &&... args) -> std::invoke_result_t<F, Parser*, Args...> {
+    return std::invoke(std::forward<F>(parser_rule), this, std::forward<Args>(args)...);
+}
+
+template <typename... Args, std::invocable<SPP::SyntacticAnalysis::Parser*, Args...> F>
+auto SPP::SyntacticAnalysis::Parser::parse_optional(F &&parser_rule, Args &&... args) -> std::optional<std::invoke_result_t<F, Parser*, Args...>> {
+    const auto index = pos;
+    const auto result = std::invoke(std::forward<F>(parser_rule), this, std::forward<Args>(args)...);
+
+    if (result.is_some()) {
+        return result;
+    }
+    pos = index;
+    return std::nullopt;
+}
+
+template <std::invocable<SPP::SyntacticAnalysis::Parser*> F, std::invocable<SPP::SyntacticAnalysis::Parser*> S>
+auto SPP::SyntacticAnalysis::Parser::parse_0_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>> {
+    auto done_1_parse = false;
+    auto result = std::vector<std::invoke_result_t<F, Parser*>>{};
+    auto temp_index = pos;
+
+    while (true) {
+        if (done_1_parse) {
+            const auto sep = parse_optional(std::forward<S>(separator));
+            if (sep.is_none()) { return result; }
+        }
+
+        const auto ast = std::invoke(std::forward<F>(parser_rule), this);
+        if (ast.is_some()) {
+            result.push_back(ast.unwrap());
+            done_1_parse = true;
+            temp_index = pos;
+        }
+        else {
+            pos = temp_index;
+            return result;
+        }
+    }
+}
+
+template <std::invocable<SPP::SyntacticAnalysis::Parser*> F, std::invocable<SPP::SyntacticAnalysis::Parser*> S>
+auto SPP::SyntacticAnalysis::Parser::parse_1_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>> {
+    const auto result = parse_0_or_more(std::forward<F>(parser_rule), std::forward<S>(separator));
+    if (result.empty()) {
+        throw Errors::SyntaxError{pos, "Expected at least one element"};
+    }
+    return result;
+}
+
+template <std::invocable<SPP::SyntacticAnalysis::Parser*> F, std::invocable<SPP::SyntacticAnalysis::Parser*> S>
+auto SPP::SyntacticAnalysis::Parser::parse_2_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>> {
+    const auto result = parse_0_or_more(std::forward<F>(parser_rule), std::forward<S>(separator));
+    if (result.size() < 2) {
+        throw Errors::SyntaxError{pos, "Expected at least two elements"};
+    }
+    return result;
+}
+
+template <std::invocable<SPP::SyntacticAnalysis::Parser*> ... Fs>
+auto SPP::SyntacticAnalysis::Parser::parse_alternate(Fs &&... parser_rules) -> Utils::CollapsingVariant<std::invoke_result_t<Fs, Parser*>...> {
+    for (const auto &parser_rule : {std::forward<Fs>(parser_rules)...}) {
+        const auto ast = parse_optional(parser_rule);
+        if (ast.is_some()) {
+            return ast.unwrap();
+        }
+    }
+    throw Errors::SyntaxError{pos, "Expected one of the alternatives"};
+}
+

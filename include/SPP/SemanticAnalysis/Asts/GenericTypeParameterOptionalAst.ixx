@@ -26,5 +26,7 @@ struct SPP::SemanticAnalysis::Asts::GenericTypeParameterOptionalAst final : Ast 
         decltype(tok_assign) &&tok_assign,
         decltype(default_type) &&default_type);
 
+    ~GenericTypeParameterOptionalAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

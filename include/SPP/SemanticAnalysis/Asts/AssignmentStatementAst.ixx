@@ -25,5 +25,7 @@ struct SPP::SemanticAnalysis::Asts::AssignmentStatementAst final : Ast {
         decltype(tok_assign) &&tok_assign,
         decltype(rhs) &&rhs);
 
+    ~AssignmentStatementAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

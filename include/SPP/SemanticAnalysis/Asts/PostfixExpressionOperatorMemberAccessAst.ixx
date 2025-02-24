@@ -22,5 +22,7 @@ struct SPP::SemanticAnalysis::Asts::PostfixExpressionOperatorMemberAccessAst fin
         decltype(tok_access) &&tok_access,
         decltype(field) &&field);
 
+    ~PostfixExpressionOperatorMemberAccessAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

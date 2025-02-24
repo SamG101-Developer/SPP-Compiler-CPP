@@ -21,7 +21,12 @@ enum class SPP::SemanticAnalysis::Asts::ConventionType {
 struct SPP::SemanticAnalysis::Asts::ConventionAst final : Ast {
     ConventionType type;
 
-    ConventionAst(std::size_t pos, decltype(type) &&type);
+    ConventionAst(
+        std::size_t pos,
+        decltype(type) &&type);
+
+    ~ConventionAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 
     static auto mov(std::size_t pos) -> std::unique_ptr<ConventionAst>;

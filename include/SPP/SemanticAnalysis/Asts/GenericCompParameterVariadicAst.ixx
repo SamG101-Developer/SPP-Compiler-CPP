@@ -28,5 +28,7 @@ struct SPP::SemanticAnalysis::Asts::GenericCompParameterVariadicAst final : Ast 
         decltype(tok_colon) &&tok_colon,
         decltype(type) &&type);
 
+    ~GenericCompParameterVariadicAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

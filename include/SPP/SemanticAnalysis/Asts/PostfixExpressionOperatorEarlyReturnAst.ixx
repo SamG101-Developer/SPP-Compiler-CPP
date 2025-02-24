@@ -20,5 +20,7 @@ struct SPP::SemanticAnalysis::Asts::PostfixExpressionOperatorEarlyReturnAst fina
         std::size_t pos,
         decltype(tok_question_mark) &&tok_question_mark);
 
+    ~PostfixExpressionOperatorEarlyReturnAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

@@ -22,5 +22,7 @@ struct SPP::SemanticAnalysis::Asts::PostfixExpressionOperatorStepKeywordAst fina
         decltype(tok_dot) &&tok_dot,
         decltype(tok_step) &&tok_step);
 
+    ~PostfixExpressionOperatorStepKeywordAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

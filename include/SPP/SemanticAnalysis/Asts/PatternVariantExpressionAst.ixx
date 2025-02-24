@@ -20,5 +20,7 @@ struct SPP::SemanticAnalysis::Asts::PatternVariantExpressionAst final : Ast {
         std::size_t pos,
         decltype(expr) &&expr);
 
+    ~PatternVariantExpressionAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

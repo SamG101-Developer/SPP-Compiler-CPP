@@ -21,5 +21,7 @@ struct SPP::SemanticAnalysis::Asts::ModuleImplementationAst final : Ast {
         std::size_t pos,
         decltype(members) &&members);
 
+    ~ModuleImplementationAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

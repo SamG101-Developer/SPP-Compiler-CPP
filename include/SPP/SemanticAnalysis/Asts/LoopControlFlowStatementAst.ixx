@@ -23,5 +23,7 @@ struct SPP::SemanticAnalysis::Asts::LoopControlFlowStatementAst final : Ast {
         decltype(tok_loop) &&tok_loop,
         decltype(skip_or_expr) &&skip_or_expr);
 
+    ~LoopControlFlowStatementAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

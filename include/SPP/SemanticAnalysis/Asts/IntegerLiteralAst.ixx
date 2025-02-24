@@ -24,5 +24,7 @@ struct SPP::SemanticAnalysis::Asts::IntegerLiteralAst final : Ast {
         decltype(val) &&val,
         decltype(type) &&type);
 
+    ~IntegerLiteralAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

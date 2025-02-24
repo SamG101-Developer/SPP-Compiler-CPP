@@ -22,5 +22,7 @@ struct SPP::SemanticAnalysis::Asts::UnaryExpressionAst final : Ast {
         decltype(op) &&op,
         decltype(rhs) &&rhs);
 
+    ~UnaryExpressionAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

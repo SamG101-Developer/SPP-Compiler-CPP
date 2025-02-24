@@ -20,5 +20,7 @@ struct SPP::SemanticAnalysis::Asts::UnaryExpressionOperatorAsyncAst final : Ast 
         std::size_t pos,
         decltype(tok_async) &&tok_async);
 
+    ~UnaryExpressionOperatorAsyncAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

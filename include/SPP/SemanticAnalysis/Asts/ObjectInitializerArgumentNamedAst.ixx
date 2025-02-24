@@ -24,5 +24,7 @@ struct SPP::SemanticAnalysis::Asts::ObjectInitializerArgumentNamedAst final : As
         decltype(tok_assign) &&tok_assign,
         decltype(value) &&value);
 
+    ~ObjectInitializerArgumentNamedAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

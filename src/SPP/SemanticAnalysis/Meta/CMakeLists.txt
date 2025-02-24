@@ -10,7 +10,4 @@ target_sources(SPP_SemanticAnalysis_Meta PRIVATE
 target_include_directories(SPP_SemanticAnalysis_Meta PRIVATE
         ${CMAKE_SOURCE_DIR}/include)
 
-target_link_libraries(SPP_SemanticAnalysis_Meta PRIVATE
-        re2::re2)
-
 add_library(SPP::SemanticAnalysis::Meta ALIAS SPP_SemanticAnalysis_Meta)

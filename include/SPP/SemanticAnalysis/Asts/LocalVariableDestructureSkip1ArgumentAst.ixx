@@ -20,5 +20,7 @@ struct SPP::SemanticAnalysis::Asts::LocalVariableDestructureSkip1ArgumentAst fin
         std::size_t pos,
         decltype(tok_underscore) &&tok_underscore);
 
+    ~LocalVariableDestructureSkip1ArgumentAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

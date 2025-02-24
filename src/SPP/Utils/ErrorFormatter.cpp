@@ -1,5 +1,6 @@
 module;
 #include <string>
+#include <vector>
 
 
 module spp.utils.error_formatter;

@@ -25,5 +25,7 @@ struct SPP::SemanticAnalysis::Asts::WhereConstraintsGroupAst final : Ast {
         decltype(constraints) &&constraints,
         decltype(tok_right_bracket) &&tok_right_bracket);
 
+    ~WhereConstraintsGroupAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

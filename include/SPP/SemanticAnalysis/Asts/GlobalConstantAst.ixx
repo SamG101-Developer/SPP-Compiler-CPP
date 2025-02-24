@@ -33,5 +33,7 @@ struct SPP::SemanticAnalysis::Asts::GlobalConstantAst final : Ast {
         decltype(tok_assign) &&tok_assign,
         decltype(value) &&value);
 
+    ~GlobalConstantAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

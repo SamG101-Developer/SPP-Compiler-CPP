@@ -59,6 +59,8 @@ struct SPP::SemanticAnalysis::Asts::FunctionParameterRequiredAst final : Ast {
         decltype(convention) &&convention,
         decltype(type) &&type);
 
+    ~FunctionParameterRequiredAst() override;
+
     /**
      * A convenience function to convert the AST node to a string representation. This calls the print function with a
      * new printer object rooted at this node.

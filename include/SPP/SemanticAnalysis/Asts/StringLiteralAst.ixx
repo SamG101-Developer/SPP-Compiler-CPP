@@ -20,5 +20,7 @@ struct SPP::SemanticAnalysis::Asts::StringLiteralAst final : Ast {
         std::size_t pos,
         decltype(val) &&val);
 
+    ~StringLiteralAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

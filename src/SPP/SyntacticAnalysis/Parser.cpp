@@ -132,36 +132,10 @@ using namespace SPP::SemanticAnalysis;
 using namespace SPP::LexicalAnalysis;
 
 
-template <SPP::SyntacticAnalysis::is_parser_member_function F>
-auto SPP::SyntacticAnalysis::Parser::parse_once(F &&parser_rule) -> decltype(auto) {
-    return std::mem_fn(std::forward<F>(parser_rule))(this);
-}
-
-template <typename F>
-auto SPP::SyntacticAnalysis::Parser::parse_once(F &&parser_rule) -> decltype(auto) {
-    return std::invoke(std::forward<F>(parser_rule), this);
-}
-
-template <typename F>
-auto SPP::SyntacticAnalysis::Parser::parse_optional(F &&parser_rule) -> std::optional<std::invoke_result_t<F, Parser*>> {
-    const auto index = pos;
-
-    try {
-        auto result = parse_once(std::forward<F>(parser_rule));
-        auto optional_type = std::optional<decltype(result)>();
-        optional_type = std::move(result);
-        return optional_type;
-    }
-    catch (Errors::SyntaxError &) {
-        pos = index;
-        return std::nullopt;
-    }
-}
-
-template <typename F, SPP::SyntacticAnalysis::is_parser_member_function S>
-auto SPP::SyntacticAnalysis::Parser::parse_0_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>> {
+template <typename R, SPP::SyntacticAnalysis::is_parser_member_function S>
+auto SPP::SyntacticAnalysis::Parser::parse_0_or_more(R(Parser::* parser_rule)(), S &&separator) -> std::vector<R> {
     auto done_1_parse = false;
-    auto result = std::vector<std::invoke_result_t<F, Parser*>>{};
+    auto result = std::vector<R>();
     auto temp_index = pos;
 
     while (true) {
@@ -171,8 +145,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_0_or_more(F &&parser_rule, S &&separa
         }
 
         try {
-            const auto ast = parse_once(std::forward<F>(parser_rule));
-            result.push_back(std::move(ast));
+            result.emplace_back(parse_once(parser_rule));
             done_1_parse = true;
             temp_index = pos;
         }
@@ -183,18 +156,18 @@ auto SPP::SyntacticAnalysis::Parser::parse_0_or_more(F &&parser_rule, S &&separa
     }
 }
 
-template <typename F, SPP::SyntacticAnalysis::is_parser_member_function S>
-auto SPP::SyntacticAnalysis::Parser::parse_1_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>> {
-    const auto result = parse_0_or_more(std::forward<F>(parser_rule), std::forward<S>(separator));
+template <typename R, SPP::SyntacticAnalysis::is_parser_member_function S>
+auto SPP::SyntacticAnalysis::Parser::parse_1_or_more(R(Parser::* parser_rule)(), S &&separator) -> std::vector<R> {
+    auto result = parse_0_or_more(parser_rule, std::forward<S>(separator));
     if (result.empty()) {
         throw Errors::SyntaxError{pos, "Expected at least one element"};
     }
     return result;
 }
 
-template <typename F, SPP::SyntacticAnalysis::is_parser_member_function S>
-auto SPP::SyntacticAnalysis::Parser::parse_2_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>> {
-    const auto result = parse_0_or_more(std::forward<F>(parser_rule), std::forward<S>(separator));
+template <typename R, SPP::SyntacticAnalysis::is_parser_member_function S>
+auto SPP::SyntacticAnalysis::Parser::parse_2_or_more(R(Parser::* parser_rule)(), S &&separator) -> std::vector<R> {
+    auto result = parse_0_or_more(parser_rule, std::forward<S>(separator));
     if (result.size() < 2) {
         throw Errors::SyntaxError{pos, "Expected at least two elements"};
     }
@@ -204,13 +177,13 @@ auto SPP::SyntacticAnalysis::Parser::parse_2_or_more(F &&parser_rule, S &&separa
 template <typename F, typename ... Fs>
 auto SPP::SyntacticAnalysis::Parser::parse_alternate(F&& parser_rule, Fs &&... parser_rules) -> std::unique_ptr<Asts::Ast> {
     auto p1 = parse_optional(std::forward<F>(parser_rule));
-    auto result = p1.transform([]<typename T>(T &&x) { return Utils::cast_unique<Asts::Ast>(std::move(x)); });
-    return result.value_or(parse_alternate(std::forward<Fs>(parser_rules)...));
+    auto result = p1.transform([](auto &&x) { return Utils::cast_unique<Asts::Ast>(std::move(x)); });
+    return std::move(result).value_or(parse_alternate(std::forward<Fs>(parser_rules)...));
 }
 
 template <typename F>
 auto SPP::SyntacticAnalysis::Parser::parse_alternate(F&& parser_rule) -> std::unique_ptr<Asts::Ast> {
-    auto p1 = std::mem_fn(std::forward<F>(parser_rule))(this);
+    auto p1 = parse_once(std::forward<F>(parser_rule));
     return Utils::cast_unique<Asts::Ast>(std::move(p1));
 }
 
@@ -678,16 +651,16 @@ auto SPP::SyntacticAnalysis::Parser::parse_binary_expression_precedence_level_6(
 auto SPP::SyntacticAnalysis::Parser::parse_unary_expression() -> std::unique_ptr<Asts::Ast> {
     auto p1 = parse_0_or_more(&Parser::parse_unary_op, &Parser::parse_nothing) | std::ranges::views::reverse;
     auto p2 = parse_once(&Parser::parse_postfix_expression);
-    return std::accumulate(p1.begin(), p1.end(), std::move(p2), []<typename A, typename T>(A &&acc, T &&elem) -> std::unique_ptr<Asts::UnaryExpressionAst> {
-        return std::make_unique<Asts::UnaryExpressionAst>(acc->pos, std::forward<T>(elem), std::forward<A>(acc));
+    return std::accumulate(p1.begin(), p1.end(), std::move(p2), [](auto &&acc, auto &&elem) -> std::unique_ptr<Asts::UnaryExpressionAst> {
+        return std::make_unique<Asts::UnaryExpressionAst>(acc->pos, std::move(elem), std::move(acc));
     });
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_postfix_expression() -> std::unique_ptr<Asts::Ast> {
     auto p1 = parse_once(&Parser::parse_primary_expression);
     auto p2 = parse_0_or_more(&Parser::parse_postfix_op, &Parser::parse_nothing);
-    return std::accumulate(p2.begin(), p2.end(), std::move(p1), []<typename A, typename T>(A &&acc, T &&elem) -> std::unique_ptr<Asts::PostfixExpressionAst> {
-        return std::make_unique<Asts::PostfixExpressionAst>(acc->pos, std::forward<T>(elem), std::forward<A>(acc));
+    return std::accumulate(p2.begin(), p2.end(), std::move(p1), [](auto &&acc, auto &&elem) -> std::unique_ptr<Asts::PostfixExpressionAst> {
+        return std::make_unique<Asts::PostfixExpressionAst>(acc->pos, std::move(elem), std::move(acc));
     });
 }
 
@@ -1088,7 +1061,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_pattern_flavour_destructuring() -> st
 auto SPP::SyntacticAnalysis::Parser::parse_pattern_flavour_non_destructuring() -> std::unique_ptr<Asts::CaseExpressionBranchAst> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_boolean_comparison_op);
-    auto p2 = parse_1_or_more([](Parser* x) { return Utils::cast_unique<Asts::Ast>(std::mem_fn(&Parser::parse_pattern_variant_expression)(x)); }, &Parser::parse_token_comma);
+    auto p2 = parse_1_or_more(&Parser::parse_pattern_variant_expression, &Parser::parse_token_comma);
     auto p3 = parse_once(&Parser::parse_inner_scope);
     return std::make_unique<Asts::CaseExpressionBranchAst>(c1, std::move(p1), std::move(p2), std::nullopt, std::move(p3));
 }
@@ -1103,7 +1076,10 @@ auto SPP::SyntacticAnalysis::Parser::parse_pattern_flavour_else() -> std::unique
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_pattern_variant_else);
     auto p2 = parse_once(&Parser::parse_inner_scope);
-    return std::make_unique<Asts::CaseExpressionBranchAst>(c1, std::nullopt, std::vector{Utils::cast_unique<Asts::Ast>(std::move(p1))}, std::nullopt, std::move(p2));
+
+    auto a1 = std::make_unique<Asts::CaseExpressionBranchAst>(c1, std::nullopt, std::vector<std::unique_ptr<Asts::Ast>>{}, std::nullopt, std::move(p2));
+    a1->patterns.push_back(std::move(p1));
+    return a1;
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_pattern_group_destructure() -> std::unique_ptr<Asts::Ast> {
@@ -1178,7 +1154,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_literal() -> std::uni
     return std::make_unique<Asts::PatternVariantLiteralAst>(c1, std::move(p1));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_expression() -> std::unique_ptr<Asts::PatternVariantExpressionAst> {
+auto SPP::SyntacticAnalysis::Parser::parse_pattern_variant_expression() -> std::unique_ptr<Asts::Ast> {
     auto c1 = get_current_pos();
     auto p1 = parse_once(&Parser::parse_expression);
     return std::make_unique<Asts::PatternVariantExpressionAst>(c1, std::move(p1));
@@ -1474,16 +1450,16 @@ auto SPP::SyntacticAnalysis::Parser::parse_type_binary_expression_precedence_lev
 auto SPP::SyntacticAnalysis::Parser::parse_type_unary_expression() -> std::unique_ptr<Asts::Ast> {
     auto p1 = parse_0_or_more(&Parser::parse_type_unary_op, &Parser::parse_nothing) | std::ranges::views::reverse;
     auto p2 = parse_once(&Parser::parse_type_primary_expression);
-    return std::accumulate(p1.begin(), p1.end(), std::move(p2), []<typename A, typename T>(A &&acc, T &&elem) -> std::unique_ptr<Asts::TypeUnaryExpressionAst> {
-        return std::make_unique<Asts::TypeUnaryExpressionAst>(acc->pos, std::forward<T>(elem), std::forward<A>(acc));
+    return std::accumulate(p1.begin(), p1.end(), std::move(p2), [](auto &&acc, auto &&elem) -> std::unique_ptr<Asts::TypeUnaryExpressionAst> {
+        return std::make_unique<Asts::TypeUnaryExpressionAst>(acc->pos, std::move(elem), std::move(acc));
     });
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_type_postfix_expression() -> std::unique_ptr<Asts::Ast> {
     auto p1 = parse_once(&Parser::parse_type_primary_expression);
     auto p2 = parse_0_or_more(&Parser::parse_type_postfix_op, &Parser::parse_nothing);
-    return std::accumulate(p2.begin(), p2.end(), std::move(p1), []<typename A, typename T>(A &&acc, T &&elem) -> std::unique_ptr<Asts::TypePostfixExpressionAst> {
-        return std::make_unique<Asts::TypePostfixExpressionAst>(acc->pos, std::forward<A>(acc), std::forward<T>(elem));
+    return std::accumulate(p2.begin(), p2.end(), std::move(p1), [](auto &&acc, auto &&elem) -> std::unique_ptr<Asts::TypePostfixExpressionAst> {
+        return std::make_unique<Asts::TypePostfixExpressionAst>(acc->pos, std::move(acc), std::move(elem));
     });
 }
 
@@ -1574,7 +1550,10 @@ auto SPP::SyntacticAnalysis::Parser::parse_type_tuple_1_items() -> std::unique_p
     auto p2 = parse_once(&Parser::parse_type);
     auto p3 = parse_once(&Parser::parse_token_comma);
     auto p4 = parse_once(&Parser::parse_token_right_parenthesis);
-    return std::make_unique<Asts::TypeTupleAst>(c1, std::move(p1), std::vector{std::move(p2)}, std::move(p4));
+
+    auto a1 = std::make_unique<Asts::TypeTupleAst>(c1, std::move(p1), std::vector<std::unique_ptr<Asts::Ast>>{}, std::move(p4));
+    a1->type_list.push_back(std::move(p2));
+    return a1;
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_type_tuple_n_items() -> std::unique_ptr<Asts::TypeTupleAst> {
@@ -1762,7 +1741,10 @@ auto SPP::SyntacticAnalysis::Parser::parse_literal_tuple_1_items() -> std::uniqu
     auto p2 = parse_once(&Parser::parse_expression);
     auto _a = parse_once(&Parser::parse_token_comma);
     auto p3 = parse_once(&Parser::parse_token_right_parenthesis);
-    return std::make_unique<Asts::TupleLiteralAst>(c1, std::move(p1), std::vector{std::move(p2)}, std::move(p3));
+
+    auto a1 = std::make_unique<Asts::TupleLiteralAst>(c1, std::move(p1), std::vector<std::unique_ptr<Asts::Ast>>{}, std::move(p3));
+    a1->tuple_list.push_back(std::move(p2));
+    return a1;
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_literal_comp_tuple_1_items() -> std::unique_ptr<Asts::TupleLiteralAst> {
@@ -1771,7 +1753,10 @@ auto SPP::SyntacticAnalysis::Parser::parse_literal_comp_tuple_1_items() -> std::
     auto p2 = parse_once(&Parser::parse_comp_value);
     auto _a = parse_once(&Parser::parse_token_comma);
     auto p3 = parse_once(&Parser::parse_token_right_parenthesis);
-    return std::make_unique<Asts::TupleLiteralAst>(c1, std::move(p1), std::vector{std::move(p2)}, std::move(p3));
+
+    auto a1 = std::make_unique<Asts::TupleLiteralAst>(c1, std::move(p1), std::vector<std::unique_ptr<Asts::Ast>>{}, std::move(p3));
+    a1->tuple_list.push_back(std::move(p2));
+    return a1;
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_literal_tuple_n_items() -> std::unique_ptr<Asts::TupleLiteralAst> {
@@ -1862,145 +1847,145 @@ auto SPP::SyntacticAnalysis::Parser::parse_keyword_primitive(const TokenTypes ke
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_left_curly_brace() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkLeftCurlyBrace); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkLeftCurlyBrace); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkLeftBrace, "{");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_right_curly_brace() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkRightCurlyBrace); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkRightCurlyBrace); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkRightBrace, "}");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_left_parenthesis() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkLeftParenthesis); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkLeftParenthesis); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkLeftParenthesis, "(");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_right_parenthesis() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkRightParenthesis); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkRightParenthesis); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkRightParenthesis, ")");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_left_square_bracket() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkLeftSquareBracket); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkLeftSquareBracket); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkLeftBracket, "[");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_right_square_bracket() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkRightSquareBracket); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkRightSquareBracket); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkRightBracket, "]");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_dot() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkDot); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkDot); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkDot, ".");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_comma() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkComma); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkComma); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkComma, ",");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_colon() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkColon); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkColon); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkColon, ":");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_at() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkAt); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkAt); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkAt, "@");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_assign() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkAssign, "=");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_newline() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkNewLine); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkNewLine); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkNewLine, "\n");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_question_mark() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkQuestionMark); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkQuestionMark); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkQuestionMark, "?");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_borrow() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkAmpersand); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkAmpersand); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkAmpersand, "&");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_union() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkVerticalBar); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkVerticalBar); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkVerticalBar, "|");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_lt() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkLessThanSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkLessThanSign); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkLessThan, "<");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_gt() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkGreaterThanSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkGreaterThanSign); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkGreaterThan, ">");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_add() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkPlusSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkPlusSign); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkPlus, "+");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_sub() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkMinusSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkMinusSign); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkMinus, "-");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_mul() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkAsterisk); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkAsterisk); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkAsterisk, "*");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_div() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkForwardSlash); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkForwardSlash); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkForwardSlash, "/");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_rem() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkPercentSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkPercentSign); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkPercent, "%");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_underscore() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkUnderscore); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkUnderscore); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkUnderscore, "_");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_speech_mark() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkSpeechMark); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkSpeechMark); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkSpeechMark, "\"");
 }
 
@@ -2018,313 +2003,313 @@ auto SPP::SyntacticAnalysis::Parser::parse_token_double_dot() -> std::unique_ptr
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_rightward_arrow() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkMinusSign); });
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkGreaterThanSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkMinusSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkGreaterThanSign); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkRightwardsArrow, "->");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_eq() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkEquals, "==");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_ne() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkExclamationMark); });
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkExclamationMark); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkNotEquals, "!=");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_le() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkLessThanSign); });
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkLessThanSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkLessThanOrEqual, "<=");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_ge() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkGreaterThanSign); });
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkGreaterThanSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkGreaterThanOrEqual, ">=");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_add_assign() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkPlusSign); });
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkPlusSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkPlusEquals, "+=");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_sub_assign() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkMinusSign); });
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkMinusSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkMinusEquals, "-=");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_ss() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkLessThanSign); });
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkGreaterThanSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkLessThanSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkGreaterThanSign); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkSpaceship, "<=>");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_mul_assign() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkAsterisk); });
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkAsterisk); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkAsteriskEquals, "*=");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_div_assign() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkForwardSlash); });
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkForwardSlash); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkForwardSlashEquals, "/=");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_rem_assign() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkPercentSign); });
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkPercentSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkPercentEquals, "%=");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_mod_assign() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkPercentSign); });
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkPercentSign); });
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkPercentSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkPercentSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkDoublePercentEquals, "%%=");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_exp_assign() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkAsterisk); });
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkAsterisk); });
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkAsterisk); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkAsterisk); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkEqualsSign); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkExponentEquals, "**=");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_mod() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkPercentSign); });
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkPercentSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkPercentSign); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkPercentSign); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkPercent, "%%");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_exp() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkAsterisk); });
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkAsterisk); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkAsterisk); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkAsterisk); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::TkExponent, "**");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_nothing() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::NoToken); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::NoToken); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::NoToken, "");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_cls() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwCls); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwCls); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwCls, "cls");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_sup() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwSup); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwSup); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwSup, "sup");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_ext() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwExt); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwExt); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwExt, "ext");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_fun() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwFun); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwFun); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwFun, "fun");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_cor() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwCor); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwCor); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwCor, "cor");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_use() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwUse); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwUse); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwUse, "use");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_let() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwLet); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwLet); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwLet, "let");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_mut() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwMut); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwMut); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwMut, "mut");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_cmp() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwCmp); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwCmp); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwCmp, "cmp");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_where() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwWhere); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwWhere); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwWhere, "where");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_self_val() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwSelfVal); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwSelfVal); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwSelfVal, "self");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_self_type() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwSelfType); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwSelfType); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwSelfType, "Self");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_case() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwCase); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwCase); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwCase, "case");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_loop() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwLoop); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwLoop); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwLoop, "loop");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_with() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwWith); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwWith); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwWith, "with");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_gen() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwGen); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwGen); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwGen, "gen");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_ret() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwRet); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwRet); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwRet, "ret");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_skip() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwSkip); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwSkip); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwSkip, "skip");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_exit() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwExit); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwExit); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwExit, "exit");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_else() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwElse); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwElse); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwElse, "else");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_false() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwFalse); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwFalse); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwFalse, "false");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_true() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwTrue); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwTrue); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwTrue, "true");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_of() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwOf); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwOf); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwOf, "of");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_in() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwIn); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwIn); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwIn, "in");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_pin() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwPin); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwPin); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwPin, "pin");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_rel() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwRel); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwRel); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwRel, "rel");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_as() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwAs); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwAs); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwAs, "as");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_is() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwIs); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwIs); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwIs, "is");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_and() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwAnd); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwAnd); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwAnd, "and");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_or() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwOr); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwOr); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwOr, "or");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_not() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwNot); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwNot); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwNot, "not");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_async() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwAsync); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwAsync); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwAsync, "async");
 }
 
 auto SPP::SyntacticAnalysis::Parser::parse_keyword_step() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwStep); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_keyword_primitive)(x, TokenTypes::KwStep); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::KwStep, "step");
 }
 
@@ -2335,7 +2320,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_lexeme_dec_integer() -> std::unique_p
     parse_once(&Parser::parse_nothing);
     switch (token_stream[get_current_pos()].tok_type) {
     case RawTokenTypes::TkNumber:
-        parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkNumber); });
+        parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkNumber); });
         integer += token_stream[get_current_pos()].tok_metadata;
     default:
         throw Errors::SyntaxError(c1, "Expected decimal integer");
@@ -2443,7 +2428,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_lexeme_identifier() -> std::unique_pt
     switch (token_stream[get_current_pos()].tok_type) {
     case RawTokenTypes::TkCharacter:
         if (std::islower(token_stream[get_current_pos()].tok_metadata)) {
-            parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkCharacter); });
+            parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkCharacter); });
             identifier += token_stream[get_current_pos()].tok_metadata;
         }
         else {
@@ -2495,7 +2480,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_lexeme_upper_identifier() -> std::uni
     switch (token_stream[get_current_pos()].tok_type) {
     case RawTokenTypes::TkCharacter:
         if (std::isupper(token_stream[get_current_pos()].tok_metadata)) {
-            parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkCharacter); });
+            parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkCharacter); });
             identifier += token_stream[get_current_pos()].tok_metadata;
         }
         else {
@@ -2574,7 +2559,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_character(char character) -> std::uni
             return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::TkNumber);
         });
         if (number->token_data[0] != character)
-            throw Errors::SyntaxError(c1, format("Expected '{}', got '{}'", character, number->token_data));
+            throw Errors::SyntaxError(c1, std::format("Expected '{}', got '{}'", character, number->token_data));
         return std::make_unique<Asts::TokenAst>(c1, TokenTypes::NoToken, std::move(number->token_data));
     }
 
@@ -2585,7 +2570,7 @@ auto SPP::SyntacticAnalysis::Parser::parse_character(char character) -> std::uni
 
 auto SPP::SyntacticAnalysis::Parser::parse_eof() -> std::unique_ptr<Asts::TokenAst> {
     auto c1 = get_current_pos();
-    parse_once([](Parser *x) { std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::EndOfFile); });
+    parse_once([](Parser *x) { return std::mem_fn(&Parser::parse_token_primitive)(x, RawTokenTypes::EndOfFile); });
     return std::make_unique<Asts::TokenAst>(c1, TokenTypes::EndOfFile, "");
 }
 

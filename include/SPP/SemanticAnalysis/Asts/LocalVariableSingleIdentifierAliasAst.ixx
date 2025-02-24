@@ -22,5 +22,7 @@ struct SPP::SemanticAnalysis::Asts::LocalVariableSingleIdentifierAliasAst final 
         decltype(tok_as) &&tok_as,
         decltype(name) &&name);
 
+    ~LocalVariableSingleIdentifierAliasAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

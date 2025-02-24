@@ -18,6 +18,12 @@ struct SPP::SemanticAnalysis::Asts::GenericIdentifierAst final : Ast {
     std::string value;
     AstMemberType<GenericArgumentGroupAst> generic_args_group;
 
-    GenericIdentifierAst(std::size_t pos, decltype(value) &&value, decltype(generic_args_group) &&generic_args_group);
+    GenericIdentifierAst(
+        std::size_t pos,
+        decltype(value) &&value,
+        decltype(generic_args_group) &&generic_args_group);
+
+    ~GenericIdentifierAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

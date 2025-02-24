@@ -22,5 +22,7 @@ struct SPP::SemanticAnalysis::Asts::TypePostfixOperatorIndexedTypeAst final : As
         decltype(tok_sep) &&tok_sep,
         decltype(index) &&index);
 
+    ~TypePostfixOperatorIndexedTypeAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

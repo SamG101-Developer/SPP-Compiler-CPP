@@ -31,5 +31,7 @@ struct SPP::SemanticAnalysis::Asts::LoopExpressionAst final : Ast {
         decltype(inner_scope) &&inner_scope,
         decltype(else_statement) &&else_statement);
 
+    ~LoopExpressionAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

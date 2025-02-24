@@ -22,5 +22,7 @@ struct SPP::SemanticAnalysis::Asts::PatternVariantElseCaseAst final : Ast {
         decltype(tok_else) &&tok_else,
         decltype(case_expr) &&case_expr);
 
+    ~PatternVariantElseCaseAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

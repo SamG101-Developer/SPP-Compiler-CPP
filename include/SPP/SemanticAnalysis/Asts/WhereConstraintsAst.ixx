@@ -26,5 +26,7 @@ struct SPP::SemanticAnalysis::Asts::WhereConstraintsAst final : Ast {
         decltype(tok_colon) &&tok_colon,
         decltype(constraint) &&constraint);
 
+    ~WhereConstraintsAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

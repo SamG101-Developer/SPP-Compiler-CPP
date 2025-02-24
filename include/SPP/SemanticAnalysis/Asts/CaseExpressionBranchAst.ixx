@@ -32,5 +32,7 @@ struct SPP::SemanticAnalysis::Asts::CaseExpressionBranchAst final : Ast {
         std::size_t pos,
         std::unique_ptr<PatternVariantElseCaseAst> &&else_case) -> std::unique_ptr<CaseExpressionBranchAst>;
 
+    ~CaseExpressionBranchAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

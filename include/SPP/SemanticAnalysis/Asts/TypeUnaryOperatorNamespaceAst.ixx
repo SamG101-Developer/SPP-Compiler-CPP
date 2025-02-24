@@ -22,5 +22,7 @@ struct SPP::SemanticAnalysis::Asts::TypeUnaryOperatorNamespaceAst final : Ast {
         decltype(name) &&name,
         decltype(tok_sep) &&tok_sep);
 
+    ~TypeUnaryOperatorNamespaceAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

@@ -24,5 +24,7 @@ struct SPP::SemanticAnalysis::Asts::PatternVariantSingleIdentifierAst final : As
         decltype(name) &&name,
         decltype(alias) &&alias);
 
+    ~PatternVariantSingleIdentifierAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

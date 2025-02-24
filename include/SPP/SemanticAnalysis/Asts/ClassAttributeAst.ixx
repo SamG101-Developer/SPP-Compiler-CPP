@@ -24,6 +24,14 @@ struct SPP::SemanticAnalysis::Asts::ClassAttributeAst final : Ast {
     AstMemberType<TokenAst> tok_colon;
     AstMemberType<Ast> type;
 
-    ClassAttributeAst(std::size_t pos, decltype(annotations) &&annotations, decltype(identifier) &&identifier, decltype(tok_colon) &&tok_colon, decltype(type) &&type);
+    ClassAttributeAst(
+        std::size_t pos,
+        decltype(annotations) &&annotations,
+        decltype(identifier) &&identifier,
+        decltype(tok_colon) &&tok_colon,
+        decltype(type) &&type);
+
+    ~ClassAttributeAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

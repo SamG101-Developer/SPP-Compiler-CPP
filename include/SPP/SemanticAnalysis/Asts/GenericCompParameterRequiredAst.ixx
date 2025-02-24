@@ -26,5 +26,7 @@ struct SPP::SemanticAnalysis::Asts::GenericCompParameterRequiredAst final : Ast 
         decltype(tok_colon) &&tok_colon,
         decltype(type) &&type);
 
+    ~GenericCompParameterRequiredAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

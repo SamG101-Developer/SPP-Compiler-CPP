@@ -34,6 +34,7 @@ struct SPP::SemanticAnalysis::Scoping::NamespaceSymbol final : Symbol {
     NamespaceSymbol(NamespaceSymbol &&) noexcept = default;
     auto operator=(NamespaceSymbol &) -> NamespaceSymbol& = delete;
     auto operator=(NamespaceSymbol &&) noexcept -> NamespaceSymbol& = default;
+    ~NamespaceSymbol() override;
 
     auto copy() const -> NamespaceSymbol;
     auto to_json() const -> std::u8string override;

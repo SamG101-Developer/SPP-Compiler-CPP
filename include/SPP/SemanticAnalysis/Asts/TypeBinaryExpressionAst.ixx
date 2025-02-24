@@ -24,6 +24,8 @@ struct SPP::SemanticAnalysis::Asts::TypeBinaryExpressionAst final : Ast {
         decltype(op) &&op,
         decltype(rhs) &&rhs);
 
+    ~TypeBinaryExpressionAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 
     auto convert() -> AstMemberType<Ast>;

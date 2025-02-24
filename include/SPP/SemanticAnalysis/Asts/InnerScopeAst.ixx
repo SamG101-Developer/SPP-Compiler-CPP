@@ -25,5 +25,7 @@ struct SPP::SemanticAnalysis::Asts::InnerScopeAst final : Ast {
         decltype(members) &&members,
         decltype(tok_right_brace) &&tok_right_brace);
 
+    ~InnerScopeAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

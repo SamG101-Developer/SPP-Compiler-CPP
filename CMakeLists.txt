@@ -8,7 +8,6 @@ set(CMAKE_CXX_STANDARD ${CMAKE_CXX_STANDARD_LATEST})
 include(FetchContent)
 
 find_package(magic_enum REQUIRED)
-find_package(RE2 REQUIRED)
 find_package(Boost REQUIRED)
 
 add_subdirectory(src/SPP)

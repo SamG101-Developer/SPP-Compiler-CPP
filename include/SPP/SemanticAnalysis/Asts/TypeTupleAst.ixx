@@ -25,6 +25,8 @@ struct SPP::SemanticAnalysis::Asts::TypeTupleAst final : Ast {
         decltype(type_list) &&type_list,
         decltype(tok_right_parenthesis) &&tok_right_parenthesis);
 
+    ~TypeTupleAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 
     auto convert() -> AstMemberType<Ast>;

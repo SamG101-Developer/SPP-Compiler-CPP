@@ -28,5 +28,7 @@ struct SPP::SemanticAnalysis::Asts::GenericArgumentGroupAst final : Ast {
 
     static auto from_empty() -> std::unique_ptr<GenericArgumentGroupAst>;
 
+    ~GenericArgumentGroupAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

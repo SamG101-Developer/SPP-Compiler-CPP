@@ -25,5 +25,7 @@ struct SPP::SemanticAnalysis::Asts::PatternVariantDestructureArrayAst final : As
         decltype(bindings) &&bindings,
         decltype(tok_right_bracket) &&tok_right_bracket);
 
+    ~PatternVariantDestructureArrayAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

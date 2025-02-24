@@ -24,5 +24,7 @@ struct SPP::SemanticAnalysis::Asts::PatternVariantAttributeBindingAst final : As
         decltype(tok_assign) &&tok_assign,
         decltype(value) &&value);
 
+    ~PatternVariantAttributeBindingAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

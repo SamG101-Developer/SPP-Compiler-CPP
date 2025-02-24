@@ -22,5 +22,7 @@ struct SPP::SemanticAnalysis::Asts::PatternVariantDestructureSkipNArgumentsAst f
         decltype(tok_variadic) &&tok_variadic,
         decltype(binding) &&binding);
 
+    ~PatternVariantDestructureSkipNArgumentsAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

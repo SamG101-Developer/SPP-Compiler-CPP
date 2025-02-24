@@ -23,5 +23,7 @@ struct SPP::SemanticAnalysis::Asts::PinStatementAst final : Ast {
         decltype(tok_pin) &&tok_pin,
         decltype(pins) &&pins);
 
+    ~PinStatementAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

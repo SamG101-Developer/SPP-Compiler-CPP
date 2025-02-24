@@ -22,5 +22,7 @@ struct SPP::SemanticAnalysis::Asts::LoopElseStatementAst final : Ast {
         decltype(tok_else) &&tok_else,
         decltype(body) &&body);
 
+    ~LoopElseStatementAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

@@ -28,5 +28,7 @@ struct SPP::SemanticAnalysis::Asts::LetStatementUninitializedAst final : Ast {
         decltype(conv) &&conv,
         decltype(type) &&type);
 
+    ~LetStatementUninitializedAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

@@ -22,5 +22,7 @@ struct SPP::SemanticAnalysis::Asts::PostfixExpressionOperatorNotKeywordAst final
         decltype(tok_dot) &&tok_dot,
         decltype(tok_not) &&tok_not);
 
+    ~PostfixExpressionOperatorNotKeywordAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

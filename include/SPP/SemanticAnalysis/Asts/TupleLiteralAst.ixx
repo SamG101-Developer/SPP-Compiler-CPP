@@ -25,5 +25,7 @@ struct SPP::SemanticAnalysis::Asts::TupleLiteralAst final : Ast {
         decltype(tuple_list) &&tuple_list,
         decltype(tok_right_parenthesis) &&tok_right_parenthesis);
 
+    ~TupleLiteralAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

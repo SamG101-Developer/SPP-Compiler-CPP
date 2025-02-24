@@ -33,5 +33,7 @@ struct SPP::SemanticAnalysis::Asts::UseStatementAst final : Ast {
         decltype(tok_assign) &&tok_assign,
         decltype(old_type) &&old_type);
 
+    ~UseStatementAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

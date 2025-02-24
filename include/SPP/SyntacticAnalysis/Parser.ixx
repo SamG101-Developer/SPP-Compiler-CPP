@@ -48,23 +48,45 @@ public:
     auto set_current_pos(std::size_t new_index) -> void;
 
 private:
-    template <is_parser_member_function F>
-    auto parse_once(F &&parser_rule) -> decltype(auto);
+    template <typename F>
+    auto parse_once(F &&parser_rule) -> std::invoke_result_t<F, Parser*> {
+        return std::invoke(std::forward<F>(parser_rule), this);
+    }
+
+    template <typename R>
+    auto parse_once(R(Parser::* parser_rule)()) -> R {
+        return parse_once(std::mem_fn(parser_rule));
+    }
 
     template <typename F>
-    auto parse_once(F &&parser_rule) -> decltype(auto);
+    auto parse_optional(F&& parser_rule) -> std::optional<std::invoke_result_t<F, Parser*>> {
+        const auto index = pos;
 
-    template <typename F>
-    auto parse_optional(F &&parser_rule) -> std::optional<std::invoke_result_t<F, Parser*>>;
+        try {
+            auto result = parse_once(std::forward<F>(parser_rule));
+            auto optional_type = std::optional<decltype(result)>();
+            optional_type = std::move(result);
+            return optional_type;
+        }
+        catch (Errors::SyntaxError &) {
+            pos = index;
+            return std::nullopt;
+        }
+    }
 
-    template <typename F, is_parser_member_function S>
-    auto parse_0_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>>;
+    template <typename R>
+    auto parse_optional(R(Parser::* parser_rule)()) -> std::optional<R> {
+        return parse_optional(std::mem_fn(parser_rule));
+    }
 
-    template <typename F, is_parser_member_function S>
-    auto parse_1_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>>;
+    template <typename R, is_parser_member_function S>
+    auto parse_0_or_more(R(Parser::* parser_rule)(), S &&separator) -> std::vector<R>;
 
-    template <typename F, is_parser_member_function S>
-    auto parse_2_or_more(F &&parser_rule, S &&separator) -> std::vector<std::invoke_result_t<F, Parser*>>;
+    template <typename R, is_parser_member_function S>
+    auto parse_1_or_more(R(Parser::* parser_rule)(), S &&separator) -> std::vector<R>;
+
+    template <typename R, is_parser_member_function S>
+    auto parse_2_or_more(R(Parser::* parser_rule)(), S &&separator) -> std::vector<R>;
 
     template <typename F, typename... Fs>
     auto parse_alternate(F&& parser_rule, Fs &&... parser_rules) -> std::unique_ptr<Asts::Ast>;
@@ -218,7 +240,7 @@ private:
     CREATE_PARSER_RULE(pattern_variant_destructure_tuple, Asts::PatternVariantDestructureTupleAst);
     CREATE_PARSER_RULE(pattern_variant_attribute_binding, Asts::PatternVariantAttributeBindingAst);
     CREATE_PARSER_RULE(pattern_variant_literal, Asts::PatternVariantLiteralAst)
-    CREATE_PARSER_RULE(pattern_variant_expression, Asts::PatternVariantExpressionAst);
+    CREATE_PARSER_RULE(pattern_variant_expression, Asts::Ast);
     CREATE_PARSER_RULE(pattern_variant_else, Asts::PatternVariantElseAst);
     CREATE_PARSER_RULE(pattern_variant_else_case, Asts::PatternVariantElseCaseAst);
     CREATE_PARSER_RULE(pattern_variant_nested_for_destructure_array, Asts::Ast);

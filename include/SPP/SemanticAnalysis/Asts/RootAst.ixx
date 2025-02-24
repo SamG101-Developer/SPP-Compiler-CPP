@@ -22,5 +22,7 @@ struct SPP::SemanticAnalysis::Asts::RootAst final : Ast {
         decltype(root_ast) &&root_ast,
         decltype(tok_eof) &&tok_eof);
 
+    ~RootAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

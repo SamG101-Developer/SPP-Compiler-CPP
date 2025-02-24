@@ -32,5 +32,7 @@ struct SPP::SemanticAnalysis::Asts::SupPrototypeExtensionAst final : Ast {
         decltype(where_block) &&where_block,
         decltype(body) &&body);
 
+    ~SupPrototypeExtensionAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

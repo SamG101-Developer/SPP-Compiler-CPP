@@ -28,5 +28,7 @@ struct SPP::SemanticAnalysis::Asts::FloatLiteralAst final : Ast {
         decltype(decimal_part) &&decimal_part,
         decltype(type) &&type);
 
+    ~FloatLiteralAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

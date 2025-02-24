@@ -23,5 +23,7 @@ struct SPP::SemanticAnalysis::Asts::GenericTypeParameterInlineConstraintsAst fin
         decltype(tok_colon) &&tok_colon,
         decltype(type) &&type);
 
+    ~GenericTypeParameterInlineConstraintsAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

@@ -22,5 +22,7 @@ struct SPP::SemanticAnalysis::Asts::ObjectInitializerAst final : Ast {
         decltype(type) &&type,
         decltype(obj_args_group) &&obj_args_group);
 
+    ~ObjectInitializerAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

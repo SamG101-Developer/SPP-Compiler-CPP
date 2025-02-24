@@ -24,5 +24,8 @@ struct SPP::SemanticAnalysis::Asts::ParenthesizedExpressionAst final : Ast {
         decltype(tok_left_parenthesis) &&tok_left_parenthesis,
         decltype(expr) &&expr,
         decltype(tok_right_parenthesis) &&tok_right_parenthesis);
+
+    ~ParenthesizedExpressionAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

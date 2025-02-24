@@ -14,7 +14,6 @@ target_include_directories(SPP_SemanticAnalysis_Scoping PRIVATE
         ${CMAKE_SOURCE_DIR}/include)
 
 target_link_libraries(SPP_SemanticAnalysis_Scoping PRIVATE
-        SPP::SemanticAnalysis::Asts
-        re2::re2)
+        SPP::SemanticAnalysis::Asts)
 
 add_library(SPP::SemanticAnalysis::Scoping ALIAS SPP_SemanticAnalysis_Scoping)

@@ -35,5 +35,7 @@ struct SPP::SemanticAnalysis::Asts::CaseExpressionAst final : Ast {
         AstMemberType<InnerScopeAst> &&inner_scope,
         decltype(branches) &&branches) -> std::unique_ptr<CaseExpressionAst>;
 
+    ~CaseExpressionAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

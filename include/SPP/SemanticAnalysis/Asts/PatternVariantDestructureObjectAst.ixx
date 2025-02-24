@@ -27,5 +27,7 @@ struct SPP::SemanticAnalysis::Asts::PatternVariantDestructureObjectAst final : A
         decltype(bindings) &&bindings,
         decltype(tok_right_parenthesis) &&tok_right_parenthesis);
 
+    ~PatternVariantDestructureObjectAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

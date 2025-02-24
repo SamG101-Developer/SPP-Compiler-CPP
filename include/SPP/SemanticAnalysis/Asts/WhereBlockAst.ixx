@@ -25,5 +25,7 @@ struct SPP::SemanticAnalysis::Asts::WhereBlockAst final : Ast {
 
     static auto from_empty() -> std::unique_ptr<WhereBlockAst>;
 
+    ~WhereBlockAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

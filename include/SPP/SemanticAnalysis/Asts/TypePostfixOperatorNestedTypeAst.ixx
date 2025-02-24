@@ -22,5 +22,7 @@ struct SPP::SemanticAnalysis::Asts::TypePostfixOperatorNestedTypeAst final : Ast
         decltype(tok_sep) &&tok_sep,
         decltype(name) &&name);
 
+    ~TypePostfixOperatorNestedTypeAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

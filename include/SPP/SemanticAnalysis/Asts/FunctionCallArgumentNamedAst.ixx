@@ -64,6 +64,8 @@ struct SPP::SemanticAnalysis::Asts::FunctionCallArgumentNamedAst final : Ast {
         decltype(convention) &&convention,
         decltype(expression) &&expression);
 
+    ~FunctionCallArgumentNamedAst() override;
+
     /**
      * Print the AST node in the context of its parent and children nodes - this takes the indentation into account from
      * the scopes.

@@ -25,5 +25,7 @@ struct SPP::SemanticAnalysis::Asts::LoopConditionIterableAst final : Ast {
         decltype(tok_in) &&tok_in,
         decltype(iterable) &&iterable);
 
+    ~LoopConditionIterableAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

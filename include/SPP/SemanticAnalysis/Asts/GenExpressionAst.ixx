@@ -30,5 +30,7 @@ struct SPP::SemanticAnalysis::Asts::GenExpressionAst final : Ast {
         decltype(conv) &&conv,
         decltype(expr) &&expr);
 
+    ~GenExpressionAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

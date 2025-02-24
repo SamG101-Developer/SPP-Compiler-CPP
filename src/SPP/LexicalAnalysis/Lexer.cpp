@@ -1,5 +1,6 @@
 module;
 #include <string_view>
+#include <vector>
 
 module spp.lexical_analysis.lexer;
 import spp.lexical_analysis.tokens;

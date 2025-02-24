@@ -30,5 +30,7 @@ struct SPP::SemanticAnalysis::Asts::PostfixExpressionOperatorFunctionCallAst fin
         decltype(function_args_group) &&function_args_group,
         decltype(tok_fold) &&tok_fold);
 
+    ~PostfixExpressionOperatorFunctionCallAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

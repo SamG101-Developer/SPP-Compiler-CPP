@@ -28,6 +28,8 @@ struct SPP::SemanticAnalysis::Asts::TypeArrayAst final : Ast {
         decltype(size) &&size,
         decltype(tok_right_bracket) &&tok_right_bracket);
 
+    ~TypeArrayAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 
     auto convert() -> AstMemberType<Ast>;

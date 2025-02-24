@@ -26,5 +26,7 @@ struct SPP::SemanticAnalysis::Asts::RetStatementAst final : Ast {
         decltype(tok_ret) &&tok_ret,
         decltype(expr) &&expr);
 
+    ~RetStatementAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

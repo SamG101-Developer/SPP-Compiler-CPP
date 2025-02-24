@@ -36,5 +36,7 @@ struct SPP::SemanticAnalysis::Asts::AnnotationAst final : Ast {
         decltype(tok_ast) &&tok_ast,
         decltype(name) &&name);
 
+    ~AnnotationAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

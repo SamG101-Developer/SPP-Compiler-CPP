@@ -20,5 +20,7 @@ struct SPP::SemanticAnalysis::Asts::PatternVariantElseAst final : Ast {
         std::size_t pos,
         decltype(tok_else) &&tok_else);
 
+    ~PatternVariantElseAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

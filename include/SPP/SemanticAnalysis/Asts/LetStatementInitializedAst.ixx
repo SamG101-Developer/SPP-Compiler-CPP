@@ -26,5 +26,7 @@ struct SPP::SemanticAnalysis::Asts::LetStatementInitializedAst final : Ast {
         decltype(tok_assign) &&tok_assign,
         decltype(value) &&value);
 
+    ~LetStatementInitializedAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

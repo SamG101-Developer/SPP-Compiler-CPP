@@ -22,5 +22,7 @@ struct SPP::SemanticAnalysis::Asts::GenericTypeParameterRequiredAst final : Ast 
         decltype(name) &&name,
         decltype(constraints) &&constraints);
 
+    ~GenericTypeParameterRequiredAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

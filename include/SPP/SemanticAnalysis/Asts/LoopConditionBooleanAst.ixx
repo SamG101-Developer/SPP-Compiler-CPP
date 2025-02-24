@@ -20,5 +20,7 @@ struct SPP::SemanticAnalysis::Asts::LoopConditionBooleanAst final : Ast {
         std::size_t pos,
         decltype(cond) &&cond);
 
+    ~LoopConditionBooleanAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

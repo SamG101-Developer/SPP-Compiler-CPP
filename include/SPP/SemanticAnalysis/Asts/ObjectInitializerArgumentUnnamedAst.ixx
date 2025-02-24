@@ -22,5 +22,7 @@ struct SPP::SemanticAnalysis::Asts::ObjectInitializerArgumentUnnamedAst final : 
         decltype(tok_default) &&tok_default,
         decltype(name) &&name);
 
+    ~ObjectInitializerArgumentUnnamedAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

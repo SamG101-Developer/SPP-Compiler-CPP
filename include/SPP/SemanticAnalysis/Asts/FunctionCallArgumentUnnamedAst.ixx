@@ -58,6 +58,8 @@ struct SPP::SemanticAnalysis::Asts::FunctionCallArgumentUnnamedAst final : Ast {
         decltype(tok_unpack) &&tok_unpack,
         decltype(expression) &&expression);
 
+    ~FunctionCallArgumentUnnamedAst() override;
+
     /**
      * Print the AST node in the context of its parent and children nodes - this takes the indentation into account from
      * the scopes.

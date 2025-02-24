@@ -28,5 +28,7 @@ struct SPP::SemanticAnalysis::Asts::GenericParameterGroupAst final : Ast {
 
     static auto from_empty() -> std::unique_ptr<GenericParameterGroupAst>;
 
+    ~GenericParameterGroupAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

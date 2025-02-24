@@ -22,5 +22,7 @@ struct SPP::SemanticAnalysis::Asts::PostfixExpressionAst final : Ast {
         decltype(lhs) &&lhs,
         decltype(op) &&op);
 
+    ~PostfixExpressionAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

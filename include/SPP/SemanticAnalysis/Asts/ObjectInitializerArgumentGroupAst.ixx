@@ -25,5 +25,7 @@ struct SPP::SemanticAnalysis::Asts::ObjectInitializerArgumentGroupAst final : As
         decltype(obj_args_group) &&obj_args_group,
         decltype(tok_right_parenthesis) &&tok_right_parenthesis);
 
+    ~ObjectInitializerArgumentGroupAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

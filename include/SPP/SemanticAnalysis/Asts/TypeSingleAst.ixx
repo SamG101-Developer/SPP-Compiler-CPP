@@ -26,5 +26,7 @@ struct SPP::SemanticAnalysis::Asts::TypeSingleAst final : Ast {
 
     static auto from(GenericIdentifierAst const &identifier) -> std::unique_ptr<TypeSingleAst>;
 
+    ~TypeSingleAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

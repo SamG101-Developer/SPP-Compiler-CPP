@@ -28,5 +28,7 @@ struct SPP::SemanticAnalysis::Asts::ArrayLiteral0ElementAst final : Ast {
         decltype(size) &&size,
         decltype(tok_right_bracket) &&tok_right_bracket);
 
+    ~ArrayLiteral0ElementAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

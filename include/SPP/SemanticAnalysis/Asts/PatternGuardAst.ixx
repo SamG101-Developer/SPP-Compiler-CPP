@@ -22,5 +22,7 @@ struct SPP::SemanticAnalysis::Asts::PatternGuardAst final : Ast {
         decltype(tok_guard) &&tok_guard,
         decltype(expr) &&expr);
 
+    ~PatternGuardAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

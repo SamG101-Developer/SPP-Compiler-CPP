@@ -22,7 +22,14 @@ struct SPP::SemanticAnalysis::Asts::SupPrototypeFunctionsAst final : Ast {
     AstMemberType<SupImplementationAst> body;
 
     SupPrototypeFunctionsAst(
-        std::size_t pos, decltype(tok_sup) &&tok_sup, decltype(generic_params) &&generic_params, decltype(name) &&name,
-        decltype(where_block) &&where_block, decltype(body) &&body);
+        std::size_t pos,
+        decltype(tok_sup) &&tok_sup,
+        decltype(generic_params) &&generic_params,
+        decltype(name) &&name,
+        decltype(where_block) &&where_block,
+        decltype(body) &&body);
+
+    ~SupPrototypeFunctionsAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

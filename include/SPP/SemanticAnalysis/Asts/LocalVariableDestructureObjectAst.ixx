@@ -27,5 +27,7 @@ struct SPP::SemanticAnalysis::Asts::LocalVariableDestructureObjectAst final : As
         decltype(bindings) &&bindings,
         decltype(tok_right_parenthesis) &&tok_right_parenthesis);
 
+    ~LocalVariableDestructureObjectAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

@@ -73,6 +73,8 @@ struct SPP::SemanticAnalysis::Asts::FunctionParameterOptionalAst final : Ast {
         decltype(tok_assign) &&tok_assign,
         decltype(default_value) &&default_value);
 
+    ~FunctionParameterOptionalAst() override;
+
     /**
      * A convenience function to convert the AST node to a string representation. This calls the print function with a
      * new printer object rooted at this node.

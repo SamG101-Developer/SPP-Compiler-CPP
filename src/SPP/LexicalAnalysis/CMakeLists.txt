@@ -12,7 +12,6 @@ target_include_directories(SPP_LexicalAnalysis PRIVATE
         ${CMAKE_SOURCE_DIR}/include)
 
 target_link_libraries(SPP_LexicalAnalysis PRIVATE
-        magic_enum::magic_enum
-        re2::re2)
+        magic_enum::magic_enum)
 
 add_library(SPP::LexicalAnalysis ALIAS SPP_LexicalAnalysis)

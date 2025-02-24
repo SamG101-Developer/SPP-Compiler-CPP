@@ -24,5 +24,7 @@ struct SPP::SemanticAnalysis::Asts::GenericTypeParameterVariadicAst final : Ast 
         decltype(name) &&name,
         decltype(constraints) &&constraints);
 
+    ~GenericTypeParameterVariadicAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

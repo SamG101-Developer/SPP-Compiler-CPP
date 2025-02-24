@@ -1,5 +1,6 @@
 module;
-#include <re2/re2.h>
+#include <cstdint>
+#include <string>
 
 module spp.semantic_analysis.meta.ast_printer;
 
@@ -22,7 +23,7 @@ auto SPP::SemanticAnalysis::Meta::AstPrinter::decrease_indent() -> void {
 auto SPP::SemanticAnalysis::Meta::AstPrinter::format_code(std::string&& code) const -> std::string {
     // Python code: return re.sub(r"\n", "\n" + " " * self._current_indent, code)
     auto formatted_string = std::string(code);
-    RE2::Replace(&formatted_string, RE2("\n"), "\n" + std::string(indent_level, ' '));
+    // RE2::Replace(&formatted_string, RE2("\n"), "\n" + std::string(indent_level, ' '));
     return formatted_string;
 }
 

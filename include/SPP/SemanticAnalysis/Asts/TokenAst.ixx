@@ -21,5 +21,7 @@ struct SPP::SemanticAnalysis::Asts::TokenAst final : Ast {
         decltype(token_type) token_type,
         decltype(token_data) &&token_data);
 
+    ~TokenAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::u8string override;
 };

@@ -17,9 +17,10 @@ export namespace SPP::SemanticAnalysis::Asts {
  */
 struct SPP::SemanticAnalysis::Asts::Ast : Utils::StringConverter {
     std::size_t pos;
+
     Ast(const Ast &that) = delete;
     Ast(Ast &&that) = delete;
-    ~Ast() override = default;
+    ~Ast() override;
 
     auto operator=(const Ast &that) -> Ast & = delete;
     auto operator=(Ast &&that) -> Ast & = delete;

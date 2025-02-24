@@ -20,10 +20,16 @@ SPP::SemanticAnalysis::Asts::AssignmentStatementAst::AssignmentStatementAst(
 SPP::SemanticAnalysis::Asts::AssignmentStatementAst::~AssignmentStatementAst() = default;
 
 auto SPP::SemanticAnalysis::Asts::AssignmentStatementAst::print(Meta::AstPrinter &printer) const -> std::string {
+    auto lhs_string_1 = lhs | std::ranges::views::transform([&printer](const auto &element) { return element->print(printer); });
+    auto lhs_string_2 = std::string{lhs_string_1.begin(), lhs_string_1.end()};
+
+    auto rhs_string_1 = rhs | std::ranges::views::transform([&printer](const auto &element) { return element->print(printer); });
+    auto rhs_string_2 = std::string{rhs_string_1.begin(), rhs_string_1.end()};
+
     auto string = std::format(
         "{} {} {}",
-        lhs | std::ranges::views::transform([&printer](const auto &element) { return element->print(printer); }) | std::ranges::to<std::string>,
+        std::move(lhs_string_2),
         tok_assign->print(printer),
-        rhs | std::ranges::views::transform([&printer](const auto &element) { return element->print(printer); }) | std::ranges::to<std::string>);
+        std::move(rhs_string_2));
     return string;
 }

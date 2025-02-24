@@ -5,12 +5,9 @@ module;
 
 export module spp.semantic_analysis.asts.class_attribute_ast;
 import spp.semantic_analysis.asts.ast;
+import spp.semantic_analysis.meta.ast_printer;
 import spp.semantic_analysis.asts.ast_members;
 import spp.semantic_analysis.asts.ast_types;
-import spp.semantic_analysis.asts.annotation_ast;
-import spp.semantic_analysis.asts.identifier_ast;
-import spp.semantic_analysis.asts.token_ast;
-import spp.semantic_analysis.meta.ast_printer;
 
 
 export namespace SPP::SemanticAnalysis::Asts {

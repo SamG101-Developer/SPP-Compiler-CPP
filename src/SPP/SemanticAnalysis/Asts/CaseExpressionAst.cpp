@@ -4,6 +4,7 @@ module;
 #include <string>
 
 module spp.semantic_analysis.asts.case_expression_ast;
+import spp.semantic_analysis.asts.case_expression_branch_ast;
 import spp.semantic_analysis.asts.token_ast;
 
 
@@ -23,11 +24,14 @@ SPP::SemanticAnalysis::Asts::CaseExpressionAst::CaseExpressionAst(
 SPP::SemanticAnalysis::Asts::CaseExpressionAst::~CaseExpressionAst() = default;
 
 auto SPP::SemanticAnalysis::Asts::CaseExpressionAst::print(Meta::AstPrinter &printer) const -> std::string {
+    auto branches_string_1 = branches | std::ranges::views::transform([&printer](const auto &element) { return element->print(printer); });
+    auto branches_string_2 = std::string{branches_string_1.begin(), branches_string_1.end()};
+
     auto string = std::format(
         "{} {} {} {}",
         tok_case->print(printer),
         expr->print(printer),
         tok_of.has_value() ? tok_of.value()->print(printer) : "",
-        branches | std::ranges::views::transform([&printer](const auto &element) { return element->print(printer); }) | std::ranges::to<std::string>);
+        std::move(branches_string_2));
     return string;
 }

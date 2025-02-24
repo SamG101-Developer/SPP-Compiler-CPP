@@ -27,7 +27,7 @@ struct SPP::SemanticAnalysis::Asts::TypeTupleAst final : Ast {
 
     ~TypeTupleAst() override;
 
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 
     auto convert() -> AstMemberType<Ast>;
 };

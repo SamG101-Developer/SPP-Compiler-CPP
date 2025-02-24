@@ -24,5 +24,5 @@ struct SPP::SemanticAnalysis::Asts::LoopElseStatementAst final : Ast {
 
     ~LoopElseStatementAst() override;
 
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 };

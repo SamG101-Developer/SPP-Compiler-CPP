@@ -27,7 +27,7 @@ struct SPP::SemanticAnalysis::Asts::ConventionAst final : Ast {
 
     ~ConventionAst() override;
 
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 
     static auto mov(std::size_t pos) -> std::unique_ptr<ConventionAst>;
     static auto mut(std::size_t pos) -> std::unique_ptr<ConventionAst>;

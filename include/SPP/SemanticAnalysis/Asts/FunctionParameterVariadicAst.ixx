@@ -73,5 +73,5 @@ struct SPP::SemanticAnalysis::Asts::FunctionParameterVariadicAst final : Ast {
      * new printer object rooted at this node.
      * @return A string representation of the AST node.
      */
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 };

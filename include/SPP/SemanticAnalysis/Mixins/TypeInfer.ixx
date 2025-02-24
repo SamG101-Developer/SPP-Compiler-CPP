@@ -38,7 +38,7 @@ struct SPP::SemanticAnalysis::Mixins::InferredType final : Utils::StringConverte
     auto from_type(Asts::TypeSingleAst &&type);
     auto eq(InferredType const *that, Scoping::Scope const *this_scope, Scoping::Scope const *that_scope = nullptr) const -> bool;
     auto strip() -> InferredType;
-    auto to_string() const -> std::u8string override;
+    auto to_string() const -> std::string override;
 };
 
 

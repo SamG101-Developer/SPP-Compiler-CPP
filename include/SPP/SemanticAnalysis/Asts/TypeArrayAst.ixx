@@ -30,7 +30,7 @@ struct SPP::SemanticAnalysis::Asts::TypeArrayAst final : Ast {
 
     ~TypeArrayAst() override;
 
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 
     auto convert() -> AstMemberType<Ast>;
 };

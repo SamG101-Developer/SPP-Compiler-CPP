@@ -33,5 +33,5 @@ struct SPP::SemanticAnalysis::Asts::ClassAttributeAst final : Ast {
 
     ~ClassAttributeAst() override;
 
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 };

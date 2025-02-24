@@ -30,5 +30,5 @@ struct SPP::SemanticAnalysis::Asts::ArrayLiteral0ElementAst final : Ast {
 
     ~ArrayLiteral0ElementAst() override;
 
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 };

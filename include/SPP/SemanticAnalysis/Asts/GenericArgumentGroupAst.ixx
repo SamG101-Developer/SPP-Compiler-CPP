@@ -30,5 +30,5 @@ struct SPP::SemanticAnalysis::Asts::GenericArgumentGroupAst final : Ast {
 
     ~GenericArgumentGroupAst() override;
 
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 };

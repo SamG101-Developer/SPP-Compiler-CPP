@@ -30,5 +30,5 @@ struct SPP::SemanticAnalysis::Asts::FunctionImplementationAst final : Ast {
 
     ~FunctionImplementationAst() override;
 
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 };

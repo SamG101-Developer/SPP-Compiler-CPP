@@ -26,5 +26,5 @@ struct SPP::SemanticAnalysis::Asts::LocalVariableAttributeBindingAst final : Ast
 
     ~LocalVariableAttributeBindingAst() override;
 
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 };

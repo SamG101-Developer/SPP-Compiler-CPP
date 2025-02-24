@@ -27,5 +27,5 @@ struct SPP::SemanticAnalysis::Asts::PatternVariantDestructureTupleAst final : As
 
     ~PatternVariantDestructureTupleAst() override;
 
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 };

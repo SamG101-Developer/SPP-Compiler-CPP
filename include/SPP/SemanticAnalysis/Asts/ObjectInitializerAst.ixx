@@ -24,5 +24,5 @@ struct SPP::SemanticAnalysis::Asts::ObjectInitializerAst final : Ast {
 
     ~ObjectInitializerAst() override;
 
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 };

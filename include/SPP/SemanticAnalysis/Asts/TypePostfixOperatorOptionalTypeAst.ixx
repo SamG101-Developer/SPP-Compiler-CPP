@@ -22,5 +22,5 @@ struct SPP::SemanticAnalysis::Asts::TypePostfixOperatorOptionalTypeAst final : A
 
     ~TypePostfixOperatorOptionalTypeAst() override;
 
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 };

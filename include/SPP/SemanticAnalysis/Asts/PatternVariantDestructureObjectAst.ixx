@@ -29,5 +29,5 @@ struct SPP::SemanticAnalysis::Asts::PatternVariantDestructureObjectAst final : A
 
     ~PatternVariantDestructureObjectAst() override;
 
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 };

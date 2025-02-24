@@ -33,5 +33,5 @@ struct SPP::SemanticAnalysis::Asts::LoopExpressionAst final : Ast {
 
     ~LoopExpressionAst() override;
 
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 };

@@ -27,5 +27,5 @@ struct SPP::SemanticAnalysis::Asts::TupleLiteralAst final : Ast {
 
     ~TupleLiteralAst() override;
 
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 };

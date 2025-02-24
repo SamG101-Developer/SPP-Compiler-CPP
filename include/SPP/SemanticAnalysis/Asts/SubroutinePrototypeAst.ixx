@@ -13,5 +13,5 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 struct SPP::SemanticAnalysis::Asts::SubroutinePrototypeAst final : FunctionPrototypeAst {
     using FunctionPrototypeAst::FunctionPrototypeAst;
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 };

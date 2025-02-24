@@ -27,5 +27,5 @@ struct SPP::SemanticAnalysis::Asts::PatternVariantDestructureArrayAst final : As
 
     ~PatternVariantDestructureArrayAst() override;
 
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 };

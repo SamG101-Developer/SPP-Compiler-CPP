@@ -37,5 +37,5 @@ struct SPP::SemanticAnalysis::Asts::CaseExpressionAst final : Ast {
 
     ~CaseExpressionAst() override;
 
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 };

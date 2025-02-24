@@ -29,5 +29,5 @@ struct SPP::SemanticAnalysis::Asts::FunctionParameterGroupAst final : Ast {
 
     ~FunctionParameterGroupAst() override;
 
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 };

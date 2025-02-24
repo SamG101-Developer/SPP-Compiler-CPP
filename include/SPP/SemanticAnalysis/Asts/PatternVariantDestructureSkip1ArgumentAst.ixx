@@ -22,5 +22,5 @@ struct SPP::SemanticAnalysis::Asts::PatternVariantDestructureSkip1ArgumentAst fi
 
     ~PatternVariantDestructureSkip1ArgumentAst() override;
 
-    auto print(Meta::AstPrinter &printer) const -> std::u8string override;
+    auto print(Meta::AstPrinter &printer) const -> std::string override;
 };

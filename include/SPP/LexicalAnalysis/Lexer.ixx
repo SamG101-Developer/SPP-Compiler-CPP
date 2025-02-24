@@ -15,5 +15,5 @@ class SPP::LexicalAnalysis::Lexer {
 
 public:
     explicit Lexer(std::string_view code);
-    [[nodiscard]] auto Lex() const -> std::vector<RawToken>;
+    [[nodiscard]] auto lex() const -> std::vector<RawToken>;
 };

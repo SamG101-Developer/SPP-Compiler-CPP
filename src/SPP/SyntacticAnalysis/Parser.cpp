@@ -123,13 +123,45 @@ import spp.semantic_analysis.asts.where_constraints_group_ast;
 import spp.syntactic_analysis.parser_error;
 import spp.utils.pointers;
 
-// import genex.algorithms.accumulate;
-// import genex.views.reverse;
-// import genex.generator;
-
 
 using namespace SPP::SemanticAnalysis;
 using namespace SPP::LexicalAnalysis;
+
+
+SPP::SyntacticAnalysis::Parser::Parser(
+    std::vector<RawToken> &&token_stream,
+    std::string &&file_name,
+    std::optional<Utils::ErrorFormatter> error_formatter):
+    token_stream_size(token_stream.size()),
+    name(std::move(file_name)),
+    token_stream(std::move(token_stream)),
+    error_formatter(error_formatter.value_or(Utils::ErrorFormatter{this->token_stream, name})) {
+}
+
+
+auto SPP::SyntacticAnalysis::Parser::get_current_token() const -> RawToken {
+    return token_stream[pos];
+}
+
+
+auto SPP::SyntacticAnalysis::Parser::get_current_pos() const -> std::size_t {
+    return pos;
+}
+
+
+auto SPP::SyntacticAnalysis::Parser::set_current_pos(const std::size_t new_index) -> void {
+    pos = new_index;
+}
+
+
+auto SPP::SyntacticAnalysis::Parser::store_error(std::size_t new_pos, std::string new_error) -> bool {
+    if (new_pos > error->pos) {
+        error->reset(pos, std::move(new_error));
+        return true;
+    }
+    return false;
+}
+
 
 
 template <typename R, SPP::SyntacticAnalysis::is_parser_member_function S>

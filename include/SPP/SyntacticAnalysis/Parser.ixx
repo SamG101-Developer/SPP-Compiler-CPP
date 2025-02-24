@@ -39,10 +39,10 @@ class SPP::SyntacticAnalysis::Parser {
     Utils::ErrorFormatter error_formatter;
     std::optional<Errors::SyntaxError> error = std::nullopt;
 
-    auto store_error(std::size_t pos, std::string error) -> bool;
+    auto store_error(std::size_t new_pos, std::string new_error) -> bool;
 
 public:
-    explicit Parser(std::vector<LexicalAnalysis::RawToken> token_stream, std::string file_name = "", std::optional<Utils::ErrorFormatter> error_formatter = std::nullopt);
+    explicit Parser(std::vector<LexicalAnalysis::RawToken>&& token_stream, std::string &&file_name = "", std::optional<Utils::ErrorFormatter> error_formatter = std::nullopt);
     auto get_current_token() const -> LexicalAnalysis::RawToken;
     auto get_current_pos() const -> std::size_t;
     auto set_current_pos(std::size_t new_index) -> void;

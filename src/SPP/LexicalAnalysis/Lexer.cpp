@@ -11,8 +11,8 @@ SPP::LexicalAnalysis::Lexer::Lexer(const std::string_view code) : code(code) {
 }
 
 
-auto SPP::LexicalAnalysis::Lexer::Lex() const -> std::vector<RawToken> {
-    auto tokens = std::vector<RawToken>{};
+auto SPP::LexicalAnalysis::Lexer::lex() const -> std::vector<RawToken> {
+    auto tokens = std::vector<RawToken>(code.length() * 0.5);
     auto in_string = false;
 
     for (const auto c : code) {

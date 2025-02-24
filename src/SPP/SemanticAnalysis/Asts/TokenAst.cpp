@@ -1,5 +1,5 @@
 module;
-#include <utility>
+#include <cstddef>
 
 module spp.semantic_analysis.asts.token_ast;
 
@@ -19,4 +19,3 @@ SPP::SemanticAnalysis::Asts::TokenAst::~TokenAst() = default;
 auto SPP::SemanticAnalysis::Asts::TokenAst::print(Meta::AstPrinter &printer) const -> std::string {
     return token_data;
 }
-

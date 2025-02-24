@@ -23,6 +23,12 @@ struct SPP::SemanticAnalysis::Asts::GenericIdentifierAst final : Ast {
         decltype(value) &&value,
         decltype(generic_args_group) &&generic_args_group);
 
+    static auto from(IdentifierAst const &identifier) -> std::unique_ptr<GenericIdentifierAst>;
+
+    static auto from(TypeSingleAst const &identifier) -> std::unique_ptr<GenericIdentifierAst>;
+
+    static auto from(GenericIdentifierAst const &identifier) -> std::unique_ptr<GenericIdentifierAst>;
+
     ~GenericIdentifierAst() override;
 
     auto print(Meta::AstPrinter &printer) const -> std::string override;

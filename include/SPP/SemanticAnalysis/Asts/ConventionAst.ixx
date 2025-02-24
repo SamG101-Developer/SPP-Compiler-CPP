@@ -23,7 +23,7 @@ struct SPP::SemanticAnalysis::Asts::ConventionAst final : Ast {
 
     ConventionAst(
         std::size_t pos,
-        decltype(type) &&type);
+        decltype(type) type);
 
     ~ConventionAst() override;
 

@@ -1,5 +1,4 @@
 module;
-#include <format>
 #include <string>
 
 module spp.semantic_analysis.asts.boolean_literal_ast;
@@ -15,6 +14,5 @@ SPP::SemanticAnalysis::Asts::BooleanLiteralAst::BooleanLiteralAst(
 SPP::SemanticAnalysis::Asts::BooleanLiteralAst::~BooleanLiteralAst() = default;
 
 auto SPP::SemanticAnalysis::Asts::BooleanLiteralAst::print(Meta::AstPrinter &printer) const -> std::string {
-    auto string = std::format("{}", val->print(printer));
-    return string;
+    return val->print(printer);
 }

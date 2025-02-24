@@ -1,5 +1,6 @@
 module;
 #include <string_view>
+#include <locale>
 #include <vector>
 
 module spp.lexical_analysis.lexer;
@@ -20,72 +21,17 @@ auto SPP::LexicalAnalysis::Lexer::Lex() const -> std::vector<RawToken> {
             continue;
         }
 
-        switch (c) {
-        case '0':
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-        case '8':
-        case '9':
+        if (48 <= c and c <= 57) {
             tokens.emplace_back(RawTokenTypes::TkNumber, c);
-        case 'a':
-        case 'b':
-        case 'c':
-        case 'd':
-        case 'e':
-        case 'f':
-        case 'g':
-        case 'h':
-        case 'i':
-        case 'j':
-        case 'k':
-        case 'l':
-        case 'm':
-        case 'n':
-        case 'o':
-        case 'p':
-        case 'q':
-        case 'r':
-        case 's':
-        case 't':
-        case 'u':
-        case 'v':
-        case 'w':
-        case 'x':
-        case 'y':
-        case 'z':
-        case 'A':
-        case 'B':
-        case 'C':
-        case 'D':
-        case 'E':
-        case 'F':
-        case 'G':
-        case 'H':
-        case 'I':
-        case 'J':
-        case 'K':
-        case 'L':
-        case 'M':
-        case 'N':
-        case 'O':
-        case 'P':
-        case 'Q':
-        case 'R':
-        case 'S':
-        case 'T':
-        case 'U':
-        case 'V':
-        case 'W':
-        case 'X':
-        case 'Y':
-        case 'Z':
+            continue;
+        }
+
+        if (65 <= c and c <= 90 or 97 <= c and c <= 122) {
             tokens.emplace_back(RawTokenTypes::TkCharacter, c);
-            break;
+            continue;
+        }
+
+        switch (c) {
         case '=':
             tokens.emplace_back(RawTokenTypes::TkEqualsSign, c);
             break;

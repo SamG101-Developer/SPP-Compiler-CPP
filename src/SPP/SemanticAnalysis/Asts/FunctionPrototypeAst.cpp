@@ -4,6 +4,7 @@ module;
 #include <string>
 
 module spp.semantic_analysis.asts.function_prototype_ast;
+import spp.semantic_analysis.asts.annotation_ast;
 import spp.semantic_analysis.asts.identifier_ast;
 import spp.semantic_analysis.asts.token_ast;
 import spp.semantic_analysis.asts.generic_parameter_group_ast;

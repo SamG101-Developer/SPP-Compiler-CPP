@@ -22,7 +22,7 @@ struct SPP::SemanticAnalysis::Asts::UseStatementAst final : Ast {
     AstMemberType<TokenAst> tok_assign;
     AstMemberType<Ast> old_type;
 
-    bool _generated;
+    bool _generated = false;
 
     UseStatementAst(
         std::size_t pos,

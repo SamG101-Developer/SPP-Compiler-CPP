@@ -141,7 +141,7 @@ target_sources(SPP_SemanticAnalysis_Asts PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/FunctionParameterOptionalAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/FunctionParameterRequiredAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/FunctionParameterSelfAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/FunctionParameterVariadicAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/FunctionParameterVariadicAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/FunctionPrototypeAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/GenericArgumentGroupAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/GenericCompArgumentNamedAst.cpp
@@ -166,10 +166,10 @@ target_sources(SPP_SemanticAnalysis_Asts PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/LetStatementUninitializedAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/LocalVariableAttributeBindingAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/LocalVariableDestructureArrayAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/LocalVariableDestructureObjectAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/LocalVariableDestructureObjectAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/LocalVariableDestructureSkip1ArgumentAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/LocalVariableDestructureSkipNArgumentsAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/LocalVariableDestructureTupleAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/LocalVariableDestructureTupleAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/LocalVariableSingleIdentifierAliasAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/LocalVariableSingleIdentifierAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/LoopConditionBooleanAst.cpp
@@ -193,18 +193,18 @@ target_sources(SPP_SemanticAnalysis_Asts PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/PatternVariantDestructureTupleAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PatternVariantElseAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PatternVariantElseCaseAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/PatternVariantExpressionAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/PatternVariantLiteralAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/PatternVariantExpressionAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/PatternVariantLiteralAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PatternVariantSingleIdentifierAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PostfixExpressionAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PostfixExpressionOperatorEarlyReturnAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PostfixExpressionOperatorFunctionCallAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PostfixExpressionOperatorMemberAccessAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/PostfixExpressionOperatorNotKeywordAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/PostfixExpressionOperatorNotKeywordAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PostfixExpressionOperatorStepKeywordAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/PinStatementAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/PinStatementAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/RelStatementAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/RetStatementAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/RetStatementAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/RootAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/StringLiteralAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/SubroutinePrototypeAst.cpp
@@ -214,22 +214,22 @@ target_sources(SPP_SemanticAnalysis_Asts PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/TokenAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/TupleLiteralAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/TypeArrayAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/TypeBinaryExpressionAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/TypeBinaryExpressionAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/TypeParenthesizedAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/TypePostfixExpressionAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/TypePostfixExpressionAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/TypePostfixOperatorIndexedTypeAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/TypePostfixOperatorNestedTypeAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/TypePostfixOperatorNestedTypeAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/TypePostfixOperatorOptionalTypeAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/TypeSingleAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/TypeTupleAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/TypeUnaryExpressionAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/TypeTupleAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/TypeUnaryExpressionAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/TypeUnaryOperatorNamespaceAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/UnaryExpressionAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/UnaryExpressionOperatorAsyncAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/UseStatementAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/UnaryExpressionOperatorAsyncAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/UseStatementAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/WhereBlockAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/WhereConstraintsAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/WhereConstraintsGroupAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/WhereConstraintsAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/WhereConstraintsGroupAst.cpp
 )
 
 target_include_directories(SPP_SemanticAnalysis_Asts PRIVATE

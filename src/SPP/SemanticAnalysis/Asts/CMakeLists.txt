@@ -155,7 +155,7 @@ target_sources(SPP_SemanticAnalysis_Asts PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/GenericTypeParameterOptionalAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/GenericTypeParameterRequiredAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/GenericTypeParameterVariadicAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/GenericIdentifierAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/GenericIdentifierAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/GenericParameterGroupAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/GenExpressionAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/GlobalConstantAst.cpp
@@ -167,7 +167,7 @@ target_sources(SPP_SemanticAnalysis_Asts PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/LocalVariableAttributeBindingAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/LocalVariableDestructureArrayAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/LocalVariableDestructureObjectAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/LocalVariableDestructureSkip1ArgumentAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/LocalVariableDestructureSkip1ArgumentAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/LocalVariableDestructureSkipNArgumentsAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/LocalVariableDestructureTupleAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/LocalVariableSingleIdentifierAliasAst.cpp
@@ -188,7 +188,7 @@ target_sources(SPP_SemanticAnalysis_Asts PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/PatternVariantAttributeBindingAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PatternVariantDestructureArrayAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PatternVariantDestructureObjectAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/PatternVariantDestructureSkip1ArgumentAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/PatternVariantDestructureSkip1ArgumentAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PatternVariantDestructureSkipNArgumentsAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PatternVariantDestructureTupleAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PatternVariantElseAst.cpp

@@ -140,10 +140,10 @@ target_sources(SPP_SemanticAnalysis_Asts PRIVATE
 #        ${CMAKE_CURRENT_LIST_DIR}/FunctionParameterGroupAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/FunctionParameterOptionalAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/FunctionParameterRequiredAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/FunctionParameterSelfAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/FunctionParameterSelfAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/FunctionParameterVariadicAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/FunctionPrototypeAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/GenericArgumentGroupAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/FunctionPrototypeAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/GenericArgumentGroupAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/GenericCompArgumentNamedAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/GenericCompArgumentUnnamedAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/GenericCompParameterOptionalAst.cpp
@@ -151,13 +151,13 @@ target_sources(SPP_SemanticAnalysis_Asts PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/GenericCompParameterVariadicAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/GenericTypeArgumentNamedAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/GenericTypeArgumentUnnamedAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/GenericTypeParameterInlineConstraintsAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/GenericTypeParameterInlineConstraintsAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/GenericTypeParameterOptionalAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/GenericTypeParameterRequiredAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/GenericTypeParameterRequiredAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/GenericTypeParameterVariadicAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/GenericIdentifierAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/GenericParameterGroupAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/GenExpressionAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/GenExpressionAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/GlobalConstantAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/IdentifierAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/InnerScopeAst.cpp
@@ -171,7 +171,7 @@ target_sources(SPP_SemanticAnalysis_Asts PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/LocalVariableDestructureSkipNArgumentsAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/LocalVariableDestructureTupleAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/LocalVariableSingleIdentifierAliasAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/LocalVariableSingleIdentifierAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/LocalVariableSingleIdentifierAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/LoopConditionBooleanAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/LoopConditionIterableAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/LoopControlFlowStatementAst.cpp
@@ -179,10 +179,10 @@ target_sources(SPP_SemanticAnalysis_Asts PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/LoopExpressionAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/ModuleImplementationAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ModulePrototypeAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/ObjectInitializerAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ObjectInitializerAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ObjectInitializerArgumentGroupAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/ObjectInitializerArgumentNamedAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/ObjectInitializerArgumentUnnamedAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ObjectInitializerArgumentNamedAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ObjectInitializerArgumentUnnamedAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/ParenthesizedExpressionAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/PatternGuardAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/PatternVariantAttributeBindingAst.cpp
@@ -205,7 +205,7 @@ target_sources(SPP_SemanticAnalysis_Asts PRIVATE
 #        ${CMAKE_CURRENT_LIST_DIR}/PinStatementAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/RelStatementAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/RetStatementAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/RootAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/RootAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/StringLiteralAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/SubroutinePrototypeAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/SupImplementationAst.cpp
@@ -217,7 +217,7 @@ target_sources(SPP_SemanticAnalysis_Asts PRIVATE
 #        ${CMAKE_CURRENT_LIST_DIR}/TypeBinaryExpressionAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/TypeParenthesizedAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/TypePostfixExpressionAst.cpp
-#        ${CMAKE_CURRENT_LIST_DIR}/TypePostfixOperatorIndexedTypeAst.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/TypePostfixOperatorIndexedTypeAst.cpp
 #        ${CMAKE_CURRENT_LIST_DIR}/TypePostfixOperatorNestedTypeAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/TypePostfixOperatorOptionalTypeAst.cpp
         ${CMAKE_CURRENT_LIST_DIR}/TypeSingleAst.cpp

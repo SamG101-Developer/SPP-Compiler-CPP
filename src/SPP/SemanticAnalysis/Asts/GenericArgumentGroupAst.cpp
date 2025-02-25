@@ -19,6 +19,10 @@ SPP::SemanticAnalysis::Asts::GenericArgumentGroupAst::GenericArgumentGroupAst(
     tok_paren_r{std::move(tok_paren_r)} {
 }
 
+auto SPP::SemanticAnalysis::Asts::GenericArgumentGroupAst::from_empty() -> std::unique_ptr<GenericArgumentGroupAst> {
+    return std::make_unique<GenericArgumentGroupAst>(0, nullptr, std::vector<std::unique_ptr<Ast>>{}, nullptr);
+}
+
 SPP::SemanticAnalysis::Asts::GenericArgumentGroupAst::~GenericArgumentGroupAst() = default;
 
 auto SPP::SemanticAnalysis::Asts::GenericArgumentGroupAst::print(Meta::AstPrinter &printer) const -> std::string {

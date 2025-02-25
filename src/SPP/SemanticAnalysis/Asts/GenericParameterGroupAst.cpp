@@ -19,6 +19,10 @@ SPP::SemanticAnalysis::Asts::GenericParameterGroupAst::GenericParameterGroupAst(
     tok_right_parenthesis{std::move(tok_right_parenthesis)} {
 }
 
+auto SPP::SemanticAnalysis::Asts::GenericParameterGroupAst::from_empty() -> std::unique_ptr<GenericParameterGroupAst> {
+    return std::make_unique<GenericParameterGroupAst>(0, nullptr, std::vector<std::unique_ptr<Ast>>{}, nullptr);
+}
+
 SPP::SemanticAnalysis::Asts::GenericParameterGroupAst::~GenericParameterGroupAst() = default;
 
 auto SPP::SemanticAnalysis::Asts::GenericParameterGroupAst::print(Meta::AstPrinter &printer) const -> std::string {

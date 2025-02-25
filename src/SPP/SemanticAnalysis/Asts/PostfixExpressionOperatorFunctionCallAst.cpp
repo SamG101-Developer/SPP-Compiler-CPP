@@ -22,7 +22,7 @@ SPP::SemanticAnalysis::Asts::PostfixExpressionOperatorFunctionCallAst::~PostfixE
 
 auto SPP::SemanticAnalysis::Asts::PostfixExpressionOperatorFunctionCallAst::print(Meta::AstPrinter &printer) const -> std::string {
     auto string = std::format(
-        "{}{}{}{}",
+        "{}{}{}",
         generic_args_group->print(printer),
         function_args_group->print(printer),
         tok_fold.has_value() ? tok_fold.value()->print(printer) : "");

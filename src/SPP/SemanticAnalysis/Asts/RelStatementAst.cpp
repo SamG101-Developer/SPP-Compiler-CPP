@@ -1,5 +1,6 @@
 module;
 #include <format>
+#include <numeric>
 #include <ranges>
 #include <string>
 
@@ -20,7 +21,7 @@ SPP::SemanticAnalysis::Asts::RelStatementAst::~RelStatementAst() = default;
 
 auto SPP::SemanticAnalysis::Asts::RelStatementAst::print(Meta::AstPrinter &printer) const -> std::string {
     auto rels_string_1 = rels | std::views::transform([&printer](auto const &rel) { return rel->print(printer); });
-    auto rels_string_2 = std::string{rels_string_1.begin(), rels_string_1.end()};
+    auto rels_string_2 = std::accumulate(rels_string_1.begin(), rels_string_1.end(), std::string{});
 
     auto string = std::format(
         "{}{}",

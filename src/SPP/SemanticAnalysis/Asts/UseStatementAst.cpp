@@ -1,5 +1,6 @@
 module;
 #include <format>
+#include <numeric>
 #include <ranges>
 #include <string>
 
@@ -30,7 +31,7 @@ SPP::SemanticAnalysis::Asts::UseStatementAst::~UseStatementAst() = default;
 
 auto SPP::SemanticAnalysis::Asts::UseStatementAst::print(Meta::AstPrinter &printer) const -> std::string {
     auto annotations_string_1 = annotations | std::views::transform([&printer](const auto &member) { return member->print(printer); });
-    auto annotations_string_2 = std::string{annotations_string_1.begin(), annotations_string_1.end()};
+    auto annotations_string_2 = std::accumulate(annotations_string_1.begin(), annotations_string_1.end(), std::string{});
 
     auto string = std::format(
         "{}{}{}{}{}{}",

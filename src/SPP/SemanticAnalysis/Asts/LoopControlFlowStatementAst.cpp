@@ -1,5 +1,6 @@
 module;
 #include <format>
+#include <numeric>
 #include <ranges>
 #include <string>
 
@@ -20,7 +21,7 @@ SPP::SemanticAnalysis::Asts::LoopControlFlowStatementAst::~LoopControlFlowStatem
 
 auto SPP::SemanticAnalysis::Asts::LoopControlFlowStatementAst::print(Meta::AstPrinter &printer) const -> std::string {
     auto tok_exit_or_skip_string_1 = tok_exit_or_skip | std::views::transform([&printer](const auto &element) { return element->print(printer); });
-    auto tok_exit_or_skip_string_2 = std::string{tok_exit_or_skip_string_1.begin(), tok_exit_or_skip_string_1.end()};
+    auto tok_exit_or_skip_string_2 = std::accumulate(tok_exit_or_skip_string_1.begin(), tok_exit_or_skip_string_1.end(), std::string{});
 
     auto string = std::format(
         "{}{}",

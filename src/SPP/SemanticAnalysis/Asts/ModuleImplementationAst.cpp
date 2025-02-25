@@ -1,5 +1,6 @@
 module;
 #include <format>
+#include <numeric>
 #include <ranges>
 #include <string>
 
@@ -17,7 +18,7 @@ SPP::SemanticAnalysis::Asts::ModuleImplementationAst::~ModuleImplementationAst()
 
 auto SPP::SemanticAnalysis::Asts::ModuleImplementationAst::print(Meta::AstPrinter &printer) const -> std::string {
     auto members_string_1 = members | std::views::transform([&printer](const auto &member) { return member->print(printer); });
-    auto members_string_2 = std::string{members_string_1.begin(), members_string_1.end()};
+    auto members_string_2 = std::accumulate(members_string_1.begin(), members_string_1.end(), std::string{});
 
     auto string = std::format(
         "{}",

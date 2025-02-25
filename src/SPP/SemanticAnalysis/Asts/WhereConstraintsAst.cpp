@@ -1,5 +1,6 @@
 module;
 #include <format>
+#include <numeric>
 #include <ranges>
 #include <string>
 
@@ -22,7 +23,7 @@ SPP::SemanticAnalysis::Asts::WhereConstraintsAst::~WhereConstraintsAst() = defau
 
 auto SPP::SemanticAnalysis::Asts::WhereConstraintsAst::print(Meta::AstPrinter &printer) const -> std::string {
     auto types_string_1 = types | std::views::transform([&printer](const auto &member) { return member->print(printer); });
-    auto types_string_2 = std::string{types_string_1.begin(), types_string_1.end()};
+    auto types_string_2 = std::accumulate(types_string_1.begin(), types_string_1.end(), std::string{});
 
     auto string = std::format(
         "{}{}{}",

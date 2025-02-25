@@ -1,5 +1,6 @@
 module;
 #include <format>
+#include <numeric>
 #include <ranges>
 #include <string>
 
@@ -22,7 +23,7 @@ SPP::SemanticAnalysis::Asts::TypeTupleAst::~TypeTupleAst() = default;
 
 auto SPP::SemanticAnalysis::Asts::TypeTupleAst::print(Meta::AstPrinter &printer) const -> std::string {
     auto type_list_string_1 = type_list | std::views::transform([&printer](const auto &member) { return member->print(printer); });
-    auto type_list_string_2 = std::string{type_list_string_1.begin(), type_list_string_1.end()};
+    auto type_list_string_2 = std::accumulate(type_list_string_1.begin(), type_list_string_1.end(), std::string{});
 
     auto string = std::format(
         "{}{}{}",

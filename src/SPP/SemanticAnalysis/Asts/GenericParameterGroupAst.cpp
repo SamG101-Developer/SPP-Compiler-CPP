@@ -1,5 +1,6 @@
 module;
 #include <format>
+#include <numeric>
 #include <ranges>
 #include <string>
 
@@ -22,7 +23,7 @@ SPP::SemanticAnalysis::Asts::GenericParameterGroupAst::~GenericParameterGroupAst
 
 auto SPP::SemanticAnalysis::Asts::GenericParameterGroupAst::print(Meta::AstPrinter &printer) const -> std::string {
     auto generic_args_groups_string_1 = generic_args_groups | std::views::transform([&printer](auto const &generic_args_group) { return generic_args_group->print(printer); });
-    auto generic_args_groups_string_2 = std::string{generic_args_groups_string_1.begin(), generic_args_groups_string_1.end()};
+    auto generic_args_groups_string_2 = std::accumulate(generic_args_groups_string_1.begin(), generic_args_groups_string_1.end(), std::string{});
 
     auto string = std::format(
         "{}{}{}",

@@ -1,5 +1,6 @@
 module;
 #include <format>
+#include <numeric>
 #include <ranges>
 #include <string>
 
@@ -22,7 +23,7 @@ SPP::SemanticAnalysis::Asts::ObjectInitializerArgumentGroupAst::~ObjectInitializ
 
 auto SPP::SemanticAnalysis::Asts::ObjectInitializerArgumentGroupAst::print(Meta::AstPrinter &printer) const -> std::string {
     auto args_string_1 = obj_args_group | std::views::transform([&printer](auto const &arg) { return arg->print(printer); });
-    auto args_string_2 = std::string{args_string_1.begin(), args_string_1.end()};
+    auto args_string_2 = std::accumulate(args_string_1.begin(), args_string_1.end(), std::string{});
 
     auto string = std::format(
         "{}{}{}",

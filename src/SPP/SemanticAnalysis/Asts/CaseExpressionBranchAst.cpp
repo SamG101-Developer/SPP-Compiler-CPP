@@ -1,5 +1,6 @@
 module;
 #include <format>
+#include <numeric>
 #include <ranges>
 #include <string>
 
@@ -25,7 +26,7 @@ SPP::SemanticAnalysis::Asts::CaseExpressionBranchAst::~CaseExpressionBranchAst()
 
 auto SPP::SemanticAnalysis::Asts::CaseExpressionBranchAst::print(Meta::AstPrinter &printer) const -> std::string {
     auto patterns_string_1 = patterns | std::ranges::views::transform([&printer](const auto &element) { return element->print(printer); });
-    auto patterns_string_2 = std::string{patterns_string_1.begin(), patterns_string_1.end()};
+    auto patterns_string_2 = std::accumulate(patterns_string_1.begin(), patterns_string_1.end(), std::string{});
 
     auto string = std::format(
         "{} {} {} {}",

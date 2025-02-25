@@ -1,5 +1,6 @@
 module;
 #include <format>
+#include <numeric>
 #include <ranges>
 #include <string>
 
@@ -23,10 +24,10 @@ SPP::SemanticAnalysis::Asts::LocalVariableDestructureObjectAst::~LocalVariableDe
 
 auto SPP::SemanticAnalysis::Asts::LocalVariableDestructureObjectAst::print(Meta::AstPrinter &printer) const -> std::string {
     auto bindings_string_1 = bindings | std::views::transform([&printer](const auto &member) { return member->print(printer); });
-    auto bindings_string_2 = std::string{bindings_string_1.begin(), bindings_string_1.end()};
+    auto bindings_string_2 = std::accumulate(bindings_string_1.begin(), bindings_string_1.end(), std::string{});
 
     auto string = std::format(
-        "{}{}{}{}{}",
+        "{}{}{}{}",
         type->print(printer),
         tok_left_parenthesis->print(printer),
         std::move(bindings_string_2),

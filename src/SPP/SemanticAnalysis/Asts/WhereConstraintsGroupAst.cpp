@@ -1,9 +1,11 @@
 module;
 #include <format>
+#include <numeric>
 #include <ranges>
 #include <string>
 
 module spp.semantic_analysis.asts.where_constraints_group_ast;
+import spp.semantic_analysis.asts.where_constraints_ast;
 import spp.semantic_analysis.asts.token_ast;
 
 
@@ -22,7 +24,7 @@ SPP::SemanticAnalysis::Asts::WhereConstraintsGroupAst::~WhereConstraintsGroupAst
 
 auto SPP::SemanticAnalysis::Asts::WhereConstraintsGroupAst::print(Meta::AstPrinter &printer) const -> std::string {
     auto constraints_string_1 = constraints | std::views::transform([&printer](const auto &member) { return member->print(printer); });
-    auto constraints_string_2 = std::string{constraints_string_1.begin(), constraints_string_1.end()};
+    auto constraints_string_2 = std::accumulate(constraints_string_1.begin(), constraints_string_1.end(), std::string{});
 
     auto string = std::format(
         "{}{}{}",

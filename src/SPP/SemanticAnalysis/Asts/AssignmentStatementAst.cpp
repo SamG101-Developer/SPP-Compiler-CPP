@@ -1,5 +1,6 @@
 module;
 #include <format>
+#include <numeric>
 #include <ranges>
 #include <string>
 
@@ -21,10 +22,10 @@ SPP::SemanticAnalysis::Asts::AssignmentStatementAst::~AssignmentStatementAst() =
 
 auto SPP::SemanticAnalysis::Asts::AssignmentStatementAst::print(Meta::AstPrinter &printer) const -> std::string {
     auto lhs_string_1 = lhs | std::ranges::views::transform([&printer](const auto &element) { return element->print(printer); });
-    auto lhs_string_2 = std::string{lhs_string_1.begin(), lhs_string_1.end()};
+    auto lhs_string_2 = std::accumulate(lhs_string_1.begin(), lhs_string_1.end(), std::string{});
 
     auto rhs_string_1 = rhs | std::ranges::views::transform([&printer](const auto &element) { return element->print(printer); });
-    auto rhs_string_2 = std::string{rhs_string_1.begin(), rhs_string_1.end()};
+    auto rhs_string_2 = std::accumulate(rhs_string_1.begin(), rhs_string_1.end(), std::string{});
 
     auto string = std::format(
         "{} {} {}",

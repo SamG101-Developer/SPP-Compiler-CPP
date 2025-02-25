@@ -1,5 +1,6 @@
 module;
 #include <format>
+#include <numeric>
 #include <ranges>
 #include <string>
 
@@ -20,7 +21,7 @@ SPP::SemanticAnalysis::Asts::PinStatementAst::~PinStatementAst() = default;
 
 auto SPP::SemanticAnalysis::Asts::PinStatementAst::print(Meta::AstPrinter &printer) const -> std::string {
     auto pins_string_1 = pins | std::views::transform([&printer](const auto &member) { return member->print(printer); });
-    auto pins_string_2 = std::string{pins_string_1.begin(), pins_string_1.end()};
+    auto pins_string_2 = std::accumulate(pins_string_1.begin(), pins_string_1.end(), std::string{});
 
     auto string = std::format(
         "{}{}",

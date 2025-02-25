@@ -1,5 +1,6 @@
 module;
-#include <cstddef>
+#include <string>
+#include <utility>
 
 module spp.semantic_analysis.asts.token_ast;
 
@@ -12,7 +13,6 @@ SPP::SemanticAnalysis::Asts::TokenAst::TokenAst(
     token_type{token_type},
     token_data{std::move(token_data)} {
 }
-
 
 SPP::SemanticAnalysis::Asts::TokenAst::~TokenAst() = default;
 

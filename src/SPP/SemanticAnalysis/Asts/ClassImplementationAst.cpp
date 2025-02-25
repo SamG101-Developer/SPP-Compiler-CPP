@@ -1,5 +1,6 @@
 module;
 #include <format>
+#include <numeric>
 #include <ranges>
 #include <string>
 
@@ -21,7 +22,7 @@ SPP::SemanticAnalysis::Asts::ClassImplementationAst::~ClassImplementationAst() =
 
 auto SPP::SemanticAnalysis::Asts::ClassImplementationAst::print(Meta::AstPrinter &printer) const -> std::string {
     auto members_string_1 = members | std::ranges::views::transform([&printer](const auto &element) { return element->print(printer); });
-    auto members_string_2 = std::string{members_string_1.begin(), members_string_1.end()};
+    auto members_string_2 = std::accumulate(members_string_1.begin(), members_string_1.end(), std::string{});
 
     auto string = std::format(
         "{}\n{}\n{}",

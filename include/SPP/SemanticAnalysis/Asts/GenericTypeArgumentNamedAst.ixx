@@ -19,9 +19,9 @@ struct SPP::SemanticAnalysis::Asts::GenericTypeArgumentNamedAst final : Ast {
 
     GenericTypeArgumentNamedAst(
         std::size_t pos,
-        decltype(type) &&type,
+        decltype(name) &&name,
         decltype(tok_assign) &&tok_assign,
-        decltype(name) &&name);
+        decltype(type) &&type);
 
     ~GenericTypeArgumentNamedAst() override;
 

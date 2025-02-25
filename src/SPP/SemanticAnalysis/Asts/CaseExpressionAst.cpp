@@ -22,6 +22,14 @@ SPP::SemanticAnalysis::Asts::CaseExpressionAst::CaseExpressionAst(
     branches{std::move(branches)} {
 }
 
+auto SPP::SemanticAnalysis::Asts::CaseExpressionAst::from_simple(
+    std::size_t pos,
+    decltype(tok_case) &&tok_case,
+    decltype(expr) &&expr, AstMemberType<InnerScopeAst> &&inner_scope, decltype(branches) &&branches) -> std::unique_ptr<CaseExpressionAst> {
+    return nullptr; // todo
+}
+
+
 SPP::SemanticAnalysis::Asts::CaseExpressionAst::~CaseExpressionAst() = default;
 
 auto SPP::SemanticAnalysis::Asts::CaseExpressionAst::print(Meta::AstPrinter &printer) const -> std::string {

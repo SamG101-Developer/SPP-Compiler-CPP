@@ -17,5 +17,5 @@ class SPP::Utils::ErrorFormatter {
 
 public:
     ErrorFormatter(std::vector<LexicalAnalysis::RawToken> token_stream, std::string file_path);
-    auto error(std::size_t start_pos, std::string &&message = "", std::string &&tag_message = "", bool minimal = false) -> std::string;
+    auto error(std::size_t start_pos, std::string &&message = "", std::string &&tag_message = "", bool minimal = false) const -> std::string;
 };

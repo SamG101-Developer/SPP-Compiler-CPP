@@ -13,7 +13,7 @@ SPP::Utils::ErrorFormatter::ErrorFormatter(std::vector<LexicalAnalysis::RawToken
 }
 
 
-auto SPP::Utils::ErrorFormatter::error(std::size_t start_pos, std::string &&message, std::string&& tag_message, const bool minimal) -> std::string {
+auto SPP::Utils::ErrorFormatter::error(std::size_t start_pos, std::string &&message, std::string&& tag_message, const bool minimal) const -> std::string {
     using namespace PrettyPrinter;
     using namespace LexicalAnalysis;
 

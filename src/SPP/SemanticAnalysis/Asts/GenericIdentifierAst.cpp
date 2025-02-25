@@ -29,6 +29,10 @@ auto SPP::SemanticAnalysis::Asts::GenericIdentifierAst::from(GenericIdentifierAs
     return std::make_unique<GenericIdentifierAst>(identifier.pos, identifier.value.c_str(), GenericArgumentGroupAst::from_empty()); // todo
 }
 
+auto SPP::SemanticAnalysis::Asts::GenericIdentifierAst::empty() -> std::unique_ptr<GenericIdentifierAst> {
+    return std::make_unique<GenericIdentifierAst>(0, "", GenericArgumentGroupAst::from_empty());
+}
+
 SPP::SemanticAnalysis::Asts::GenericIdentifierAst::~GenericIdentifierAst() = default;
 
 auto SPP::SemanticAnalysis::Asts::GenericIdentifierAst::print(Meta::AstPrinter &printer) const -> std::string {

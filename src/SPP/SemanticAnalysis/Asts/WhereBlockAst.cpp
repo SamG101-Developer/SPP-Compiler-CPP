@@ -16,6 +16,10 @@ SPP::SemanticAnalysis::Asts::WhereBlockAst::WhereBlockAst(
     constraint_group{std::move(constraint_group)} {
 }
 
+auto SPP::SemanticAnalysis::Asts::WhereBlockAst::from_empty() -> std::unique_ptr<WhereBlockAst> {
+    return std::make_unique<WhereBlockAst>(0, nullptr, nullptr); // todo
+}
+
 SPP::SemanticAnalysis::Asts::WhereBlockAst::~WhereBlockAst() = default;
 
 auto SPP::SemanticAnalysis::Asts::WhereBlockAst::print(Meta::AstPrinter &printer) const -> std::string {

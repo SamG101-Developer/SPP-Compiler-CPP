@@ -37,7 +37,7 @@ class SPP::SyntacticAnalysis::Parser {
     std::string name;
     std::vector<LexicalAnalysis::RawToken> token_stream;
     Utils::ErrorFormatter error_formatter;
-    std::optional<Errors::SyntaxError> error = std::nullopt;
+    Errors::SyntaxError error = Errors::SyntaxError(0, "");
 
     auto store_error(std::size_t new_pos, std::string new_error) -> bool;
 

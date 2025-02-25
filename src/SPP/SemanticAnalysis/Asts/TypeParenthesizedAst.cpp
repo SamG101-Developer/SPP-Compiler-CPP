@@ -27,3 +27,7 @@ auto SPP::SemanticAnalysis::Asts::TypeParenthesizedAst::print(Meta::AstPrinter &
         tok_right_parenthesis->print(printer));
     return string;
 }
+
+auto SPP::SemanticAnalysis::Asts::TypeParenthesizedAst::convert() -> AstMemberType<Ast> {
+    return std::move(type);
+}

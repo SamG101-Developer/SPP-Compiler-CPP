@@ -22,6 +22,12 @@ SPP::SemanticAnalysis::Asts::CaseExpressionBranchAst::CaseExpressionBranchAst(
     body{std::move(body)} {
 }
 
+auto SPP::SemanticAnalysis::Asts::CaseExpressionBranchAst::from_else_case(
+    std::size_t pos,
+    std::unique_ptr<PatternVariantElseCaseAst> &&else_case) -> std::unique_ptr<CaseExpressionBranchAst> {
+    return nullptr;
+}
+
 SPP::SemanticAnalysis::Asts::CaseExpressionBranchAst::~CaseExpressionBranchAst() = default;
 
 auto SPP::SemanticAnalysis::Asts::CaseExpressionBranchAst::print(Meta::AstPrinter &printer) const -> std::string {

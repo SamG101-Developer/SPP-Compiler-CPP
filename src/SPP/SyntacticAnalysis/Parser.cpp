@@ -154,9 +154,9 @@ auto SPP::SyntacticAnalysis::Parser::set_current_pos(const std::size_t new_index
 }
 
 
-auto SPP::SyntacticAnalysis::Parser::store_error(std::size_t new_pos, std::string new_error) -> bool {
-    if (new_pos > error->pos) {
-        error->reset(pos, std::move(new_error));
+auto SPP::SyntacticAnalysis::Parser::store_error(const std::size_t new_pos, std::string new_error) -> bool {
+    if (new_pos > error.pos) {
+        error.reset(pos, std::move(new_error));
         return true;
     }
     return false;
@@ -1466,11 +1466,6 @@ auto SPP::SyntacticAnalysis::Parser::parse_type_binary_expression_precedence_lev
     return p2.has_value() ? std::make_unique<Asts::TypeBinaryExpressionAst>(c1, std::move(p1), std::move(p2->first), std::move(p2->second))->convert() : Utils::cast_unique<Asts::Ast>(std::move(p1));
 }
 
-auto SPP::SyntacticAnalysis::Parser::parse_type() -> std::unique_ptr<Asts::Ast> {
-    auto p1 = parse_once(&Parser::parse_type_binary_expression_precedence_level_1);
-    return p1;
-}
-
 auto SPP::SyntacticAnalysis::Parser::parse_type_binary_expression_precedence_level_1() -> std::unique_ptr<Asts::Ast> {
     return parse_type_binary_expression_precedence_level_n(&Parser::parse_type_binary_expression_precedence_level_2, &Parser::parse_type_binary_op_precedence_level_1, &Parser::parse_type_binary_expression_precedence_level_1);
 }
@@ -1478,6 +1473,34 @@ auto SPP::SyntacticAnalysis::Parser::parse_type_binary_expression_precedence_lev
 auto SPP::SyntacticAnalysis::Parser::parse_type_binary_expression_precedence_level_2() -> std::unique_ptr<Asts::Ast> {
     return parse_type_binary_expression_precedence_level_n(&Parser::parse_type_unary_expression, &Parser::parse_type_binary_op_precedence_level_2, &Parser::parse_type_binary_expression_precedence_level_2);
 }
+
+auto SPP::SyntacticAnalysis::Parser::parse_type() -> std::unique_ptr<Asts::Ast> {
+    auto p1 = parse_once(&Parser::parse_type_binary_expression_precedence_level_1);
+    return p1;
+}
+
+auto SPP::SyntacticAnalysis::Parser::parse_type_binary_op_precedence_level_1() -> std::unique_ptr<Asts::TokenAst> {
+    auto p1 = parse_once(&Parser::parse_keyword_and);
+    return p1;
+}
+
+auto SPP::SyntacticAnalysis::Parser::parse_type_binary_op_precedence_level_2() -> std::unique_ptr<Asts::TokenAst> {
+    auto p1 = parse_once(&Parser::parse_keyword_or);
+    return p1;
+}
+
+auto SPP::SyntacticAnalysis::Parser::parse_global_constant() -> std::unique_ptr<Asts::GlobalConstantAst> {
+    auto c1 = get_current_pos();
+    auto p1 = parse_0_or_more(&Parser::parse_annotation, &Parser::parse_nothing);
+    auto p2 = parse_once(&Parser::parse_keyword_cmp);
+    auto p3 = parse_once(&Parser::parse_identifier);
+    auto p4 = parse_once(&Parser::parse_token_colon);
+    auto p5 = parse_once(&Parser::parse_type);
+    auto p6 = parse_once(&Parser::parse_token_assign);
+    auto p7 = parse_once(&Parser::parse_comp_value);
+    return std::make_unique<Asts::GlobalConstantAst>(c1, std::move(p1), std::move(p2), std::move(p3), std::move(p4), std::move(p5), std::move(p6), std::move(p7));
+}
+
 
 auto SPP::SyntacticAnalysis::Parser::parse_type_unary_expression() -> std::unique_ptr<Asts::Ast> {
     auto p1 = parse_0_or_more(&Parser::parse_type_unary_op, &Parser::parse_nothing) | std::ranges::views::reverse;
@@ -2608,9 +2631,9 @@ auto SPP::SyntacticAnalysis::Parser::parse_eof() -> std::unique_ptr<Asts::TokenA
 
 auto SPP::SyntacticAnalysis::Parser::parse_token_primitive(RawTokenTypes token_type) -> std::unique_ptr<Asts::TokenAst> {
     if (pos > token_stream_size) {
-        auto new_error = std::format("Expected token '{}' but found end of file", magic_enum::enum_name(token_type));
+        const auto new_error = std::format("Expected token '{}' but found end of file", magic_enum::enum_name(token_type));
         store_error(get_current_pos(), new_error);
-        throw *error;
+        throw error;
     }
 
     if (token_type != RawTokenTypes::TkNewLine) {
@@ -2629,16 +2652,16 @@ auto SPP::SyntacticAnalysis::Parser::parse_token_primitive(RawTokenTypes token_t
     }
 
     if (token_stream[pos].tok_type != token_type) {
-        if (error->pos == pos) {
-            error->expected.insert(token_type);
-            throw *error;
+        if (error.pos == pos) {
+            error.expected.insert(token_type);
+            throw error;
         }
 
-        auto new_error = std::format("Expected got '{}'", token_stream[pos].tok_metadata);
+        auto new_error = std::format("Expected £ got '{}'", token_stream[pos].tok_metadata);
         if (store_error(pos, new_error)) {
-            error->expected.insert(token_type);
+            error.expected.insert(token_type);
         }
-        throw *error;
+        throw error;
     }
 
     auto token_character = std::string{};

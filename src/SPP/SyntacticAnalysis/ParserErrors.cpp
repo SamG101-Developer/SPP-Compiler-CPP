@@ -1,6 +1,7 @@
 module;
-#include <magic_enum/magic_enum.hpp>
+#include <iostream>
 #include <ranges>
+#include <magic_enum/magic_enum.hpp>
 
 
 module spp.syntactic_analysis.parser_error;
@@ -26,7 +27,10 @@ auto SPP::SyntacticAnalysis::Errors::SyntaxError::throw_(Utils::ErrorFormatter c
         | std::ranges::to<std::string>();
 
     auto error_message = std::string{what()};
-    error_message.replace(error_message.find("£"), 1, all_expected_tokens);
+    if (error_message.contains("£")) {
+        error_message.replace(error_message.find("£"), 1, all_expected_tokens);
+    }
+    error_message = error_formatter.error(pos, std::move(error_message), "Syntax Error");
     throw SyntaxError(pos, error_message.c_str());
 }
 

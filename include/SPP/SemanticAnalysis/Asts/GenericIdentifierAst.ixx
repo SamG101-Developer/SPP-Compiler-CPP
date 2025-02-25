@@ -29,6 +29,8 @@ struct SPP::SemanticAnalysis::Asts::GenericIdentifierAst final : Ast {
 
     static auto from(GenericIdentifierAst const &identifier) -> std::unique_ptr<GenericIdentifierAst>;
 
+    static auto empty() -> std::unique_ptr<GenericIdentifierAst>;
+
     ~GenericIdentifierAst() override;
 
     auto print(Meta::AstPrinter &printer) const -> std::string override;

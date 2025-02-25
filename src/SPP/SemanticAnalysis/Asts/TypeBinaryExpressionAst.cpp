@@ -3,7 +3,9 @@ module;
 #include <string>
 
 module spp.semantic_analysis.asts.type_binary_expression_ast;
+import spp.semantic_analysis.asts.generic_identifier_ast;
 import spp.semantic_analysis.asts.token_ast;
+import spp.semantic_analysis.asts.type_single_ast;
 
 
 SPP::SemanticAnalysis::Asts::TypeBinaryExpressionAst::TypeBinaryExpressionAst(
@@ -26,4 +28,8 @@ auto SPP::SemanticAnalysis::Asts::TypeBinaryExpressionAst::print(Meta::AstPrinte
         op->print(printer),
         rhs->print(printer));
     return string;
+}
+
+auto SPP::SemanticAnalysis::Asts::TypeBinaryExpressionAst::convert() -> AstMemberType<Ast> {
+    return std::make_unique<TypeSingleAst>(0, GenericIdentifierAst::empty()); // todo
 }

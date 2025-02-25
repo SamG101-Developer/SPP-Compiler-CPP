@@ -15,12 +15,12 @@ export namespace SPP::SemanticAnalysis::Asts {
 
 
 struct SPP::SemanticAnalysis::Asts::LoopControlFlowStatementAst final : Ast {
-    AstMemberType<std::vector<TokenAst>> tok_loop;
+    AstMemberType<std::vector<TokenAst>> tok_exit_or_skip;
     AstMemberTypeOpt<Ast> skip_or_expr;
 
     LoopControlFlowStatementAst(
         std::size_t pos,
-        decltype(tok_loop) &&tok_loop,
+        decltype(tok_exit_or_skip) &&tok_loop,
         decltype(skip_or_expr) &&skip_or_expr);
 
     ~LoopControlFlowStatementAst() override;

@@ -20,5 +20,7 @@ struct SPP::SemanticAnalysis::Asts::GenericCompArgumentUnnamedAst final : Ast {
         std::size_t pos,
         decltype(value) &&value);
 
+    ~GenericCompArgumentUnnamedAst() override;
+
     auto print(Meta::AstPrinter &printer) const -> std::string override;
 };

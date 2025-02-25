@@ -21,8 +21,8 @@ struct SPP::SemanticAnalysis::Asts::LoopExpressionAst final : Ast {
     AstMemberType<InnerScopeAst> inner_scope;
     AstMemberTypeOpt<LoopElseStatementAst> else_statement;
 
-    std::map<std::size_t, Ast*> _loop_type_info;
-    std::size_t _loop_level;
+    std::map<std::size_t, Ast*> _loop_type_info = {};
+    std::size_t _loop_level = 0;
 
     LoopExpressionAst(
         std::size_t pos,
